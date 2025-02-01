@@ -27,8 +27,8 @@ public class Customer : AutoObject
     [DisplayName("Guid (see menu on right-click)")]
     public Guid Id
     {
-        get { return GetProperty<Guid>(); }
-        set { SetProperty(value); }
+        get => GetProperty<Guid>();
+        set => SetProperty(value);
     }
 
     //[ReadOnly(true)]
@@ -36,15 +36,15 @@ public class Customer : AutoObject
     [PropertyGridOptions(EditorDataTemplateResourceKey = "DateTimePicker")]
     public DateTime CreationDateAndTime
     {
-        get { return GetProperty<DateTime>(); }
-        set { SetProperty(value); }
+        get => GetProperty<DateTime>();
+        set => SetProperty(value);
     }
 
     [DisplayName("Sub Object (Address)")]
     [PropertyGridOptions(ForcePropertyChanged = true)]
     public Address SubObject
     {
-        get { return GetProperty<Address>(); }
+        get => GetProperty<Address>();
         set
         {
             // because it's a sub object we want to update the property grid
@@ -69,7 +69,7 @@ public class Customer : AutoObject
         }
     }
 
-    private void OnSubObjectPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void OnSubObjectPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         OnPropertyChanged(nameof(SubObject), false, true);
         OnPropertyChanged(nameof(SubObjectAsObject), false, true);
@@ -79,44 +79,44 @@ public class Customer : AutoObject
     [PropertyGridOptions(EditorDataTemplateResourceKey = "ObjectEditor", ForcePropertyChanged = true)]
     public Address SubObjectAsObject
     {
-        get { return SubObject; }
-        set { SubObject = value; }
+        get => SubObject;
+        set => SubObject = value;
     }
 
     [PropertyGridOptions(SortOrder = 10)]
     public string FirstName
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     [PropertyGridOptions(SortOrder = 20)]
     public string LastName
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     [Category("Dates and Times")]
     [PropertyGridOptions(SortOrder = 40)]
     public DateTime DateOfBirth
     {
-        get { return GetProperty<DateTime>(); }
-        set { SetProperty(value); }
+        get => GetProperty<DateTime>();
+        set => SetProperty(value);
     }
 
     [Category("Enums")]
     [PropertyGridOptions(SortOrder = 30)]
     public Gender Gender
     {
-        get { return GetProperty<Gender>(); }
-        set { SetProperty(value); }
+        get => GetProperty<Gender>();
+        set => SetProperty(value);
     }
 
     [Category("Enums")]
     public Status Status
     {
-        get { return GetProperty<Status>(); }
+        get => GetProperty<Status>();
         set
         {
             if (SetProperty(value))
@@ -133,8 +133,8 @@ public class Customer : AutoObject
     [Category("Enums")]
     public Status StatusColor
     {
-        get { return Status; }
-        set { Status = value; }
+        get => Status;
+        set => Status = value;
     }
 
     [PropertyGridOptions(IsEnum = true, EnumNames = ["1N\\/AL1D", "\\/AL1D", "UNKN0WN"], EnumValues = [Status.Invalid, Status.Valid, Status.Unknown])]
@@ -142,32 +142,32 @@ public class Customer : AutoObject
     [Category("Enums")]
     public string StatusColorString
     {
-        get { return Status.ToString(); }
-        set { Status = (Status)Enum.Parse(typeof(Status), value); }
+        get => Status.ToString();
+        set => Status = (Status)Enum.Parse(typeof(Status), value);
     }
 
     [PropertyGridOptions(IsEnum = true, IsFlagsEnum = true, EnumNames = ["First", "Second", "Third"])]
     [Category("Enums")]
     public string MultiEnumString
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     [PropertyGridOptions(IsEnum = true, IsFlagsEnum = true, EnumNames = ["None", "My First", "My Second", "My Third"], EnumValues = [0, 1, 2, 4])]
     [Category("Enums")]
     public string MultiEnumStringWithDisplay
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     [Category("Dates and Times")]
     [Description("This is the timespan tooltip")]
     public TimeSpan TimeSpan
     {
-        get { return GetProperty<TimeSpan>(); }
-        set { SetProperty(value); }
+        get => GetProperty<TimeSpan>();
+        set => SetProperty(value);
     }
 
     [Category("Security")]
@@ -175,7 +175,7 @@ public class Customer : AutoObject
     [DisplayName("Password (SecureString)")]
     public SecureString Password
     {
-        get { return GetProperty<SecureString>(); }
+        get => GetProperty<SecureString>();
         set
         {
             if (SetProperty(value))
@@ -201,8 +201,8 @@ public class Customer : AutoObject
     [Browsable(false)]
     public string NotBrowsable
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     [DisplayName("Description (multi-line)")]
@@ -211,8 +211,8 @@ public class Customer : AutoObject
     [PropertyGridOptions(EditorDataTemplateResourceKey = "BigTextEditor")]
     public string Description
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "FormatTextEditor")]
@@ -221,38 +221,38 @@ public class Customer : AutoObject
     [DisplayName("Byte Array (hex format)")]
     public byte[] ByteArray1
     {
-        get { return GetProperty<byte[]>(); }
-        set { SetProperty(value); }
+        get => GetProperty<byte[]>();
+        set => SetProperty(value);
     }
 
     [ReadOnly(true)]
     [DisplayName("Byte Array (press button for hex dump)")]
     public byte[] ByteArray2
     {
-        get { return ByteArray1; }
-        set { ByteArray1 = value; }
+        get => ByteArray1;
+        set => ByteArray1 = value;
     }
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "CustomEditor", SortOrder = -10)]
     [DisplayName("Web Site (custom sort order)")]
     public string WebSite
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     [Category("Collections")]
     public string[] ArrayOfStrings
     {
-        get { return GetProperty<string[]>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string[]>();
+        set => SetProperty(value);
     }
 
     [Category("Collections")]
     public List<string> ListOfStrings
     {
-        get { return GetProperty<List<string>>(); }
-        set { SetProperty(value); }
+        get => GetProperty<List<string>>();
+        set => SetProperty(value);
     }
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "AddressListEditor", SortOrder = 10)]
@@ -260,31 +260,31 @@ public class Customer : AutoObject
     [Category("Collections")]
     public ObservableCollection<Address> Addresses
     {
-        get { return GetProperty<ObservableCollection<Address>>(); }
-        set { SetProperty(value); }
+        get => GetProperty<ObservableCollection<Address>>();
+        set => SetProperty(value);
     }
 
     [DisplayName("Days Of Week (multi-valued enum)")]
     [Category("Enums")]
     public DaysOfWeek DaysOfWeek
     {
-        get { return GetProperty<DaysOfWeek>(); }
-        set { SetProperty(value); }
+        get => GetProperty<DaysOfWeek>();
+        set => SetProperty(value);
     }
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "PercentEditor")]
     [DisplayName("Percentage Of Satisfaction (int)")]
     public int PercentageOfSatisfactionInt
     {
-        get { return GetProperty<int>(0, "PercentageOfSatisfaction"); }
-        set { SetProperty("PercentageOfSatisfaction", value); }
+        get => GetProperty<int>(0, "PercentageOfSatisfaction");
+        set => SetProperty("PercentageOfSatisfaction", value);
     }
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "PercentEditor")]
     [DisplayName("Percentage Of Satisfaction (double)")]
     public double PercentageOfSatisfaction
     {
-        get { return GetProperty<double>(); }
+        get => GetProperty<double>();
         set
         {
             if (SetProperty(value))
@@ -298,46 +298,46 @@ public class Customer : AutoObject
     [DisplayName("Preferred Color Name (custom editor)")]
     public string PreferredColorName
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "FontEditor")]
     [DisplayName("Preferred Font (custom editor)")]
     public FontFamily PreferredFont
     {
-        get { return GetProperty<FontFamily>(); }
-        set { SetProperty(value); }
+        get => GetProperty<FontFamily>();
+        set => SetProperty(value);
     }
 
     [DisplayName("Point (auto type converter)")]
     public Point Point
     {
-        get { return GetProperty<Point>(); }
-        set { SetProperty(value); }
+        get => GetProperty<Point>();
+        set => SetProperty(value);
     }
 
     [DisplayName("Nullable Int32 (supports empty string)")]
     public int? NullableInt32
     {
-        get { return GetProperty<int?>(); }
-        set { SetProperty(value); }
+        get => GetProperty<int?>();
+        set => SetProperty(value);
     }
 
     [DisplayName("Boolean (Checkbox)")]
     [Category("Booleans")]
     public bool SampleBoolean
     {
-        get { return GetProperty<bool>(); }
-        set { SetProperty(value); }
+        get => GetProperty<bool>();
+        set => SetProperty(value);
     }
 
     [DisplayName("Boolean (Checkbox three states)")]
     [Category("Booleans")]
     public bool? SampleNullableBoolean
     {
-        get { return GetProperty<bool?>(); }
-        set { SetProperty(value); }
+        get => GetProperty<bool?>();
+        set => SetProperty(value);
     }
 
     [DisplayName("Boolean (DropDownList)")]
@@ -345,8 +345,8 @@ public class Customer : AutoObject
     [PropertyGridOptions(EditorDataTemplateResourceKey = "BooleanDropDownListEditor")]
     public bool SampleBooleanDropDownList
     {
-        get { return GetProperty<bool>(); }
-        set { SetProperty(value); }
+        get => GetProperty<bool>();
+        set => SetProperty(value);
     }
 
     [DisplayName("Boolean (DropDownList 3 states)")]
@@ -354,8 +354,8 @@ public class Customer : AutoObject
     [PropertyGridOptions(EditorDataTemplateResourceKey = "NullableBooleanDropDownListEditor")]
     public bool? SampleNullableBooleanDropDownList
     {
-        get { return GetProperty<bool?>(); }
-        set { SetProperty(value); }
+        get => GetProperty<bool?>();
+        set => SetProperty(value);
     }
 }
 
@@ -365,43 +365,43 @@ public class Address : AutoObject
     [PropertyGridOptions(SortOrder = 10)]
     public string Line1
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     [PropertyGridOptions(SortOrder = 20)]
     public string Line2
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     [PropertyGridOptions(SortOrder = 30)]
     public int? ZipCode
     {
-        get { return GetProperty<int?>(); }
-        set { SetProperty(value); }
+        get => GetProperty<int?>();
+        set => SetProperty(value);
     }
 
     [PropertyGridOptions(SortOrder = 40)]
     public string City
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     [PropertyGridOptions(SortOrder = 50)]
     public string State
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     [PropertyGridOptions(SortOrder = 60)]
     public string Country
     {
-        get { return GetProperty<string>(); }
-        set { SetProperty(value); }
+        get => GetProperty<string>();
+        set => SetProperty(value);
     }
 
     protected override bool OnPropertyChanged(string name, bool setChanged, bool forceRaise) => base.OnPropertyChanged(name, setChanged, forceRaise);
@@ -450,7 +450,6 @@ public class Address : AutoObject
 
     private static bool TryFindStateZip(string text, out string state, out int zip)
     {
-        zip = 0;
         state = null;
         string zipText = text;
         int pos = text.LastIndexOfAny([' ']);

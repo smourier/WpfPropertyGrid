@@ -6,8 +6,7 @@ public static class DataBindingEvaluator
     private static readonly char[] indexExprEndChars = [']', ')'];
     private static readonly char[] indexExprStartChars = ['[', '('];
 
-    public static string Eval(object? container, string expression, string format, bool throwOnError = true) => Eval(container, expression, null, format, throwOnError);
-    public static string Eval(object? container, string expression, IFormatProvider? provider, string format, bool throwOnError = true)
+    public static string EvalFormat(object? container, string expression, IFormatProvider? provider, string? format = null, bool throwOnError = true)
     {
         format ??= "{0}";
         if (provider == null)
@@ -88,7 +87,7 @@ public static class DataBindingEvaluator
 
         string? propName = null;
         object? index = null;
-        var s = expression.Substring(idx1 + 1, (idx2 - idx1) - 1).Trim();
+        var s = expression.Substring(idx1 + 1, idx2 - idx1 - 1).Trim();
         if (idx1 != 0)
         {
             propName = expression[..idx1];

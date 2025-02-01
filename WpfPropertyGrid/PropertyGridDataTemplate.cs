@@ -1,17 +1,23 @@
 namespace WpfPropertyGrid;
 
-[ContentProperty("DataTemplate")]
+[ContentProperty(nameof(DataTemplate))]
 public class PropertyGridDataTemplate
 {
     private class NullableEnum { }
     public static readonly Type NullableEnumType = typeof(NullableEnum);
 
-    private List<Type> _resolvedPropertyTypes;
-    private List<Type> _resolvedCollectionItemPropertyTypes;
+    private readonly Lazy<List<Type>> _resolvedPropertyTypes;
+    private readonly Lazy<List<Type>> _resolvedCollectionItemPropertyTypes;
 
-    public string PropertyType { get; set; }
-    public string CollectionItemPropertyType { get; set; }
-    public DataTemplate DataTemplate { get; set; }  // note: may be null
+    public PropertyGridDataTemplate()
+    {
+        _resolvedPropertyTypes = new(GetResolvedPropertyTypes);
+        _resolvedCollectionItemPropertyTypes = new(GetResolvedCollectionItemPropertyTypes);
+    }
+
+    public string? PropertyType { get; set; }
+    public string? CollectionItemPropertyType { get; set; }
+    public DataTemplate? DataTemplate { get; set; }  // note: may be null
     public bool? IsCollection { get; set; }
     public bool? IsReadOnly { get; set; }
     public bool? IsError { get; set; }
@@ -19,63 +25,53 @@ public class PropertyGridDataTemplate
     public bool? IsFlagsEnum { get; set; }
     public bool? IsCollectionItemValueType { get; set; }
     public bool? IsValueType { get; set; }
-    public string Category { get; set; }
-    public string Name { get; set; }
+    public string? Category { get; set; }
+    public string? Name { get; set; }
 
-    public virtual IList<Type> ResolvedPropertyTypes
+    public virtual IReadOnlyList<Type> ResolvedPropertyTypes => _resolvedPropertyTypes.Value;
+    private List<Type> GetResolvedPropertyTypes()
     {
-        get
+        var types = new List<Type>();
+        var names = PropertyType?.SplitToList<string>('|') ?? [];
+        foreach (var name in names)
         {
-            if (_resolvedPropertyTypes == null)
-            {
-                _resolvedPropertyTypes = [];
-                List<string> names = PropertyType.SplitToList<string>('|');
-                foreach (string name in names)
-                {
-                    if (string.IsNullOrWhiteSpace(name))
-                        continue;
+            if (string.IsNullOrWhiteSpace(name))
+                continue;
 
-                    Type type;
-                    // a hack to handle nullable enum in a general way
-                    if (name == "System.Nullable`1[System.Enum]")
-                    {
-                        type = NullableEnumType;
-                    }
-                    else
-                    {
-                        type = TypeResolutionService.ResolveType(name);
-                    }
-                    if (type != null)
-                    {
-                        _resolvedPropertyTypes.Add(type);
-                    }
-                }
+            Type? type;
+            // a hack to handle nullable enum in a general way
+            if (name == "System.Nullable`1[System.Enum]")
+            {
+                type = NullableEnumType;
             }
-            return _resolvedPropertyTypes;
+            else
+            {
+                type = TypeResolutionService.ResolveType(name);
+            }
+            if (type != null)
+            {
+                types.Add(type);
+            }
         }
+        return types;
     }
 
-    public virtual IList<Type> ResolvedCollectionItemPropertyTypes
+    public virtual IReadOnlyList<Type> ResolvedCollectionItemPropertyTypes => _resolvedCollectionItemPropertyTypes.Value;
+    private List<Type> GetResolvedCollectionItemPropertyTypes()
     {
-        get
+        var types = new List<Type>();
+        var names = CollectionItemPropertyType?.SplitToList<string>('|') ?? [];
+        foreach (var name in names)
         {
-            if (_resolvedCollectionItemPropertyTypes == null)
-            {
-                _resolvedCollectionItemPropertyTypes = [];
-                List<string> names = CollectionItemPropertyType.SplitToList<string>('|');
-                foreach (string name in names)
-                {
-                    if (string.IsNullOrWhiteSpace(name))
-                        continue;
+            if (string.IsNullOrWhiteSpace(name))
+                continue;
 
-                    Type type = TypeResolutionService.ResolveType(name);
-                    if (type != null)
-                    {
-                        _resolvedCollectionItemPropertyTypes.Add(type);
-                    }
-                }
+            var type = TypeResolutionService.ResolveType(name);
+            if (type != null)
+            {
+                types.Add(type);
             }
-            return _resolvedCollectionItemPropertyTypes;
         }
+        return types;
     }
 }

@@ -10,8 +10,8 @@ public partial class App : Application
 #endif
     }
 
-    private void OnEditorWindowCloseCanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;
-    private void OnEditorWindowCloseExecuted(object sender, ExecutedRoutedEventArgs e)
+    private void OnEditorWindowCloseCanExecute(object? sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;
+    private void OnEditorWindowCloseExecuted(object? sender, ExecutedRoutedEventArgs e)
     {
         var window = (Window)sender;
         window.DialogResult = false;

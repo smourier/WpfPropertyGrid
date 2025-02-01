@@ -2,9 +2,9 @@ namespace WpfPropertyGrid;
 
 public class PropertyGridProperty : AutoObject, IComparable, IComparable<PropertyGridProperty>
 {
-    public event EventHandler<PropertyGridEventArgs> Event;
-    private string _defaultEditorResourceKey;
-    private object _clonedValue;
+    public event EventHandler<PropertyGridEventArgs>? Event;
+    private string? _defaultEditorResourceKey;
+    private object? _clonedValue;
     private bool _valueCloned;
 
     public PropertyGridProperty(PropertyGridDataProvider dataProvider)
@@ -13,13 +13,13 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
 
         DataProvider = dataProvider;
         PropertyType = typeof(object);
-        Attributes = dataProvider.CreateDynamicObject();
-        TypeAttributes = dataProvider.CreateDynamicObject();
+        Attributes = dataProvider.CreateDynamicObject() ?? throw new NotSupportedException();
+        TypeAttributes = dataProvider.CreateDynamicObject() ?? throw new NotSupportedException();
     }
 
-    public override string ToString() => Name;
+    public override string ToString() => Name ?? string.Empty;
 
-    public virtual void CanExecute(object sender, CanExecuteRoutedEventArgs e)
+    public virtual void CanExecute(object? sender, CanExecuteRoutedEventArgs e)
     {
         if (Value is IPropertyGridCommandHandler handler)
         {
@@ -27,7 +27,7 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
         }
     }
 
-    public virtual void Executed(object sender, ExecutedRoutedEventArgs e)
+    public virtual void Executed(object? sender, ExecutedRoutedEventArgs e)
     {
         if (Value is IPropertyGridCommandHandler handler)
         {
@@ -35,15 +35,13 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
         }
     }
 
-    public virtual void OnEvent(object sender, PropertyGridEventArgs e) => Event?.Invoke(sender, e);
+    public virtual void OnEvent(object? sender, PropertyGridEventArgs e) => Event?.Invoke(sender, e);
 
     public void UpdateCellBindings(Action<BindingExpression> action) => UpdateCellBindings(null, null, action);
+    public void UpdateCellBindings(string? childName, Action<BindingExpression> action) => UpdateCellBindings(childName, null, action);
+    public virtual void UpdateCellBindings(string? childName, Func<Binding, bool>? where, Action<BindingExpression> action) => DataProvider.Grid.UpdateCellBindings(this, childName, where, action);
 
-    public void UpdateCellBindings(string childName, Action<BindingExpression> action) => UpdateCellBindings(childName, null, action);
-
-    public virtual void UpdateCellBindings(string childName, Func<Binding, bool> where, Action<BindingExpression> action) => DataProvider.Grid.UpdateCellBindings(this, childName, where, action);
-
-    public static bool IsEnumOrNullableEnum(Type type, out Type enumType, out bool nullable)
+    public static bool IsEnumOrNullableEnum(Type type, [NotNullWhen(true)] out Type? enumType, out bool nullable)
     {
         ArgumentNullException.ThrowIfNull(type);
 
@@ -80,31 +78,28 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
         return fe.DataContext as PropertyGridProperty;
     }
 
-    public PropertyGridDataProvider DataProvider { get; private set; }
+    public PropertyGridDataProvider DataProvider { get; }
     public virtual int SortOrder { get; set; }
-    public virtual Utilities.DynamicObject Attributes { get; private set; }
-    public virtual Utilities.DynamicObject TypeAttributes { get; private set; }
-    public virtual PropertyGridOptionsAttribute Options { get; set; }
-    public virtual object Tag { get; set; }
+    public virtual Utilities.DynamicObject Attributes { get; }
+    public virtual Utilities.DynamicObject TypeAttributes { get; }
+    public virtual PropertyGridOptionsAttribute? Options { get; set; }
+    public virtual object? Tag { get; set; }
 
-    public virtual Type PropertyType { get { return GetProperty<Type>(); } set { SetProperty(value); } }
-    public virtual string Name { get { return GetProperty<string>(); } set { SetProperty(value); } }
-    public virtual bool IsError { get { return GetProperty<bool>(); } set { SetProperty(value); } }
-    public virtual bool IsEnum { get { return GetProperty<bool>(); } set { SetProperty(value); } }
-    public virtual bool IsFlagsEnum { get { return GetProperty<bool>(); } set { SetProperty(value); } }
-    public virtual string Category { get { return GetProperty<string>(); } set { SetProperty(value); } }
-    public virtual string DisplayName { get { return GetProperty<string>(); } set { SetProperty(value); } }
-    public virtual string Description { get { return GetProperty<string>(); } set { SetProperty(value); } }
-    public virtual bool HasDefaultValue { get { return GetProperty<bool>(); } set { SetProperty(value); } }
-    public virtual PropertyDescriptor Descriptor { get { return GetProperty<PropertyDescriptor>(); } set { SetProperty(value); } }
-    public virtual TypeConverter Converter { get { return GetProperty<TypeConverter>(); } set { SetProperty(value); } }
+    public virtual Type? PropertyType { get => GetProperty<Type>(); set => SetProperty(value); }
+    public virtual string? Name { get => GetProperty<string>(); set => SetProperty(value); }
+    public virtual bool IsError { get => GetProperty<bool>(); set => SetProperty(value); }
+    public virtual bool IsEnum { get => GetProperty<bool>(); set => SetProperty(value); }
+    public virtual bool IsFlagsEnum { get => GetProperty<bool>(); set => SetProperty(value); }
+    public virtual string? Category { get => GetProperty<string>(); set => SetProperty(value); }
+    public virtual string? DisplayName { get => GetProperty<string>(); set => SetProperty(value); }
+    public virtual string? Description { get => GetProperty<string>(); set => SetProperty(value); }
+    public virtual bool HasDefaultValue { get => GetProperty<bool>(); set => SetProperty(value); }
+    public virtual PropertyDescriptor? Descriptor { get => GetProperty<PropertyDescriptor>(); set => SetProperty(value); }
+    public virtual TypeConverter? Converter { get => GetProperty<TypeConverter>(); set => SetProperty(value); }
 
-    public virtual object DefaultValue
+    public virtual object? DefaultValue
     {
-        get
-        {
-            return GetProperty<object>();
-        }
+        get => GetProperty<object>();
         set
         {
             if (SetProperty(value))
@@ -127,17 +122,14 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
 
             return "ObjectEditorWindow";
         }
-        set
-        {
-            _defaultEditorResourceKey = value;
-        }
+        set => _defaultEditorResourceKey = value;
     }
 
-    public virtual Type CollectionItemPropertyType
+    public virtual Type? CollectionItemPropertyType
     {
         get
         {
-            if (!IsCollection)
+            if (!IsCollection || PropertyType == null)
                 return null;
 
             return Extensions.GetElementType(PropertyType);
@@ -158,11 +150,12 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
         }
     }
 
+    public bool IsReadWrite { get => !IsReadOnly; set => IsReadOnly = !value; }
     public virtual bool IsReadOnly
     {
         get
         {
-            bool def = false;
+            var def = false;
             if (DataProvider != null && DataProvider.Grid != null && DataProvider.Grid.IsReadOnly)
             {
                 def = true;
@@ -174,13 +167,12 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
         {
             if (SetProperty(value))
             {
-                OnPropertyChanged("IsReadWrite");
+                OnPropertyChanged(nameof(IsReadWrite));
             }
         }
     }
 
     public virtual bool IsCollectionItemValueType => CollectionItemPropertyType != null && CollectionItemPropertyType.IsValueType;
-
     public virtual bool IsValueType => PropertyType != null && PropertyType.IsValueType;
 
     public virtual int CollectionCount
@@ -208,18 +200,6 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
         }
     }
 
-    public bool IsReadWrite
-    {
-        get
-        {
-            return !IsReadOnly;
-        }
-        set
-        {
-            IsReadOnly = !value;
-        }
-    }
-
     public bool? BooleanValue
     {
         get
@@ -227,7 +207,7 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
             if (Value == null)
                 return null;
 
-            bool def = HasDefaultValue && ConversionService.ChangeType(DefaultValue, false);
+            var def = HasDefaultValue && ConversionService.ChangeType(DefaultValue, false);
             return ConversionService.ChangeType(Value, def);
         }
         set
@@ -242,12 +222,12 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
         }
     }
 
-    public virtual string TextValue
+    public virtual string? TextValue
     {
         get
         {
             if (Converter != null && Converter.CanConvertTo(typeof(string)))
-                return (string)Converter.ConvertTo(Value, typeof(string));
+                return Converter.ConvertTo(Value, typeof(string)) as string;
 
             return ConversionService.ChangeType<string>(Value);
         }
@@ -255,7 +235,7 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
         {
             if (Converter != null)
             {
-                if (Converter.CanConvertFrom(typeof(string)))
+                if (Converter.CanConvertFrom(typeof(string)) && value != null)
                 {
                     Value = Converter.ConvertFrom(value);
                     return;
@@ -270,7 +250,7 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
 
             if (Descriptor != null)
             {
-                if (ConversionService.TryChangeType(value, Descriptor.PropertyType, out object v))
+                if (ConversionService.TryChangeType(value, Descriptor.PropertyType, out object? v))
                 {
                     Value = v;
                     return;
@@ -282,16 +262,16 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
 
     public virtual void OnValueChanged()
     {
-        OnPropertyChanged("TextValue");
-        OnPropertyChanged("BooleanValue");
-        OnPropertyChanged("IsCollection");
-        OnPropertyChanged("CollectionCount");
-        OnPropertyChanged("IsDefaultValue");
+        OnPropertyChanged(nameof(TextValue));
+        OnPropertyChanged(nameof(BooleanValue));
+        OnPropertyChanged(nameof(IsCollection));
+        OnPropertyChanged(nameof(CollectionCount));
+        OnPropertyChanged(nameof(IsDefaultValue));
     }
 
     public virtual void SetValue(object? value, bool setChanged, bool forceRaise, bool trackChanged)
     {
-        bool set = SetProperty("Value", value, setChanged, forceRaise, trackChanged);
+        var set = SetProperty("Value", value, setChanged, forceRaise, trackChanged);
         if (set || forceRaise)
         {
             OnValueChanged();
@@ -320,13 +300,11 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
 
     public virtual object? Value
     {
-        get
-        {
-            return GetProperty<object>();
-        }
+        get => GetProperty<object>();
         set
         {
-            if (!TryChangeType(value, PropertyType, CultureInfo.CurrentCulture, out object changedValue))
+            object? changedValue = null;
+            if (PropertyType != null && !TryChangeType(value, PropertyType, CultureInfo.CurrentCulture, out changedValue))
                 throw new ArgumentException("Cannot convert value {" + value + "} to type '" + PropertyType.FullName + "'.");
 
             if (Descriptor != null)
@@ -345,7 +323,7 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
         }
     }
 
-    protected virtual bool TryChangeType(object? value, Type type, IFormatProvider provider, out object changedValue)
+    protected virtual bool TryChangeType(object? value, Type type, IFormatProvider? provider, out object? changedValue)
     {
         ArgumentNullException.ThrowIfNull(type);
         return ConversionService.TryChangeType(value, type, provider, out changedValue);

@@ -59,7 +59,7 @@ public static class Extensions
         if (underlyingType == typeof(int))
             return Enum.ToObject(enumType, ConversionService.ChangeType<int>(value));
 
-        if ((underlyingType == typeof(uint)))
+        if (underlyingType == typeof(uint))
             return Enum.ToObject(enumType, ConversionService.ChangeType<uint>(value));
 
         if (underlyingType == typeof(short))
@@ -85,8 +85,8 @@ public static class Extensions
         if (string.IsNullOrEmpty(format))
             return obj.ToString() ?? string.Empty;
 
-        if ((format.StartsWith('*')) ||
-            (format.StartsWith('#')))
+        if (format.StartsWith('*') ||
+            format.StartsWith('#'))
         {
             char sep1 = ' ';
             char sep2 = ':';
@@ -168,7 +168,7 @@ public static class Extensions
                 }
                 else
                 {
-                    int pos = format.IndexOf(',');
+                    var pos = format.IndexOf(',');
                     if (pos <= 0)
                     {
                         separator = ",";
@@ -181,10 +181,10 @@ public static class Extensions
                         expression = format[1..pos];
                     }
                 }
-                return ConcatenateCollection(enumerable, expression, separator, formatProvider);
+                return ConcatenateCollection(enumerable, expression ?? string.Empty, separator, formatProvider) ?? string.Empty;
             }
         }
-        else if (format.IndexOf(',') >= 0)
+        else if (format.Contains(','))
         {
             var sb = new StringBuilder();
             foreach (var propName in format.Split([','], StringSplitOptions.RemoveEmptyEntries))
@@ -220,25 +220,23 @@ public static class Extensions
         int pos2 = format.IndexOf(':');
         if (pos2 > 0)
         {
-            object inner = DataBindingEvaluator.Eval(obj, format[..pos2], false);
+            var inner = DataBindingEvaluator.Eval(obj, format[..pos2], false);
             if (inner == null)
                 return string.Empty;
 
             return string.Format(formatProvider, "{0:" + format[(pos2 + 1)..] + "}", inner);
         }
-        return DataBindingEvaluator.Eval(obj, format, formatProvider, null, false);
+        return DataBindingEvaluator.EvalFormat(obj, format, formatProvider, null, false);
     }
 
-    public static string ConcatenateCollection(IEnumerable collection, string expression, string separator) => ConcatenateCollection(collection, expression, separator, null);
-
-    public static string ConcatenateCollection(IEnumerable collection, string expression, string separator, IFormatProvider formatProvider)
+    public static string? ConcatenateCollection(IEnumerable collection, string expression, string? separator, IFormatProvider? formatProvider = null)
     {
         if (collection == null)
             return null;
 
         var sb = new StringBuilder();
-        int i = 0;
-        foreach (object o in collection)
+        var i = 0;
+        foreach (var obj in collection)
         {
             if (i > 0)
             {
@@ -249,10 +247,9 @@ public static class Extensions
                 i++;
             }
 
-            if (o != null)
+            if (obj != null)
             {
-                //object e = ConvertUtilities.Evaluate(o, expression, typeof(string), null, formatProvider);
-                object e = DataBindingEvaluator.Eval(o, expression, formatProvider, null, false);
+                var e = DataBindingEvaluator.EvalFormat(obj, expression, formatProvider, null, false);
                 if (e != null)
                 {
                     sb.Append(e);
@@ -266,7 +263,7 @@ public static class Extensions
     {
         ArgumentNullException.ThrowIfNull(collectionType);
 
-        foreach (Type iface in collectionType.GetInterfaces())
+        foreach (var iface in collectionType.GetInterfaces())
         {
             if (!iface.IsGenericType)
                 continue;
@@ -293,8 +290,8 @@ public static class Extensions
         if (!enumType.IsEnum)
             throw new ArgumentException(null, nameof(enumType));
 
-        Type utype = Enum.GetUnderlyingType(enumType);
-        return GetEnumUnderlyingTypeMaxPower(utype);
+        var type = Enum.GetUnderlyingType(enumType);
+        return GetEnumUnderlyingTypeMaxPower(type);
     }
 
     public static int GetEnumUnderlyingTypeMaxPower(Type underlyingType)
@@ -320,25 +317,14 @@ public static class Extensions
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        TypeCode typeCode = Convert.GetTypeCode(value);
-        switch (typeCode)
+        var typeCode = Convert.GetTypeCode(value);
+        return typeCode switch
         {
-            case TypeCode.SByte:
-            case TypeCode.Int16:
-            case TypeCode.Int32:
-            case TypeCode.Int64:
-                return (ulong)Convert.ToInt64(value, CultureInfo.InvariantCulture);
-
-            case TypeCode.Byte:
-            case TypeCode.UInt16:
-            case TypeCode.UInt32:
-            case TypeCode.UInt64:
-                return Convert.ToUInt64(value, CultureInfo.InvariantCulture);
-
+            TypeCode.SByte or TypeCode.Int16 or TypeCode.Int32 or TypeCode.Int64 => (ulong)Convert.ToInt64(value, CultureInfo.InvariantCulture),
+            TypeCode.Byte or TypeCode.UInt16 or TypeCode.UInt32 or TypeCode.UInt64 => Convert.ToUInt64(value, CultureInfo.InvariantCulture),
             //case TypeCode.String:
-            default:
-                return ConversionService.ChangeType<ulong>(value);
-        }
+            _ => ConversionService.ChangeType<ulong>(value),
+        };
     }
 
     public static bool IsFlagsEnum(Type type)
@@ -356,9 +342,9 @@ public static class Extensions
         var list = new List<T>();
         if (thisString != null)
         {
-            foreach (string s in thisString.Split(separators))
+            foreach (var s in thisString.Split(separators))
             {
-                T item = ConversionService.ChangeType<T>(s);
+                var item = ConversionService.ChangeType<T>(s);
                 list.Add(item);
             }
         }
@@ -393,22 +379,18 @@ public static class Extensions
         return string.Compare(thisString, text, StringComparison.OrdinalIgnoreCase) == 0;
     }
 
-    public static IEnumerable<DependencyObject> EnumerateVisualChildren(this DependencyObject obj) => obj.EnumerateVisualChildren(true);
-
-    public static IEnumerable<DependencyObject> EnumerateVisualChildren(this DependencyObject obj, bool recursive) => obj.EnumerateVisualChildren(recursive, true);
-
-    public static IEnumerable<DependencyObject> EnumerateVisualChildren(this DependencyObject obj, bool recursive, bool sameLevelFirst)
+    public static IEnumerable<DependencyObject> EnumerateVisualChildren(this DependencyObject obj, bool recursive = true, bool sameLevelFirst = true)
     {
         if (obj == null)
             yield break;
 
         if (sameLevelFirst)
         {
-            int count = VisualTreeHelper.GetChildrenCount(obj);
+            var count = VisualTreeHelper.GetChildrenCount(obj);
             var list = new List<DependencyObject>(count);
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
-                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                var child = VisualTreeHelper.GetChild(obj, i);
                 if (child == null)
                     continue;
 
@@ -421,7 +403,7 @@ public static class Extensions
 
             foreach (var child in list)
             {
-                foreach (DependencyObject grandChild in child.EnumerateVisualChildren(recursive, true))
+                foreach (var grandChild in child.EnumerateVisualChildren(recursive, true))
                 {
                     yield return grandChild;
                 }
@@ -429,10 +411,10 @@ public static class Extensions
         }
         else
         {
-            int count = VisualTreeHelper.GetChildrenCount(obj);
-            for (int i = 0; i < count; i++)
+            var count = VisualTreeHelper.GetChildrenCount(obj);
+            for (var i = 0; i < count; i++)
             {
-                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                var child = VisualTreeHelper.GetChild(obj, i);
                 if (child == null)
                     continue;
 
@@ -448,11 +430,11 @@ public static class Extensions
         }
     }
 
-    public static T FindVisualChild<T>(this DependencyObject obj, Func<T, bool> where) where T : FrameworkElement
+    public static T? FindVisualChild<T>(this DependencyObject obj, Func<T, bool> where) where T : FrameworkElement
     {
         ArgumentNullException.ThrowIfNull(where);
 
-        foreach (T item in obj.EnumerateVisualChildren(true, true).OfType<T>())
+        foreach (var item in obj.EnumerateVisualChildren(true, true).OfType<T>())
         {
             if (where(item))
                 return item;
@@ -460,9 +442,9 @@ public static class Extensions
         return null;
     }
 
-    public static T FindVisualChild<T>(this DependencyObject obj, string name) where T : FrameworkElement
+    public static T? FindVisualChild<T>(this DependencyObject obj, string name) where T : FrameworkElement
     {
-        foreach (T item in obj.EnumerateVisualChildren(true, true).OfType<T>())
+        foreach (var item in obj.EnumerateVisualChildren(true, true).OfType<T>())
         {
             if (name == null)
                 return item;
@@ -493,10 +475,10 @@ public static class Extensions
     {
         if (element != null)
         {
-            MarkupObject markupObject = MarkupWriter.GetMarkupObjectFor(element);
+            var markupObject = MarkupWriter.GetMarkupObjectFor(element);
             if (markupObject != null)
             {
-                foreach (MarkupProperty mp in markupObject.Properties)
+                foreach (var mp in markupObject.Properties)
                 {
                     if (mp.IsAttached)
                         yield return mp.DependencyProperty;
@@ -505,23 +487,23 @@ public static class Extensions
         }
     }
 
-    public static T GetVisualSelfOrParent<T>(this DependencyObject source) where T : DependencyObject
+    public static T? GetVisualSelfOrParent<T>(this DependencyObject source) where T : DependencyObject
     {
         if (source == null)
             return default;
 
-        if (source is T)
-            return (T)source;
+        if (source is T t)
+            return t;
 
-        if (!(source is Visual) && !(source is Visual3D))
+        if (source is not Visual && source is not Visual3D)
             return default;
 
         return VisualTreeHelper.GetParent(source).GetVisualSelfOrParent<T>();
     }
 
-    public static T FindFocusableVisualChild<T>(this DependencyObject obj, string name) where T : FrameworkElement
+    public static T? FindFocusableVisualChild<T>(this DependencyObject obj, string name) where T : FrameworkElement
     {
-        foreach (T item in obj.EnumerateVisualChildren(true, true).OfType<T>())
+        foreach (var item in obj.EnumerateVisualChildren(true, true).OfType<T>())
         {
             if (item.Focusable && (item.Name == name || name == null))
                 return item;
@@ -534,13 +516,13 @@ public static class Extensions
         if (obj == null)
             yield break;
 
-        foreach (object item in LogicalTreeHelper.GetChildren(obj))
+        foreach (var item in LogicalTreeHelper.GetChildren(obj))
         {
             if (item == null)
                 continue;
 
-            if (item is T)
-                yield return (T)item;
+            if (item is T t)
+                yield return t;
 
             if (item is DependencyObject dep)
             {
@@ -564,10 +546,9 @@ public static class Extensions
         }
     }
 
-    public static Expander GetExpander(this DataGrid grid, object groupName)
+    public static Expander? GetExpander(this DataGrid grid, object groupName)
     {
         ArgumentNullException.ThrowIfNull(grid);
-
         ArgumentNullException.ThrowIfNull(groupName);
 
         foreach (var expander in EnumerateExpanders(grid))
@@ -578,23 +559,22 @@ public static class Extensions
         return null;
     }
 
-    public static T GetSelfOrParent<T>(this FrameworkElement source) where T : FrameworkElement
+    public static T? GetSelfOrParent<T>(this FrameworkElement? source) where T : FrameworkElement
     {
         while (true)
         {
             if (source == null)
                 return default;
 
-            if (source is T)
-                return (T)source;
+            if (source is T t)
+                return t;
 
             source = source.Parent as FrameworkElement;
         }
     }
 
-    public static string GetAllMessages(this Exception exception) => GetAllMessages(exception, Environment.NewLine);
-
-    public static string GetAllMessages(this Exception exception, string separator)
+    public static string? GetAllMessages(this Exception? exception) => GetAllMessages(exception, Environment.NewLine);
+    public static string? GetAllMessages(this Exception? exception, string? separator = null)
     {
         if (exception == null)
             return null;
@@ -604,13 +584,14 @@ public static class Extensions
         return sb.ToString().Replace("..", ".");
     }
 
-    private static void AppendMessages(StringBuilder sb, Exception e, string separator)
+    private static void AppendMessages(StringBuilder sb, Exception? e, string? separator)
     {
         if (e == null)
             return;
 
+        separator ??= Environment.NewLine;
         // this one is not interesting...
-        if (!(e is TargetInvocationException))
+        if (e is not TargetInvocationException)
         {
             if (sb.Length > 0)
             {

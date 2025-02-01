@@ -65,7 +65,7 @@ public class BaseConverter : IConverter
         return true;
     }
 
-    private static bool NormalizeHexString(ref string s)
+    private static bool NormalizeHexString(ref string? s)
     {
         if (s == null)
             return false;
@@ -111,7 +111,7 @@ public class BaseConverter : IConverter
         buffer[15] = (byte)(ints[3] >> 0x18);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out DateTimeOffset value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out DateTimeOffset value)
     {
         if (DateTimeOffset.TryParse(Convert.ToString(input, provider), provider, DateTimeStyles.None, out value))
             return true;
@@ -125,7 +125,7 @@ public class BaseConverter : IConverter
         return false;
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out TimeSpan value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out TimeSpan value)
     {
         if (TimeSpan.TryParse(Convert.ToString(input, provider), provider, out value))
             return true;
@@ -139,7 +139,7 @@ public class BaseConverter : IConverter
         return false;
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out IntPtr value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out IntPtr value)
     {
         value = IntPtr.Zero;
         if (IsNullOrEmptyString(input))
@@ -163,7 +163,7 @@ public class BaseConverter : IConverter
         return false;
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out Guid value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out Guid value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -197,7 +197,7 @@ public class BaseConverter : IConverter
             type == typeof(decimal) || type == typeof(byte) || type == typeof(sbyte);
     }
 
-    public static bool IsNullOrEmptyString(object input)
+    public static bool IsNullOrEmptyString(object? input)
     {
         if (input == null)
             return true;
@@ -208,7 +208,7 @@ public class BaseConverter : IConverter
         return string.IsNullOrWhiteSpace(s);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out ulong value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out ulong value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -216,7 +216,7 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -232,7 +232,7 @@ public class BaseConverter : IConverter
         }
 
         var styles = NumberStyles.Integer;
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         if (NormalizeHexString(ref s))
         {
             styles |= NumberStyles.AllowHexSpecifier;
@@ -240,7 +240,7 @@ public class BaseConverter : IConverter
         return ulong.TryParse(s, styles, provider, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out ushort value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out ushort value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -248,7 +248,7 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -264,7 +264,7 @@ public class BaseConverter : IConverter
         }
 
         var styles = NumberStyles.Integer;
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         if (NormalizeHexString(ref s))
         {
             styles |= NumberStyles.AllowHexSpecifier;
@@ -272,7 +272,7 @@ public class BaseConverter : IConverter
         return ushort.TryParse(s, styles, provider, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out decimal value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out decimal value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -280,7 +280,7 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -296,7 +296,7 @@ public class BaseConverter : IConverter
         }
 
         var styles = NumberStyles.Integer;
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         if (NormalizeHexString(ref s))
         {
             styles |= NumberStyles.AllowHexSpecifier;
@@ -304,7 +304,7 @@ public class BaseConverter : IConverter
         return decimal.TryParse(s, styles, provider, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out float value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out float value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -312,7 +312,7 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -328,7 +328,7 @@ public class BaseConverter : IConverter
         }
 
         var styles = NumberStyles.Integer;
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         if (NormalizeHexString(ref s))
         {
             styles |= NumberStyles.AllowHexSpecifier;
@@ -336,7 +336,7 @@ public class BaseConverter : IConverter
         return float.TryParse(s, styles, provider, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out double value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out double value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -344,9 +344,7 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        value = 0;
-
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -362,7 +360,7 @@ public class BaseConverter : IConverter
         }
 
         var styles = NumberStyles.Integer;
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         if (NormalizeHexString(ref s))
         {
             styles |= NumberStyles.AllowHexSpecifier;
@@ -370,7 +368,7 @@ public class BaseConverter : IConverter
         return double.TryParse(s, styles, provider, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out char value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out char value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -378,7 +376,7 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -393,11 +391,11 @@ public class BaseConverter : IConverter
             }
         }
 
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         return char.TryParse(s, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out DateTime value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out DateTime value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -405,7 +403,7 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -420,11 +418,11 @@ public class BaseConverter : IConverter
             }
         }
 
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         return DateTime.TryParse(s, provider, DateTimeStyles.None, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out uint value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out uint value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -432,7 +430,7 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -448,7 +446,7 @@ public class BaseConverter : IConverter
         }
 
         var styles = NumberStyles.Integer;
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         if (NormalizeHexString(ref s))
         {
             styles |= NumberStyles.AllowHexSpecifier;
@@ -456,7 +454,7 @@ public class BaseConverter : IConverter
         return uint.TryParse(s, styles, provider, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out byte value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out byte value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -464,7 +462,7 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -480,7 +478,7 @@ public class BaseConverter : IConverter
         }
 
         var styles = NumberStyles.Integer;
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         if (NormalizeHexString(ref s))
         {
             styles |= NumberStyles.AllowHexSpecifier;
@@ -488,7 +486,7 @@ public class BaseConverter : IConverter
         return byte.TryParse(s, styles, provider, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out sbyte value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out sbyte value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -496,7 +494,7 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -512,7 +510,7 @@ public class BaseConverter : IConverter
         }
 
         var styles = NumberStyles.Integer;
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         if (NormalizeHexString(ref s))
         {
             styles |= NumberStyles.AllowHexSpecifier;
@@ -520,7 +518,7 @@ public class BaseConverter : IConverter
         return sbyte.TryParse(s, styles, provider, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out short value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out short value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -539,7 +537,7 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -555,7 +553,7 @@ public class BaseConverter : IConverter
         }
 
         var styles = NumberStyles.Integer;
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         if (NormalizeHexString(ref s))
         {
             styles |= NumberStyles.AllowHexSpecifier;
@@ -563,7 +561,7 @@ public class BaseConverter : IConverter
         return short.TryParse(s, styles, provider, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out int value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out int value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -582,13 +580,13 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (input is IntPtr)
+        if (input is IntPtr ptr)
         {
-            value = ((IntPtr)input).ToInt32();
+            value = ptr.ToInt32();
             return true;
         }
 
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -604,7 +602,7 @@ public class BaseConverter : IConverter
         }
 
         var styles = NumberStyles.Integer;
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         if (NormalizeHexString(ref s))
         {
             styles |= NumberStyles.AllowHexSpecifier;
@@ -612,7 +610,7 @@ public class BaseConverter : IConverter
         return int.TryParse(s, styles, provider, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out long value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out long value)
     {
         if (IsNullOrEmptyString(input))
         {
@@ -631,13 +629,13 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (input is IntPtr)
+        if (input is IntPtr ptr)
         {
-            value = ((IntPtr)input).ToInt64();
+            value = ptr.ToInt64();
             return true;
         }
 
-        if (!(input is string))
+        if (input is not string)
         {
             if (input is IConvertible ic)
             {
@@ -653,7 +651,7 @@ public class BaseConverter : IConverter
         }
 
         var styles = NumberStyles.Integer;
-        string s = Convert.ToString(input, provider);
+        var s = Convert.ToString(input, provider);
         if (NormalizeHexString(ref s))
         {
             styles |= NumberStyles.AllowHexSpecifier;
@@ -661,7 +659,7 @@ public class BaseConverter : IConverter
         return long.TryParse(s, styles, provider, out value);
     }
 
-    private static bool TryConvert(object input, IFormatProvider provider, out bool value)
+    private static bool TryConvert(object? input, IFormatProvider? provider, out bool value)
     {
         value = false;
         if (input is byte[] inputBytes)
@@ -674,15 +672,15 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        if (TryConvert(input, typeof(long), provider, out object b))
+        if (TryConvert(input, typeof(long), provider, out var b))
         {
-            value = ((long)b) != 0;
+            value = ((long)b!) != 0;
             return true;
         }
 
-        string bools = Convert.ToString(input, provider);
+        var bools = Convert.ToString(input, provider);
         if (bools == null)
-            return false; // arguable...
+            return false;
 
         bools = bools.Trim().ToLowerInvariant();
         if (bools == "y" || bools == "yes" || bools == "t" || bools.StartsWith("true"))
@@ -699,18 +697,23 @@ public class BaseConverter : IConverter
 
     private static readonly MethodInfo _enumTryParse = typeof(Enum).GetMethods(BindingFlags.Public | BindingFlags.Static).First(m => m.Name == "TryParse" && m.GetParameters().Length == 3);
 
-    private static bool EnumTryParse(Type type, string input, out object value)
+    private static bool EnumTryParse(Type type, string? input, out object? value)
     {
-        MethodInfo mi = _enumTryParse.MakeGenericMethod(type);
+        if (input == null)
+        {
+            value = 0;
+            return false;
+        }
+
+        var mi = _enumTryParse.MakeGenericMethod(type);
         object[] args = [input, true, Enum.ToObject(type, 0)];
-        bool b = (bool)mi.Invoke(null, args);
+        var b = (bool)mi.Invoke(null, args)!;
         value = args[2];
         return b;
     }
 
-    public virtual bool TryChangeType(object input, Type conversionType, IFormatProvider provider, out object value) => TryConvert(input, conversionType, provider, out value);
-
-    public static bool TryConvert(object input, Type conversionType, IFormatProvider provider, out object value)
+    public virtual bool TryChangeType(object? input, Type conversionType, IFormatProvider? provider, out object? value) => TryConvert(input, conversionType, provider, out value);
+    public static bool TryConvert(object? input, Type conversionType, IFormatProvider? provider, out object? value)
     {
         ArgumentNullException.ThrowIfNull(conversionType);
 
@@ -750,17 +753,17 @@ public class BaseConverter : IConverter
         if (conversionType.IsNullable())
         {
             // en empty string is successfully converted into a nullable
-            string inps = input as string;
+            var inps = input as string;
             if (string.IsNullOrWhiteSpace(inps))
             {
                 value = null;
                 return true;
             }
 
-            Type vtType = conversionType.GetGenericArguments()[0];
-            if (TryConvert(input, vtType, provider, out object vtValue))
+            var vtType = conversionType.GetGenericArguments()[0];
+            if (TryConvert(input, vtType, provider, out object? vtValue))
             {
-                Type nt = typeof(Nullable<>).MakeGenericType(vtType);
+                var nt = typeof(Nullable<>).MakeGenericType(vtType);
                 value = Activator.CreateInstance(nt, vtValue);
                 return true;
             }
@@ -830,8 +833,7 @@ public class BaseConverter : IConverter
                 return false;
 
             case TypeCode.Decimal:
-                decimal decValue;
-                if (TryConvert(input, provider, out decValue))
+                if (TryConvert(input, provider, out decimal decValue))
                 {
                     value = decValue;
                     return true;
@@ -839,8 +841,7 @@ public class BaseConverter : IConverter
                 break;
 
             case TypeCode.Double:
-                double dblValue;
-                if (TryConvert(input, provider, out dblValue))
+                if (TryConvert(input, provider, out double dblValue))
                 {
                     value = dblValue;
                     return true;
@@ -848,8 +849,7 @@ public class BaseConverter : IConverter
                 break;
 
             case TypeCode.Int16:
-                short i16Value;
-                if (TryConvert(input, provider, out i16Value))
+                if (TryConvert(input, provider, out short i16Value))
                 {
                     value = i16Value;
                     return true;
@@ -857,8 +857,7 @@ public class BaseConverter : IConverter
                 break;
 
             case TypeCode.Int32:
-                int i32Value;
-                if (TryConvert(input, provider, out i32Value))
+                if (TryConvert(input, provider, out int i32Value))
                 {
                     value = i32Value;
                     return true;
@@ -866,8 +865,7 @@ public class BaseConverter : IConverter
                 break;
 
             case TypeCode.Int64:
-                long i64Value;
-                if (TryConvert(input, provider, out i64Value))
+                if (TryConvert(input, provider, out long i64Value))
                 {
                     value = i64Value;
                     return true;
@@ -875,8 +873,7 @@ public class BaseConverter : IConverter
                 break;
 
             case TypeCode.SByte:
-                sbyte sbyteValue;
-                if (TryConvert(input, provider, out sbyteValue))
+                if (TryConvert(input, provider, out sbyte sbyteValue))
                 {
                     value = sbyteValue;
                     return true;
@@ -884,8 +881,7 @@ public class BaseConverter : IConverter
                 break;
 
             case TypeCode.Single:
-                float fltValue;
-                if (TryConvert(input, provider, out fltValue))
+                if (TryConvert(input, provider, out float fltValue))
                 {
                     value = fltValue;
                     return true;
@@ -899,10 +895,10 @@ public class BaseConverter : IConverter
                 }
                 else
                 {
-                    TypeConverter tc = TypeDescriptor.GetConverter(inputType);
+                    var tc = TypeDescriptor.GetConverter(inputType);
                     if (tc != null && tc.CanConvertTo(typeof(string)))
                     {
-                        value = (string)tc.ConvertTo(input, typeof(string));
+                        value = (string)tc.ConvertTo(input, typeof(string))!;
                     }
                     else
                     {
@@ -912,8 +908,7 @@ public class BaseConverter : IConverter
                 return true;
 
             case TypeCode.UInt16:
-                ushort u16Value;
-                if (TryConvert(input, provider, out u16Value))
+                if (TryConvert(input, provider, out ushort u16Value))
                 {
                     value = u16Value;
                     return true;
@@ -921,8 +916,7 @@ public class BaseConverter : IConverter
                 break;
 
             case TypeCode.UInt32:
-                uint u32Value;
-                if (TryConvert(input, provider, out u32Value))
+                if (TryConvert(input, provider, out uint u32Value))
                 {
                     value = u32Value;
                     return true;
@@ -930,8 +924,7 @@ public class BaseConverter : IConverter
                 break;
 
             case TypeCode.UInt64:
-                ulong u64Value;
-                if (TryConvert(input, provider, out u64Value))
+                if (TryConvert(input, provider, out ulong u64Value))
                 {
                     value = u64Value;
                     return true;
@@ -959,7 +952,7 @@ public class BaseConverter : IConverter
 
                 if (conversionType == typeof(Version))
                 {
-                    if (Version.TryParse(Convert.ToString(input, provider), out Version version))
+                    if (Version.TryParse(Convert.ToString(input, provider), out var version))
                     {
                         value = version;
                         return true;
@@ -968,7 +961,7 @@ public class BaseConverter : IConverter
 
                 if (conversionType == typeof(IPAddress))
                 {
-                    if (IPAddress.TryParse(Convert.ToString(input, provider), out IPAddress address))
+                    if (IPAddress.TryParse(Convert.ToString(input, provider), out var address))
                     {
                         value = address;
                         return true;
@@ -1063,7 +1056,7 @@ public class BaseConverter : IConverter
                             }
                             catch
                             {
-                                if (TryConvert((string)input, out byte[] ib))
+                                if (TryConvert((string)input, out byte[]? ib))
                                 {
                                     value = ib;
                                     return true;
@@ -1073,18 +1066,18 @@ public class BaseConverter : IConverter
                             return false;
 
                         default:
-                            if (input is Guid)
+                            if (input is Guid guid)
                             {
-                                value = ((Guid)input).ToByteArray();
+                                value = guid.ToByteArray();
                                 return true;
                             }
 
-                            if (input is DateTimeOffset)
-                                return TryConvert(((DateTimeOffset)input).DateTime, conversionType, provider, out value);
+                            if (input is DateTimeOffset dto)
+                                return TryConvert(dto.DateTime, conversionType, provider, out value);
 
-                            if (input is TimeSpan)
+                            if (input is TimeSpan ts)
                             {
-                                value = BitConverter.GetBytes(((TimeSpan)input).Ticks);
+                                value = BitConverter.GetBytes(ts.Ticks);
                                 return true;
                             }
                             break;
@@ -1100,13 +1093,13 @@ public class BaseConverter : IConverter
             return false;
         }
 
-        TypeConverter ctConverter = null;
+        TypeConverter? typeConverter = null;
         try
         {
-            ctConverter = TypeDescriptor.GetConverter(conversionType);
-            if (ctConverter != null && ctConverter.CanConvertFrom(inputType))
+            typeConverter = TypeDescriptor.GetConverter(conversionType);
+            if (typeConverter != null && typeConverter.CanConvertFrom(inputType))
             {
-                value = ctConverter.ConvertFrom(null, provider as CultureInfo, input);
+                value = typeConverter.ConvertFrom(null, provider as CultureInfo, input);
                 return true;
             }
         }
@@ -1129,23 +1122,22 @@ public class BaseConverter : IConverter
             // do nothing
         }
 
-        // call a possible TryParse method
-        object defaultValue = conversionType.IsValueType ? Activator.CreateInstance(conversionType) : null;
-        MethodInfo mi = conversionType.GetMethod("TryParse", BindingFlags.Static | BindingFlags.Public, null, [typeof(string), conversionType.MakeByRefType()], null);
+        var defaultValue = conversionType.IsValueType ? Activator.CreateInstance(conversionType) : null;
+        var mi = conversionType.GetMethod("TryParse", BindingFlags.Static | BindingFlags.Public, null, [typeof(string), conversionType.MakeByRefType()], null);
         if (mi != null && mi.ReturnType == typeof(bool))
         {
-            object refValue = defaultValue;
-            object[] parameters = [Convert.ToString(input, provider), refValue];
-            bool b = (bool)mi.Invoke(null, parameters);
+            var refValue = defaultValue;
+            object?[] parameters = [Convert.ToString(input, provider) ?? string.Empty, refValue];
+            var b = (bool)mi.Invoke(null, parameters)!;
             value = parameters[1];
             return b;
         }
 
         try
         {
-            if (ctConverter != null && !(input is string) && ctConverter.CanConvertFrom(typeof(string)))
+            if (typeConverter != null && input is not string && typeConverter.CanConvertFrom(typeof(string)))
             {
-                value = ctConverter.ConvertFrom(null, provider as CultureInfo, Convert.ToString(input, provider));
+                value = typeConverter.ConvertFrom(null, provider as CultureInfo, Convert.ToString(input, provider) ?? string.Empty);
                 return true;
             }
         }

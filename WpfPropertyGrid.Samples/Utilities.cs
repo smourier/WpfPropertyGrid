@@ -65,7 +65,7 @@ public static class Utilities
         }
     }
 
-    private static void PasswordChanged(object sender, RoutedEventArgs e)
+    private static void PasswordChanged(object? sender, RoutedEventArgs e)
     {
         if (sender is not PasswordBox passwordBox)
             return;

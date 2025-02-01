@@ -7,24 +7,24 @@ public class PropertyGridOptionsAttribute : Attribute
         EnumSeparator = ", ";
     }
 
-    public string[] EnumNames { get; set; }
-    public object[] EnumValues { get; set; }
+    public string[]? EnumNames { get; set; }
+    public object[]? EnumValues { get; set; }
     public bool IsEnum { get; set; }
     public bool IsFlagsEnum { get; set; }
     public int EnumMaxPower { get; set; }
     public bool CollectionEditorHasOnlyOneColumn { get; set; }
     public int SortOrder { get; set; }
-    public string EditorDataTemplatePropertyPath { get; set; }
-    public string EditorDataTemplateSelectorPropertyPath { get; set; }
-    public Type EditorType { get; set; }
-    public string EditorResourceKey { get; set; }
-    public object EditorDataTemplateResourceKey { get; set; }
-    public Type PropertyType { get; set; }
+    public string? EditorDataTemplatePropertyPath { get; set; }
+    public string? EditorDataTemplateSelectorPropertyPath { get; set; }
+    public Type? EditorType { get; set; }
+    public string? EditorResourceKey { get; set; }
+    public object? EditorDataTemplateResourceKey { get; set; }
+    public Type? PropertyType { get; set; }
     public bool ForceReadWrite { get; set; }
     public bool HasDefaultValue { get; set; }
     public bool ForcePropertyChanged { get; set; }
-    public object DefaultValue { get; set; }
-    public string EnumSeparator { get; set; }
+    public object? DefaultValue { get; set; }
+    public string? EnumSeparator { get; set; }
 
     public static DataTemplate? SelectTemplate(PropertyGridProperty property, object? item, DependencyObject container)
     {
@@ -38,15 +38,15 @@ public class PropertyGridOptionsAttribute : Attribute
         {
             if (Application.Current != null)
             {
-                DataTemplate dt = (DataTemplate)Application.Current.TryFindResource(att.EditorDataTemplateResourceKey);
+                var dt = (DataTemplate)Application.Current.TryFindResource(att.EditorDataTemplateResourceKey);
                 if (dt != null)
                     return dt;
             }
 
             if (container is FrameworkElement fe)
             {
-                var dt = (DataTemplate)fe.TryFindResource(att.EditorDataTemplateResourceKey);
-                if (dt != null)
+                var obj = fe.TryFindResource(att.EditorDataTemplateResourceKey);
+                if (obj is DataTemplate dt)
                     return dt;
             }
 
@@ -58,18 +58,18 @@ public class PropertyGridOptionsAttribute : Attribute
             var editor = Activator.CreateInstance(att.EditorType);
             if (att.EditorDataTemplateSelectorPropertyPath != null)
             {
-                var dts = (DataTemplateSelector)DataBindingEvaluator.GetPropertyValue(editor, att.EditorDataTemplateSelectorPropertyPath);
-                return dts != null ? dts.SelectTemplate(item, container) : null;
+                var dts = DataBindingEvaluator.GetPropertyValue(editor, att.EditorDataTemplateSelectorPropertyPath) as DataTemplateSelector;
+                return dts?.SelectTemplate(item, container);
             }
 
             if (att.EditorDataTemplatePropertyPath != null)
-                return (DataTemplate)DataBindingEvaluator.GetPropertyValue(editor, att.EditorDataTemplatePropertyPath);
+                return DataBindingEvaluator.GetPropertyValue(editor, att.EditorDataTemplatePropertyPath) as DataTemplate;
 
             if (editor is ContentControl cc)
             {
                 if (cc.ContentTemplateSelector != null)
                 {
-                    DataTemplate template = cc.ContentTemplateSelector.SelectTemplate(item, container);
+                    var template = cc.ContentTemplateSelector.SelectTemplate(item, container);
                     if (template != null)
                         return template;
                 }
@@ -81,7 +81,7 @@ public class PropertyGridOptionsAttribute : Attribute
             {
                 if (cp.ContentTemplateSelector != null)
                 {
-                    DataTemplate template = cp.ContentTemplateSelector.SelectTemplate(item, container);
+                    var template = cp.ContentTemplateSelector.SelectTemplate(item, container);
                     if (template != null)
                         return template;
                 }

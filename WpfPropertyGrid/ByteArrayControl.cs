@@ -17,33 +17,14 @@ public class ByteArrayControl : ScrollViewer, IDisposable
     private readonly Panel _canvas;
     private readonly TextBlock _text;
     private bool _dontDisposeStream;
-    private Stream _stream;
-    private ScrollBar _verticalScrollBar;
-    private byte[] _buffer;
+    private Stream? _stream;
+    private ScrollBar? _verticalScrollBar;
+    private byte[]? _buffer;
 
-    public object Source
-    {
-        get { return GetValue(SourceProperty); }
-        set { SetValue(SourceProperty, value); }
-    }
-
-    public long Offset
-    {
-        get { return (long)GetValue(OffsetProperty); }
-        set { SetValue(OffsetProperty, value); }
-    }
-
-    public int RowCount
-    {
-        get { return (int)GetValue(RowCountProperty); }
-        set { SetValue(RowCountProperty, value); }
-    }
-
-    public bool AddHeader
-    {
-        get { return (bool)GetValue(AddHeaderProperty); }
-        set { SetValue(AddHeaderProperty, value); }
-    }
+    public object Source { get => GetValue(SourceProperty); set => SetValue(SourceProperty, value); }
+    public long Offset { get => (long)GetValue(OffsetProperty); set => SetValue(OffsetProperty, value); }
+    public int RowCount { get => (int)GetValue(RowCountProperty); set => SetValue(RowCountProperty, value); }
+    public bool AddHeader { get => (bool)GetValue(AddHeaderProperty); set => SetValue(AddHeaderProperty, value); }
 
     public ByteArrayControl()
     {
@@ -62,13 +43,13 @@ public class ByteArrayControl : ScrollViewer, IDisposable
 
     protected override Size ArrangeOverride(Size arrangeSize)
     {
-        Size size = base.ArrangeOverride(arrangeSize);
+        var size = base.ArrangeOverride(arrangeSize);
         _text.Arrange(new Rect(size));
 
         // adjust canvas width so the h scrollbar can automatically appear
         _canvas.Width = _text.DesiredSize.Width + HorizontalOffset;
 
-        int bufferSize = ComputeNeededBufferSize();
+        var bufferSize = ComputeNeededBufferSize();
         if (_buffer == null || _buffer.Length != bufferSize)
         {
             _buffer = new byte[bufferSize];
@@ -82,13 +63,14 @@ public class ByteArrayControl : ScrollViewer, IDisposable
             return 512; // whatever...
 
         // it's in fact a bit more than what's really needed (if the h scrollbar is displayed, roundings, etc.)
-        double maxLines = DesiredSize.Height / _text.FontSize;
+        var maxLines = DesiredSize.Height / _text.FontSize;
         return RowCount * (int)maxLines;
     }
 
+#pragma warning disable CA1859 // Use concrete types when possible for improved performance
     private static object OnRowCountCoerce(DependencyObject d, object baseValue)
     {
-        int i = (int)baseValue;
+        var i = (int)baseValue;
         if (i < 8)
             return 8;
 
@@ -104,12 +86,13 @@ public class ByteArrayControl : ScrollViewer, IDisposable
         if (bac._stream == null)
             return 0L;
 
-        long l = (long)baseValue;
+        var l = (long)baseValue;
         if (l > bac._stream.Length || l < 0)
             return bac._stream.Length;
 
         return l;
     }
+#pragma warning restore CA1859 // Use concrete types when possible for improved performance
 
     private static void OnOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -166,14 +149,14 @@ public class ByteArrayControl : ScrollViewer, IDisposable
         }
 
         // read bytes and set the text content with it
-        long pos = _stream.Position;
-        int read = _buffer != null ? _stream.Read(_buffer, 0, _buffer.Length) : 0;
+        var pos = _stream.Position;
+        var read = _buffer != null ? _stream.Read(_buffer, 0, _buffer.Length) : 0;
         _text.Text = ToHexaDump(_buffer, 0, read, AddHeader, RowCount, pos);
 
         // display some tooltip
         if (VerticalScrollBar != null)
         {
-            VerticalScrollBar.ToolTip = _stream.Position + " / " + _stream.Length + " (" + (100 * _stream.Position) / _stream.Length + "%)";
+            VerticalScrollBar.ToolTip = _stream.Position + " / " + _stream.Length + " (" + 100 * _stream.Position / _stream.Length + "%)";
         }
     }
 
@@ -187,7 +170,8 @@ public class ByteArrayControl : ScrollViewer, IDisposable
 
     protected override int VisualChildrenCount => base.VisualChildrenCount + 1;
 
-    private ScrollBar VerticalScrollBar
+    // lazy
+    private ScrollBar? VerticalScrollBar
     {
         get
         {
@@ -205,9 +189,9 @@ public class ByteArrayControl : ScrollViewer, IDisposable
         if (_stream == null)
             return;
 
-        long pos = _stream.Position;
-        long newPos = ScrollableHeight == 0 ? (long)e.VerticalOffset : (long)((e.VerticalOffset * (double)(_stream.Length - ComputeNeededBufferSize() / 2)) / ScrollableHeight);
-        newPos = newPos - (newPos % RowCount);
+        var pos = _stream.Position;
+        var newPos = ScrollableHeight == 0 ? (long)e.VerticalOffset : (long)(e.VerticalOffset * (_stream.Length - ComputeNeededBufferSize() / 2) / ScrollableHeight);
+        newPos -= (newPos % RowCount);
         if (pos != newPos || newPos == 0)
         {
             _stream.Position = newPos;
@@ -223,8 +207,8 @@ public class ByteArrayControl : ScrollViewer, IDisposable
 
         try
         {
-            long pos = stream.Position;
-            long len = stream.Length;
+            var pos = stream.Position;
+            var len = stream.Length;
             return false;
         }
         catch
@@ -242,7 +226,7 @@ public class ByteArrayControl : ScrollViewer, IDisposable
         if (source is Stream stream)
         {
             if (!stream.CanRead)
-                throw new ArgumentException("source");
+                throw new ArgumentException(null, nameof(source));
 
             if (MustWrapStream(stream))
             {
@@ -280,19 +264,8 @@ public class ByteArrayControl : ScrollViewer, IDisposable
         }
     }
 
-    public virtual void Dispose()
-    {
-        if (_stream != null && !_dontDisposeStream)
-        {
-            _stream.Dispose();
-        }
-        _stream = null;
-        _dontDisposeStream = false;
-    }
-
-    public static string ToHexaDump(byte[] bytes) => ToHexaDump(bytes, 0, bytes != null ? bytes.Length : 0, true, 16, 0);
-
-    public static string ToHexaDump(byte[] bytes, int offset, int count, bool addHeader, int rowCount, long address)
+    public static string ToHexaDump(byte[]? bytes) => ToHexaDump(bytes, 0, bytes != null ? bytes.Length : 0, true, 16, 0);
+    public static string ToHexaDump(byte[]? bytes, int offset, int count, bool addHeader, int rowCount, long address)
     {
         bytes ??= [];
 
@@ -311,8 +284,8 @@ public class ByteArrayControl : ScrollViewer, IDisposable
             count = bytes.Length - offset;
         }
 
-        bool b16 = address >= int.MaxValue;
-        string format = b16 ? "{0:X16}  " : "{0:X8}  ";
+        var b16 = address >= int.MaxValue;
+        var format = b16 ? "{0:X16}  " : "{0:X8}  ";
 
         var sb = new StringBuilder();
         if (addHeader)
@@ -330,10 +303,10 @@ public class ByteArrayControl : ScrollViewer, IDisposable
             {
                 sb.AppendFormat("{0:X2} ", i);
             }
-            sb.Append(" ");
+            sb.Append(' ');
             for (int i = 0; i < rowCount; i++)
             {
-                sb.AppendFormat("{0:X1}", (i % 16));
+                sb.AppendFormat("{0:X1}", i % 16);
             }
             sb.AppendLine();
 
@@ -355,7 +328,7 @@ public class ByteArrayControl : ScrollViewer, IDisposable
             sb.AppendLine();
         }
 
-        for (int i = 0; i < count; i += rowCount)
+        for (var i = 0; i < count; i += rowCount)
         {
             sb.AppendFormat(format, i + offset + address);
 
@@ -364,7 +337,7 @@ public class ByteArrayControl : ScrollViewer, IDisposable
             {
                 sb.AppendFormat("{0:X2} ", bytes[i + j + offset]);
             }
-            sb.Append(" ");
+            sb.Append(' ');
 
             if (j < rowCount)
             {
@@ -373,8 +346,8 @@ public class ByteArrayControl : ScrollViewer, IDisposable
 
             for (j = 0; j < rowCount && (i + j) < count; j++)
             {
-                byte b = bytes[i + j + offset];
-                char c = (char)b;
+                var b = bytes[i + j + offset];
+                var c = (char)b;
                 if (b > 31 && b < 128)
                 {
                     sb.Append(c);
@@ -387,5 +360,20 @@ public class ByteArrayControl : ScrollViewer, IDisposable
             sb.AppendLine();
         }
         return sb.ToString();
+    }
+
+    public void Dispose() { Dispose(disposing: true); GC.SuppressFinalize(this); }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            if (_stream != null && !_dontDisposeStream)
+            {
+                _stream.Dispose();
+            }
+            _stream = null;
+            _dontDisposeStream = false;
+        }
+
     }
 }

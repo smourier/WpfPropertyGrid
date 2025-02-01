@@ -3,7 +3,7 @@
 [ContentProperty("DataTemplates")]
 public class PropertyGridDataTemplateSelector : DataTemplateSelector
 {
-    private PropertyGrid _propertyGrid;
+    private PropertyGrid? _propertyGrid;
 
     public PropertyGridDataTemplateSelector()
     {
@@ -15,54 +15,35 @@ public class PropertyGridDataTemplateSelector : DataTemplateSelector
     protected virtual bool Filter(PropertyGridDataTemplate template, PropertyGridProperty property)
     {
         ArgumentNullException.ThrowIfNull(template);
-
         ArgumentNullException.ThrowIfNull(property);
 
         // check various filters
         if (template.IsCollection.HasValue && template.IsCollection.Value != property.IsCollection)
-        {
             return true;
-        }
 
         if (template.IsCollectionItemValueType.HasValue && template.IsCollectionItemValueType.Value != property.IsCollectionItemValueType)
-        {
             return true;
-        }
 
         if (template.IsValueType.HasValue && template.IsValueType.Value != property.IsValueType)
-        {
             return true;
-        }
 
         if (template.IsReadOnly.HasValue && template.IsReadOnly.Value != property.IsReadOnly)
-        {
             return true;
-        }
 
         if (template.IsError.HasValue && template.IsError.Value != property.IsError)
-        {
             return true;
-        }
 
         if (template.IsValid.HasValue && template.IsValid.Value != property.IsValid)
-        {
             return true;
-        }
 
         if (template.IsFlagsEnum.HasValue && template.IsFlagsEnum.Value != property.IsFlagsEnum)
-        {
             return true;
-        }
 
         if (template.Category != null && !property.Category.EqualsIgnoreCase(template.Category))
-        {
             return true;
-        }
 
         if (template.Name != null && !property.Name.EqualsIgnoreCase(template.Name))
-        {
             return true;
-        }
 
         return false;
     }
@@ -70,11 +51,8 @@ public class PropertyGridDataTemplateSelector : DataTemplateSelector
     public virtual bool IsAssignableFrom(Type type, Type propertyType, PropertyGridDataTemplate template, PropertyGridProperty property)
     {
         ArgumentNullException.ThrowIfNull(type);
-
         ArgumentNullException.ThrowIfNull(propertyType);
-
         ArgumentNullException.ThrowIfNull(template);
-
         ArgumentNullException.ThrowIfNull(property);
 
         if (type.IsAssignableFrom(propertyType))
@@ -87,7 +65,7 @@ public class PropertyGridDataTemplateSelector : DataTemplateSelector
         // hack for nullable enums...
         if (type == PropertyGridDataTemplate.NullableEnumType)
         {
-            PropertyGridProperty.IsEnumOrNullableEnum(propertyType, out Type enumType, out bool nullable);
+            PropertyGridProperty.IsEnumOrNullableEnum(propertyType, out _, out var nullable);
             if (nullable)
                 return true;
         }
@@ -111,20 +89,20 @@ public class PropertyGridDataTemplateSelector : DataTemplateSelector
         return false;
     }
 
-    public override DataTemplate SelectTemplate(object item, DependencyObject container)
+    public override DataTemplate? SelectTemplate(object item, DependencyObject container)
     {
         ArgumentNullException.ThrowIfNull(container);
 
         if (item is not PropertyGridProperty property)
             return base.SelectTemplate(item, container);
 
-        DataTemplate propTemplate = PropertyGridOptionsAttribute.SelectTemplate(property, item, container);
+        var propTemplate = PropertyGridOptionsAttribute.SelectTemplate(property, item, container);
         if (propTemplate != null)
             return propTemplate;
 
         _propertyGrid ??= container.GetVisualSelfOrParent<PropertyGrid>();
 
-        if (_propertyGrid.ValueEditorTemplateSelector != null && _propertyGrid.ValueEditorTemplateSelector != this)
+        if (_propertyGrid != null && _propertyGrid.ValueEditorTemplateSelector != null && _propertyGrid.ValueEditorTemplateSelector != this)
         {
             DataTemplate template = _propertyGrid.ValueEditorTemplateSelector.SelectTemplate(item, container);
             if (template != null)
@@ -143,7 +121,7 @@ public class PropertyGridDataTemplateSelector : DataTemplateSelector
 
                 if (property.CollectionItemPropertyType != null)
                 {
-                    foreach (Type type in template.ResolvedCollectionItemPropertyTypes)
+                    foreach (var type in template.ResolvedCollectionItemPropertyTypes)
                     {
                         if (IsAssignableFrom(type, property.CollectionItemPropertyType, template, property))
                             return template.DataTemplate;
@@ -155,9 +133,9 @@ public class PropertyGridDataTemplateSelector : DataTemplateSelector
                 if (string.IsNullOrWhiteSpace(template.PropertyType) && template.DataTemplate != null)
                     return template.DataTemplate;
 
-                foreach (Type type in template.ResolvedPropertyTypes)
+                foreach (var type in template.ResolvedPropertyTypes)
                 {
-                    if (IsAssignableFrom(type, property.PropertyType, template, property))
+                    if (property.PropertyType != null && IsAssignableFrom(type, property.PropertyType, template, property))
                         return template.DataTemplate;
                 }
             }

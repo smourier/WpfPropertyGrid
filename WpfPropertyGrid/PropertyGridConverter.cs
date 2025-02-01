@@ -2,7 +2,7 @@ namespace WpfPropertyGrid;
 
 public class PropertyGridConverter : IValueConverter
 {
-    private static Type GetParameterAsType(object parameter)
+    private static Type? GetParameterAsType(object? parameter)
     {
         if (parameter == null)
             return null;
@@ -14,21 +14,15 @@ public class PropertyGridConverter : IValueConverter
         return TypeResolutionService.ResolveType(typeName);
     }
 
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture) => targetType == null ? value : ConversionService.ChangeType(value, targetType, null, culture);
+    public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture)
     {
-        Type parameterType = GetParameterAsType(parameter);
+        var parameterType = GetParameterAsType(parameter);
         if (parameterType != null)
         {
             value = ConversionService.ChangeType(value, parameterType, null, culture);
         }
 
-        object convertedValue = targetType == null ? value : ConversionService.ChangeType(value, targetType, null, culture);
-        return convertedValue;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        object convertedValue = targetType == null ? value : ConversionService.ChangeType(value, targetType, null, culture);
-        return convertedValue;
+        return targetType == null ? value : ConversionService.ChangeType(value, targetType, null, culture);
     }
 }

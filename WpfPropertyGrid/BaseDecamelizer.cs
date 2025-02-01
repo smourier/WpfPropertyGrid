@@ -20,12 +20,12 @@ public class BaseDecamelizer : IDecamelizer
         }
 
         var i = 0;
-        var firstIsStillUnderscore = (text[0] == '_');
-        if (((options.TextOptions & DecamelizeTextOptions.UnescapeUnicode) == DecamelizeTextOptions.UnescapeUnicode) && (CanUnicodeEscape(text, 0)))
+        var firstIsStillUnderscore = text[0] == '_';
+        if (((options.TextOptions & DecamelizeTextOptions.UnescapeUnicode) == DecamelizeTextOptions.UnescapeUnicode) && CanUnicodeEscape(text, 0))
         {
             sb.Append(GetUnicodeEscape(text, ref i));
         }
-        else if (((options.TextOptions & DecamelizeTextOptions.UnescapeHexadecimal) == DecamelizeTextOptions.UnescapeHexadecimal) && (CanHexadecimalEscape(text, 0)))
+        else if (((options.TextOptions & DecamelizeTextOptions.UnescapeHexadecimal) == DecamelizeTextOptions.UnescapeHexadecimal) && CanHexadecimalEscape(text, 0))
         {
             sb.Append(GetHexadecimalEscape(text, ref i));
         }
@@ -46,12 +46,12 @@ public class BaseDecamelizer : IDecamelizer
         for (i++; i < text.Length; i++)
         {
             var c = text[i];
-            if (((options.TextOptions & DecamelizeTextOptions.UnescapeUnicode) == DecamelizeTextOptions.UnescapeUnicode) && (CanUnicodeEscape(text, i)))
+            if (((options.TextOptions & DecamelizeTextOptions.UnescapeUnicode) == DecamelizeTextOptions.UnescapeUnicode) && CanUnicodeEscape(text, i))
             {
                 sb.Append(GetUnicodeEscape(text, ref i));
                 separated = true;
             }
-            else if (((options.TextOptions & DecamelizeTextOptions.UnescapeHexadecimal) == DecamelizeTextOptions.UnescapeHexadecimal) && (CanHexadecimalEscape(text, i)))
+            else if (((options.TextOptions & DecamelizeTextOptions.UnescapeHexadecimal) == DecamelizeTextOptions.UnescapeHexadecimal) && CanHexadecimalEscape(text, i))
             {
                 sb.Append(GetHexadecimalEscape(text, ref i));
                 separated = true;
@@ -86,7 +86,7 @@ public class BaseDecamelizer : IDecamelizer
                     case UnicodeCategory.ParagraphSeparator:
                     case UnicodeCategory.SpaceSeparator:
                     case UnicodeCategory.SpacingCombiningMark:
-                        if ((keepFormat) && (c == '{'))
+                        if (keepFormat && (c == '{'))
                         {
                             while (c != '}')
                             {
@@ -128,7 +128,7 @@ public class BaseDecamelizer : IDecamelizer
                     case UnicodeCategory.PrivateUse:
                     case UnicodeCategory.TitlecaseLetter:
                     case UnicodeCategory.UppercaseLetter:
-                        if (((category != lastCategory) && (c != ' ')) && (IsNewCategory(category, options)))
+                        if ((category != lastCategory) && (c != ' ') && IsNewCategory(category, options))
                         {
                             if ((!separated) && (prevCategory != UnicodeCategory.UppercaseLetter) &&
                                 ((!firstIsStillUnderscore) || ((options.TextOptions & DecamelizeTextOptions.KeepFirstUnderscores) != DecamelizeTextOptions.KeepFirstUnderscores)))

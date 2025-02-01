@@ -5,7 +5,6 @@ public class PropertyGridDataProvider : IListSource
     public PropertyGridDataProvider(PropertyGrid grid, object data)
     {
         ArgumentNullException.ThrowIfNull(grid);
-
         ArgumentNullException.ThrowIfNull(data);
 
         Grid = grid;
@@ -32,15 +31,15 @@ public class PropertyGridDataProvider : IListSource
         return false;
     }
 
-    public virtual PropertyGridProperty AddProperty(string propertyName)
+    public virtual PropertyGridProperty? AddProperty(string propertyName)
     {
         ArgumentNullException.ThrowIfNull(propertyName);
 
-        PropertyGridProperty prop = Properties.FirstOrDefault(p => p.Name == propertyName);
+        var prop = Properties.FirstOrDefault(p => p.Name == propertyName);
         if (prop != null)
             return prop;
 
-        PropertyDescriptor desc = TypeDescriptor.GetProperties(Data).OfType<PropertyDescriptor>().FirstOrDefault(p => p.Name == propertyName);
+        var desc = TypeDescriptor.GetProperties(Data).OfType<PropertyDescriptor>().FirstOrDefault(p => p.Name == propertyName);
         if (desc != null)
         {
             prop = CreateProperty(desc);
@@ -52,14 +51,13 @@ public class PropertyGridDataProvider : IListSource
         return prop;
     }
 
-    public virtual Utilities.DynamicObject CreateDynamicObject() => ActivatorService.CreateInstance<Utilities.DynamicObject>();
+    public virtual Utilities.DynamicObject? CreateDynamicObject() => ActivatorService.CreateInstance<Utilities.DynamicObject>();
 
-    public virtual PropertyGridProperty CreateProperty() => ActivatorService.CreateInstance<PropertyGridProperty>(this);
+    public virtual PropertyGridProperty? CreateProperty() => ActivatorService.CreateInstance<PropertyGridProperty>(this);
 
     protected virtual void Describe(PropertyGridProperty property, PropertyDescriptor descriptor)
     {
         ArgumentNullException.ThrowIfNull(property);
-
         ArgumentNullException.ThrowIfNull(descriptor);
 
         property.Descriptor = descriptor;
@@ -108,7 +106,7 @@ public class PropertyGridDataProvider : IListSource
             }
             else
             {
-                if (PropertyGridComboBoxExtension.TryGetDefaultValue(options, out string defaultValue))
+                if (PropertyGridComboBoxExtension.TryGetDefaultValue(options, out var defaultValue))
                 {
                     property.DefaultValue = defaultValue;
                     property.HasDefaultValue = true;
@@ -125,12 +123,12 @@ public class PropertyGridDataProvider : IListSource
         if (attributes == null || dynamicObject == null)
             return;
 
-        foreach (PropertyGridAttribute pga in attributes)
+        foreach (var pga in attributes)
         {
-            if (string.IsNullOrWhiteSpace(pga.Name))
+            if (string.IsNullOrWhiteSpace(pga.Name) || pga.Type == null)
                 continue;
 
-            DynamicObjectProperty prop = dynamicObject.AddProperty(pga.Name, pga.Type, null);
+            var prop = dynamicObject.AddProperty(pga.Name, pga.Type, null);
             prop.SetValue(dynamicObject, pga.Value);
         }
     }
@@ -139,15 +137,15 @@ public class PropertyGridDataProvider : IListSource
     {
         ArgumentNullException.ThrowIfNull(descriptor);
 
-        bool forceReadWrite = false;
-        PropertyGridProperty property = null;
+        var forceReadWrite = false;
+        PropertyGridProperty? property = null;
         var options = descriptor.Attributes.OfType<PropertyGridOptionsAttribute>().FirstOrDefault();
         if (options != null)
         {
             forceReadWrite = options.ForceReadWrite;
             if (options.PropertyType != null)
             {
-                property = (PropertyGridProperty)Activator.CreateInstance(options.PropertyType, this);
+                property = (PropertyGridProperty?)Activator.CreateInstance(options.PropertyType, this);
             }
         }
 
@@ -162,12 +160,12 @@ public class PropertyGridDataProvider : IListSource
                 }
                 if (options.PropertyType != null)
                 {
-                    property = (PropertyGridProperty)Activator.CreateInstance(options.PropertyType, this);
+                    property = (PropertyGridProperty?)Activator.CreateInstance(options.PropertyType, this);
                 }
             }
         }
 
-        property ??= CreateProperty();
+        property ??= CreateProperty() ?? throw new NotSupportedException();
 
         Describe(property, descriptor);
         if (forceReadWrite)
@@ -188,7 +186,7 @@ public class PropertyGridDataProvider : IListSource
             if (!descriptor.IsBrowsable)
                 continue;
 
-            PropertyGridProperty property = CreateProperty(descriptor);
+            var property = CreateProperty(descriptor);
             if (property != null)
             {
                 props.Add(property);
@@ -201,13 +199,12 @@ public class PropertyGridDataProvider : IListSource
         }
 
         props.Sort();
-        foreach (PropertyGridProperty property in props)
+        foreach (var property in props)
         {
             Properties.Add(property);
         }
     }
 
     bool IListSource.ContainsListCollection => false;
-
     IList IListSource.GetList() => Properties;
 }

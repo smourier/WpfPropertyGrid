@@ -20,20 +20,21 @@ public class DateTimePicker : DatePicker
 
     private static void SelectedTimesChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
     {
-        DateTimePicker dtp = (DateTimePicker)source;
+        var dtp = (DateTimePicker)source;
         dtp.SelectClosestMatch();
     }
 
     private static void TimesChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
     {
         var dtp = (DateTimePicker)source;
-        TimeSpan tsi = dtp.TimeInterval;
+        var tsi = dtp.TimeInterval;
         if (tsi <= TimeSpan.Zero)
         {
             tsi = new TimeSpan(0, 15, 0);
         }
+
         dtp._timeControl.Items.Clear();
-        TimeSpan ts = dtp.StartTime;
+        var ts = dtp.StartTime;
         do
         {
             dtp._timeControl.Items.Add(ts);
@@ -42,10 +43,10 @@ public class DateTimePicker : DatePicker
         while (ts < dtp.EndTime);
     }
 
-    private System.Windows.Controls.Calendar _calendar;
-    private Popup _popup;
     private readonly ListBox _timeControl;
-    private TextBox _textbox;
+    private System.Windows.Controls.Calendar? _calendar;
+    private Popup? _popup;
+    private TextBox? _textbox;
     private bool _initialSetup;
     private bool _handleEvents = true;
 
@@ -77,29 +78,10 @@ public class DateTimePicker : DatePicker
     }
 
     // it's a DateTime (not a TimeSpan so we can use the exact same bindings as for SelectedDate)
-    public DateTime? SelectedDateTime
-    {
-        get { return (DateTime?)GetValue(SelectedDateTimeProperty); }
-        set { SetValue(SelectedDateTimeProperty, value); }
-    }
-
-    public TimeSpan StartTime
-    {
-        get { return (TimeSpan)GetValue(StartTimeProperty); }
-        set { SetValue(StartTimeProperty, value); }
-    }
-
-    public TimeSpan EndTime
-    {
-        get { return (TimeSpan)GetValue(EndTimeProperty); }
-        set { SetValue(EndTimeProperty, value); }
-    }
-
-    public TimeSpan TimeInterval
-    {
-        get { return (TimeSpan)GetValue(TimeIntervalProperty); }
-        set { SetValue(TimeIntervalProperty, value); }
-    }
+    public DateTime? SelectedDateTime { get => (DateTime?)GetValue(SelectedDateTimeProperty); set => SetValue(SelectedDateTimeProperty, value); }
+    public TimeSpan StartTime { get => (TimeSpan)GetValue(StartTimeProperty); set => SetValue(StartTimeProperty, value); }
+    public TimeSpan EndTime { get => (TimeSpan)GetValue(EndTimeProperty); set => SetValue(EndTimeProperty, value); }
+    public TimeSpan TimeInterval { get => (TimeSpan)GetValue(TimeIntervalProperty); set => SetValue(TimeIntervalProperty, value); }
 
     protected virtual void SelectClosestMatch()
     {
@@ -145,23 +127,21 @@ public class DateTimePicker : DatePicker
     {
         if (SelectedTime.HasValue && SelectedDate.HasValue)
         {
-            string newText;
-            switch (SelectedDateFormat)
+            var newText = SelectedDateFormat switch
             {
-                case DatePickerFormat.Long:
-                    newText = SelectedDate.Value.ToString(System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.LongDatePattern);
-                    break;
+                DatePickerFormat.Long => SelectedDate.Value.ToString(System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.LongDatePattern),
+                _ => SelectedDate.Value.ToString(System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern),
+            };
 
-                default:
-                    newText = SelectedDate.Value.ToString(System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern);
-                    break;
-            }
             newText += " " + SelectedTime.Value;
-            _textbox.Text = newText;
+            if (_textbox != null)
+            {
+                _textbox.Text = newText;
+            }
         }
     }
 
-    protected virtual void OnTimeControlSelectionChanged(object sender, SelectionChangedEventArgs e)
+    protected virtual void OnTimeControlSelectionChanged(object? sender, SelectionChangedEventArgs? e)
     {
         if (!_handleEvents)
             return;
@@ -186,7 +166,10 @@ public class DateTimePicker : DatePicker
             {
                 case Key.Space:
                 case Key.Enter:
-                    _popup.IsOpen = false;
+                    if (_popup != null)
+                    {
+                        _popup.IsOpen = false;
+                    }
                     OnTimeControlSelectionChanged(null, null);
                     break;
             }
@@ -222,7 +205,12 @@ public class DateTimePicker : DatePicker
         {
             DisplayDate = DateTime.Now;
         }
-        _timeControl.Height = _calendar.RenderSize.Height - 6; // I'd like to improve this
+
+        if (_timeControl != null && _calendar != null)
+        {
+            _timeControl.Height = _calendar.RenderSize.Height - 6; // I'd like to improve this
+        }
+
         SelectedTimesChanged(this, new DependencyPropertyChangedEventArgs());
         OnTimeControlSelectionChanged(null, null);
     }
@@ -230,14 +218,17 @@ public class DateTimePicker : DatePicker
     public override void OnApplyTemplate()
     {
         _textbox = GetTemplateChild("PART_TextBox") as TextBox;
-        _textbox.TextChanged += (s, e) =>
+        if (_textbox != null)
         {
-            if (!_initialSetup)
+            _textbox.TextChanged += (s, e) =>
             {
-                UpdateTextbox();
-                _initialSetup = true;
-            }
-        };
+                if (!_initialSetup)
+                {
+                    UpdateTextbox();
+                    _initialSetup = true;
+                }
+            };
+        }
 
         base.OnApplyTemplate();
         _popup = GetTemplateChild("PART_Popup") as Popup;

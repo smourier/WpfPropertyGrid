@@ -10,9 +10,9 @@ public partial class AddressListEditorWindow : Window
         InitializeComponent();
     }
 
-    private void NewCommandBinding_OnCanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;
+    private void NewCommandBinding_OnCanExecute(object? sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;
 
-    private void NewCommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+    private void NewCommandBinding_OnExecuted(object? sender, ExecutedRoutedEventArgs e)
     {
         var cvs = CollectionViewSource.GetDefaultView(EditorSelector.ItemsSource);
         if (cvs == null)
@@ -29,7 +29,7 @@ public partial class AddressListEditorWindow : Window
         }
     }
 
-    private void DeleteCommandBinding_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+    private void DeleteCommandBinding_OnCanExecute(object? sender, CanExecuteRoutedEventArgs e)
     {
         var cvs = CollectionViewSource.GetDefaultView(EditorSelector.ItemsSource);
         if (cvs == null)
@@ -38,7 +38,7 @@ public partial class AddressListEditorWindow : Window
         e.CanExecute = cvs.CurrentItem != null;
     }
 
-    private void DeleteCommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+    private void DeleteCommandBinding_OnExecuted(object? sender, ExecutedRoutedEventArgs e)
     {
         var cvs = CollectionViewSource.GetDefaultView(EditorSelector.ItemsSource);
         if (cvs == null)
@@ -53,7 +53,7 @@ public partial class AddressListEditorWindow : Window
         }
     }
 
-    protected virtual void OnEditorWindowCloseExecuted(object sender, ExecutedRoutedEventArgs e)
+    protected virtual void OnEditorWindowCloseExecuted(object? sender, ExecutedRoutedEventArgs e)
     {
         Window window = (Window)sender;
         if (window.DataContext is PropertyGridProperty prop)
@@ -65,7 +65,7 @@ public partial class AddressListEditorWindow : Window
         window.Close();
     }
 
-    protected virtual void OnEditorWindowCloseCanExecute(object sender, CanExecuteRoutedEventArgs e)
+    protected virtual void OnEditorWindowCloseCanExecute(object? sender, CanExecuteRoutedEventArgs e)
     {
         Window window = (Window)sender;
         if (window.DataContext is PropertyGridProperty prop)
