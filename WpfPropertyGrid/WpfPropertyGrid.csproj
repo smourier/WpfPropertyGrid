@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<UseWpf>true</UseWpf>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Using Include="System" />
+		<Using Include="System.Collections" />
+		<Using Include="System.Collections.Concurrent" />
+		<Using Include="System.Collections.Generic" />
+		<Using Include="System.Collections.ObjectModel" />
+		<Using Include="System.Collections.Specialized" />
+		<Using Include="System.ComponentModel" />
+		<Using Include="System.ComponentModel.DataAnnotations" />
+		<Using Include="System.Diagnostics.CodeAnalysis" />
+		<Using Include="System.Dynamic" />
+		<Using Include="System.Globalization" />
+		<Using Include="System.IO" />
+		<Using Include="System.Linq" />
+		<Using Include="System.Reflection" />
+		<Using Include="System.Runtime.CompilerServices" />
+		<Using Include="System.Runtime.InteropServices" />
+		<Using Include="System.Runtime.Versioning" />
+		<Using Include="System.Security.Cryptography" />
+		<Using Include="System.Text" />
+		<Using Include="System.Threading" />
+		<Using Include="System.Windows" />
+		<Using Include="System.Windows.Controls" />
+		<Using Include="System.Windows.Controls.Primitives" />
+		<Using Include="System.Windows.Data" />
+		<Using Include="System.Windows.Input" />
+		<Using Include="System.Windows.Markup" />
+		<Using Include="System.Windows.Media" />
+		<Using Include="WpfPropertyGrid.Utilities" />
+	</ItemGroup>
+
+</Project>
