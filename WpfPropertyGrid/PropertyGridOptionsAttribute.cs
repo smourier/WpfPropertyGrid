@@ -92,17 +92,17 @@ public class PropertyGridOptionsAttribute : Attribute
         return null;
     }
 
-    public static PropertyGridOptionsAttribute FromProperty(PropertyGridProperty property)
+    public static PropertyGridOptionsAttribute? FromProperty(PropertyGridProperty property)
     {
         ArgumentNullException.ThrowIfNull(property);
 
-        PropertyGridOptionsAttribute att = property.Options;
+        var att = property.Options;
         if (att != null)
             return att;
 
         if (property.Descriptor != null)
         {
-            att = property.Descriptor.GetAttribute<PropertyGridOptionsAttribute>();
+            att = property.Descriptor.Attributes.OfType<PropertyGridOptionsAttribute>().FirstOrDefault();
         }
         return att;
     }

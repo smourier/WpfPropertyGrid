@@ -2,9 +2,9 @@
 
 public class DynamicObjectProperty : PropertyDescriptor
 {
-    private Type _type;
+    private Type? _type;
     private bool _isReadOnly;
-    private object _defaultValue;
+    private object? _defaultValue;
 
     public DynamicObjectProperty(PropertyDescriptor descriptor)
         : base(descriptor)
@@ -23,17 +23,17 @@ public class DynamicObjectProperty : PropertyDescriptor
         Construct(name, type, attributes);
     }
 
-    protected virtual void Construct(string name, Type type, IEnumerable<Attribute> attributes)
+    protected virtual void Construct(string name, Type type, IEnumerable<Attribute>? attributes)
     {
         _type = type;
 
-        var ro = Attributes.GetAttribute<ReadOnlyAttribute>();
+        var ro = attributes?.OfType<ReadOnlyAttribute>().FirstOrDefault();
         if (ro != null)
         {
             _isReadOnly = ro.IsReadOnly;
         }
 
-        var dv = Attributes.GetAttribute<DefaultValueAttribute>();
+        var dv = attributes?.OfType<DefaultValueAttribute>().FirstOrDefault();
         if (dv != null)
         {
             HasDefaultValue = true;

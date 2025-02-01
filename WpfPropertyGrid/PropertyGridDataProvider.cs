@@ -81,7 +81,7 @@ public class PropertyGridDataProvider : IListSource
         property.IsEnum = descriptor.PropertyType.IsEnum;
         property.IsFlagsEnum = descriptor.PropertyType.IsEnum && Extensions.IsFlagsEnum(descriptor.PropertyType);
 
-        var options = descriptor.GetAttribute<PropertyGridOptionsAttribute>();
+        var options = descriptor.Attributes.OfType<PropertyGridOptionsAttribute>().FirstOrDefault();
         if (options != null)
         {
             if (options.SortOrder != 0)
@@ -93,7 +93,7 @@ public class PropertyGridDataProvider : IListSource
             property.IsFlagsEnum = options.IsFlagsEnum;
         }
 
-        var att = descriptor.GetAttribute<DefaultValueAttribute>();
+        var att = descriptor.Attributes.OfType<DefaultValueAttribute>().FirstOrDefault();
         if (att != null)
         {
             property.HasDefaultValue = true;
@@ -117,7 +117,7 @@ public class PropertyGridDataProvider : IListSource
         }
 
         AddDynamicProperties(descriptor.Attributes.OfType<PropertyGridAttribute>(), property.Attributes);
-        AddDynamicProperties(descriptor.PropertyType.GetAttributes<PropertyGridAttribute>(), property.TypeAttributes);
+        AddDynamicProperties(descriptor.PropertyType.GetCustomAttributes<PropertyGridAttribute>(), property.TypeAttributes);
     }
 
     public static void AddDynamicProperties(IEnumerable<PropertyGridAttribute> attributes, Utilities.DynamicObject dynamicObject)
@@ -141,7 +141,7 @@ public class PropertyGridDataProvider : IListSource
 
         bool forceReadWrite = false;
         PropertyGridProperty property = null;
-        var options = descriptor.GetAttribute<PropertyGridOptionsAttribute>();
+        var options = descriptor.Attributes.OfType<PropertyGridOptionsAttribute>().FirstOrDefault();
         if (options != null)
         {
             forceReadWrite = options.ForceReadWrite;
@@ -153,7 +153,7 @@ public class PropertyGridDataProvider : IListSource
 
         if (property == null)
         {
-            options = descriptor.PropertyType.GetAttribute<PropertyGridOptionsAttribute>();
+            options = descriptor.PropertyType.GetCustomAttribute<PropertyGridOptionsAttribute>();
             if (options != null)
             {
                 if (!forceReadWrite)

@@ -16,7 +16,7 @@ public class PropertyGridEnumProperty : PropertyGridProperty
         {
             if (fi.Name.Equals(string.Format("{0}", base.Value)))
             {
-                PropertyGridDataProvider.AddDynamicProperties(fi.GetAttributes<PropertyGridAttribute>(), EnumAttributes);
+                PropertyGridDataProvider.AddDynamicProperties(fi.GetCustomAttributes<PropertyGridAttribute>(), EnumAttributes);
             }
         }
     }

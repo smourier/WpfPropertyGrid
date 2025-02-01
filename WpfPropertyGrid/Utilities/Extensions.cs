@@ -508,13 +508,13 @@ public static class Extensions
     public static T GetVisualSelfOrParent<T>(this DependencyObject source) where T : DependencyObject
     {
         if (source == null)
-            return default(T);
+            return default;
 
         if (source is T)
             return (T)source;
 
         if (!(source is Visual) && !(source is Visual3D))
-            return default(T);
+            return default;
 
         return VisualTreeHelper.GetParent(source).GetVisualSelfOrParent<T>();
     }
@@ -583,7 +583,7 @@ public static class Extensions
         while (true)
         {
             if (source == null)
-                return default(T);
+                return default;
 
             if (source is T)
                 return (T)source;

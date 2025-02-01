@@ -438,7 +438,7 @@ public partial class PropertyGrid : UserControl
             return;
         }
 
-        var roa = e.NewValue.GetType().GetAttribute<ReadOnlyAttribute>();
+        var roa = e.NewValue.GetType().GetCustomAttribute<ReadOnlyAttribute>();
         if (roa != null && roa.IsReadOnly)
         {
             grid.IsReadOnly = true;
