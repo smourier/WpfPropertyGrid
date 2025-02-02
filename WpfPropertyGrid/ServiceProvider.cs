@@ -40,9 +40,6 @@ public class ServiceProvider : IServiceProvider
     public virtual object? SetService(Type serviceType, object? service)
     {
         ArgumentNullException.ThrowIfNull(serviceType);
-
-        // service can be null, it will reset to the default one
-
         _services.TryGetValue(serviceType, out var previous);
         _services[serviceType] = service;
         ResetDefaultServices();
@@ -52,7 +49,6 @@ public class ServiceProvider : IServiceProvider
     public virtual object? GetService(Type serviceType)
     {
         ArgumentNullException.ThrowIfNull(serviceType);
-
         _services.TryGetValue(serviceType, out var value);
         return value;
     }

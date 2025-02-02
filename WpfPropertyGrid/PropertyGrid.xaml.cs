@@ -223,7 +223,6 @@ public partial class PropertyGrid : UserControl
         typeof(int), typeof(uint), typeof(short), typeof(ushort), typeof(long), typeof(ulong),
         typeof(bool), typeof(Guid), typeof(char),
         typeof(Uri), typeof(Version)
-        // NOTE: timespan, datetime?
     ]);
 
     protected virtual bool CollectionEditorHasOnlyOneColumn(PropertyGridProperty property)
@@ -363,7 +362,6 @@ public partial class PropertyGrid : UserControl
     {
         ArgumentNullException.ThrowIfNull(element);
 
-        // for some reason, this binding does not work, but we still use it and do our own automatically
         var expr = element.GetBindingExpression(FocusManager.FocusedElementProperty);
         if (expr != null && expr.ParentBinding != null && expr.ParentBinding.ElementName != null)
         {

@@ -49,7 +49,7 @@ public class DynamicObject : ICustomTypeDescriptor, IFormattable, INotifyPropert
         }
         newAtts.Add(new DefaultValueAttribute(defaultValue));
 
-        var dop = CreateProperty(name, type, newAtts.ToArray());
+        var dop = CreateProperty(name, type, [.. newAtts]);
         dop.SortOrder = sortOrder;
         _properties.Add(dop);
         return dop;
@@ -61,7 +61,7 @@ public class DynamicObject : ICustomTypeDescriptor, IFormattable, INotifyPropert
         _properties.Sort(comparer);
     }
 
-    public virtual object GetPropertyValue(string name, Type type, object defaultValue)
+    public virtual object? GetPropertyValue(string name, Type type, object? defaultValue)
     {
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(type);
@@ -73,7 +73,7 @@ public class DynamicObject : ICustomTypeDescriptor, IFormattable, INotifyPropert
         return defaultValue;
     }
 
-    public virtual T GetPropertyValue<T>(string name, T defaultValue)
+    public virtual T? GetPropertyValue<T>(string name, T defaultValue)
     {
         ArgumentNullException.ThrowIfNull(name);
         if (_values.TryGetValue(name, out var obj))

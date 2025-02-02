@@ -1,8 +1,5 @@
 ﻿namespace WpfPropertyGrid.Samples;
 
-/// <summary>
-/// Interaction logic for AddressListEditorWindow.xaml
-/// </summary>
 public partial class AddressListEditorWindow : Window
 {
     public AddressListEditorWindow()
@@ -11,7 +8,6 @@ public partial class AddressListEditorWindow : Window
     }
 
     private void NewCommandBinding_OnCanExecute(object? sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;
-
     private void NewCommandBinding_OnExecuted(object? sender, ExecutedRoutedEventArgs e)
     {
         var cvs = CollectionViewSource.GetDefaultView(EditorSelector.ItemsSource);
@@ -55,7 +51,7 @@ public partial class AddressListEditorWindow : Window
 
     protected virtual void OnEditorWindowCloseExecuted(object? sender, ExecutedRoutedEventArgs e)
     {
-        Window window = (Window)sender;
+        var window = (Window)sender!;
         if (window.DataContext is PropertyGridProperty prop)
         {
             prop.Executed(sender, e);
@@ -67,7 +63,7 @@ public partial class AddressListEditorWindow : Window
 
     protected virtual void OnEditorWindowCloseCanExecute(object? sender, CanExecuteRoutedEventArgs e)
     {
-        Window window = (Window)sender;
+        var window = (Window)sender!;
         if (window.DataContext is PropertyGridProperty prop)
         {
             prop.CanExecute(sender, e);

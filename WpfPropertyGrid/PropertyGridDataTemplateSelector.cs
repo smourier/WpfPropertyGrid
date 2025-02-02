@@ -10,14 +10,13 @@ public class PropertyGridDataTemplateSelector : DataTemplateSelector
         DataTemplates = [];
     }
 
-    public PropertyGrid PropertyGrid => _propertyGrid;
+    public PropertyGrid? PropertyGrid => _propertyGrid;
 
     protected virtual bool Filter(PropertyGridDataTemplate template, PropertyGridProperty property)
     {
         ArgumentNullException.ThrowIfNull(template);
         ArgumentNullException.ThrowIfNull(property);
 
-        // check various filters
         if (template.IsCollection.HasValue && template.IsCollection.Value != property.IsCollection)
             return true;
 
@@ -57,12 +56,10 @@ public class PropertyGridDataTemplateSelector : DataTemplateSelector
 
         if (type.IsAssignableFrom(propertyType))
         {
-            // bool? is assignable from bool, but we don't want that match
             if (!type.IsNullable() || propertyType.IsNullable())
                 return true;
         }
 
-        // hack for nullable enums...
         if (type == PropertyGridDataTemplate.NullableEnumType)
         {
             PropertyGridProperty.IsEnumOrNullableEnum(propertyType, out _, out var nullable);

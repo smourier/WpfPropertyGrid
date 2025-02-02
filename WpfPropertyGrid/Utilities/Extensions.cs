@@ -151,9 +151,6 @@ public static class Extensions
             else
             {
                 enumExpression = format[5..exprPos].Trim();
-                // enumExpression is a lambda like expression with index as the variable
-                // ex: {0: Item[index < 10]} will enum all objects with index < 10
-                // errrhh... so far, since lambda cannot be parsed at runtime, we do nothing...
             }
 
             if (obj is IEnumerable enumerable)
@@ -172,7 +169,6 @@ public static class Extensions
                     if (pos <= 0)
                     {
                         separator = ",";
-                        // skip '.'
                         expression = format[1..];
                     }
                     else
@@ -322,7 +318,6 @@ public static class Extensions
         {
             TypeCode.SByte or TypeCode.Int16 or TypeCode.Int32 or TypeCode.Int64 => (ulong)Convert.ToInt64(value, CultureInfo.InvariantCulture),
             TypeCode.Byte or TypeCode.UInt16 or TypeCode.UInt32 or TypeCode.UInt64 => Convert.ToUInt64(value, CultureInfo.InvariantCulture),
-            //case TypeCode.String:
             _ => ConversionService.ChangeType<ulong>(value),
         };
     }
@@ -337,7 +332,7 @@ public static class Extensions
         return type.IsDefined(typeof(FlagsAttribute), true);
     }
 
-    public static List<T> SplitToList<T>(this string thisString, params char[] separators)
+    public static List<T> SplitToList<T>(this string? thisString, params char[] separators)
     {
         var list = new List<T>();
         if (thisString != null)
@@ -345,7 +340,10 @@ public static class Extensions
             foreach (var s in thisString.Split(separators))
             {
                 var item = ConversionService.ChangeType<T>(s);
-                list.Add(item);
+                if (item != null)
+                {
+                    list.Add(item);
+                }
             }
         }
         return list;
@@ -590,7 +588,6 @@ public static class Extensions
             return;
 
         separator ??= Environment.NewLine;
-        // this one is not interesting...
         if (e is not TargetInvocationException)
         {
             if (sb.Length > 0)

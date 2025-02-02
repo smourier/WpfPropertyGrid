@@ -114,11 +114,11 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                 }
             }
         }
-        else // a string
+        else
         {
-            var bitsCount = (ulong)GetEnumMaxPower(options) - 1; // skip first
+            var bitsCount = (ulong)GetEnumMaxPower(options) - 1;
             ulong b = 1;
-            for (ulong bit = 1; bit < bitsCount; bit++) // signed, skip highest bit
+            for (ulong bit = 1; bit < bitsCount; bit++)
             {
                 if ((ul & b) != 0)
                 {
@@ -210,7 +210,7 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
             if (index < 0)
                 continue;
 
-            var ulvalue = Extensions.EnumToUInt64(att.EnumValues[index]);
+            var ulvalue = Extensions.EnumToUInt64(att.EnumValues![index]);
             ul |= ulvalue;
         }
         return ul;
@@ -253,7 +253,7 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
             {
                 var item = CreateItem();
                 item.Property = property;
-                item.Name = null; // "<unset>";
+                item.Name = null;
                 item.Value = null;
                 item.IsUnset = true;
                 items.Add(item);
@@ -283,10 +283,9 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                         zero = item;
                     }
 
-                    // determine if this name is in fact a combination of other names
-                    var bitsCount = (ulong)Extensions.GetEnumMaxPower(enumType2) - 1; // skip first
+                    var bitsCount = (ulong)Extensions.GetEnumMaxPower(enumType2) - 1;
                     ulong b = 1;
-                    for (ulong bit = 1; bit < bitsCount; bit++) // signed, skip highest bit
+                    for (ulong bit = 1; bit < bitsCount; bit++)
                     {
                         var bitName = Enum.GetName(enumType2, b);
                         if (bitName != null && name != bitName && (nameValue & b) != 0)
@@ -303,7 +302,6 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                     items.Add(item);
                 }
 
-                // determine if the lisbox is empty, which we don't want anyway
                 if (items.Count == 0)
                 {
                     var item = CreateItem();
@@ -330,7 +328,7 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                     item.Property = property;
                     item.Name = displayName;
                     item.Value = values.GetValue(i);
-                    item.IsZero = i == 0; // first one is default
+                    item.IsZero = i == 0;
                     items.Add(item);
                 }
             }
@@ -340,8 +338,6 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
             if (att != null && att.IsEnum)
             {
                 var manualFlags = false;
-                // either EnumList or EnumValues can be null but not both
-                // if not null, length must be the same
                 if (att.EnumNames == null || att.EnumNames.Length == 0)
                 {
                     if (att.EnumValues == null || att.EnumValues.Length == 0)
@@ -360,7 +356,7 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                         att.EnumValues = new object[att.EnumNames.Length];
                         if (att.IsFlagsEnum)
                         {
-                            ulong current = 1; // don't use zero when nothing is specified in flags mode
+                            ulong current = 1;
                             manualFlags = true;
                             for (var i = 0; i < att.EnumNames.Length; i++)
                             {
@@ -378,7 +374,6 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                     }
                 }
 
-                // items value must of a compatible type with property.Value
                 object? valueConverter(object? v)
                 {
                     var propType = property.Value != null ? property.Value.GetType() : property.PropertyType;
@@ -423,10 +418,9 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                             zero = item;
                         }
 
-                        // note: in this case, we don't support names as a combination of other names
-                        var bitsCount = (ulong)GetEnumMaxPower(att) - 1; // skip first
+                        var bitsCount = (ulong)GetEnumMaxPower(att) - 1;
                         ulong b = 1;
-                        for (ulong bit = 1; bit < bitsCount; bit++) // signed, skip highest bit
+                        for (ulong bit = 1; bit < bitsCount; bit++)
                         {
                             if ((uvalue & b) == 0)
                             {
@@ -439,7 +433,6 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                         items.Add(item);
                     }
 
-                    // determine if the list is empty, which we don't want anyway
                     if (items.Count == 0)
                     {
                         var item = CreateItem();
@@ -463,7 +456,7 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                         item.Property = property;
                         item.Name = att.EnumNames[i];
                         item.Value = valueConverter(att.EnumValues[i]);
-                        item.IsZero = i == 0; // first one is default
+                        item.IsZero = i == 0;
                         items.Add(item);
                     }
                 }

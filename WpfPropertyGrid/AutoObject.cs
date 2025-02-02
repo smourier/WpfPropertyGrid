@@ -74,9 +74,7 @@ namespace WpfPropertyGrid
             }
             else
             {
-                // runtime methodbase has no custom atts
                 DefaultValueAttribute? att = null;
-
                 var pi = GetType().GetProperty(name);
                 if (pi != null)
                 {

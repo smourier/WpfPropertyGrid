@@ -17,7 +17,7 @@ public class PropertyGridDataTemplate
 
     public string? PropertyType { get; set; }
     public string? CollectionItemPropertyType { get; set; }
-    public DataTemplate? DataTemplate { get; set; }  // note: may be null
+    public DataTemplate? DataTemplate { get; set; }
     public bool? IsCollection { get; set; }
     public bool? IsReadOnly { get; set; }
     public bool? IsError { get; set; }
@@ -39,7 +39,6 @@ public class PropertyGridDataTemplate
                 continue;
 
             Type? type;
-            // a hack to handle nullable enum in a general way
             if (name == "System.Nullable`1[System.Enum]")
             {
                 type = NullableEnumType;

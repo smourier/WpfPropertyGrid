@@ -11,7 +11,6 @@ public class BaseDecamelizer : IDecamelizer
 
         var sb = new StringBuilder(text.Length);
 
-        // 0=lower, 1=upper, 2=special char
         var lastCategory = CharUnicodeInfo.GetUnicodeCategory(text[0]);
         var prevCategory = lastCategory;
         if (lastCategory == UnicodeCategory.UppercaseLetter)
@@ -180,17 +179,13 @@ public class BaseDecamelizer : IDecamelizer
         return sb.ToString();
     }
 
-    // format is _xXXXX_
     private static bool CanHexadecimalEscape(string text, int i) => (i + 6) < text.Length && text[i] == '_' && text[i + 1] == 'x' && text[i + 6] == '_' &&
             IsHexNumber(text[i + 2]) &&
             IsHexNumber(text[i + 3]) &&
             IsHexNumber(text[i + 4]) &&
             IsHexNumber(text[i + 5]);
 
-    private static bool IsHexNumber(char c) =>
-        // note: we don't want to use Char.IsDigit nor Char.IsNumber
-        (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
-
+    private static bool IsHexNumber(char c) => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
     private static char GetHexadecimalEscape(string text, ref int i)
     {
         var s = text[i + 2].ToString(CultureInfo.InvariantCulture);
@@ -201,7 +196,6 @@ public class BaseDecamelizer : IDecamelizer
         return (char)int.Parse(s, NumberStyles.HexNumber);
     }
 
-    // format is \uXXXX
     private static bool CanUnicodeEscape(string text, int i) => (i + 5) < text.Length &&
             text[i] == '\\' &&
             text[i + 1] == 'u' &&
@@ -220,10 +214,7 @@ public class BaseDecamelizer : IDecamelizer
         return (char)int.Parse(s);
     }
 
-    private static bool IsPureNumber(char c) =>
-        // note: we don't want to use Char.IsDigit nor Char.IsNumber
-        c >= '0' && c <= '9';
-
+    private static bool IsPureNumber(char c) => c >= '0' && c <= '9';
     private static bool IsNewCategory(UnicodeCategory category, DecamelizeOptions options)
     {
         if ((options.TextOptions & DecamelizeTextOptions.DontDecamelizeNumbers) == DecamelizeTextOptions.DontDecamelizeNumbers)

@@ -31,7 +31,6 @@ public class BaseConverter : IConverter
         byte prev = 0;
         int offset;
 
-        // handle 0x or 0X notation
         if (text.Length >= 2 && text[0] == '0' && (text[1] == 'x' || text[1] == 'X'))
         {
             offset = 2;
@@ -752,7 +751,6 @@ public class BaseConverter : IConverter
 
         if (conversionType.IsNullable())
         {
-            // en empty string is successfully converted into a nullable
             var inps = input as string;
             if (string.IsNullOrWhiteSpace(inps))
             {
@@ -783,7 +781,6 @@ public class BaseConverter : IConverter
             return true;
         }
 
-        // enum must be before integers
         if (conversionType.IsEnum)
         {
             if (EnumTryParse(conversionType, Convert.ToString(input, provider), out value))
@@ -1086,7 +1083,6 @@ public class BaseConverter : IConverter
                 break;
         }
 
-        // catch many exceptions before they happen
         if (IsNumberType(conversionType) && IsNullOrEmptyString(input))
         {
             value = Activator.CreateInstance(conversionType);
@@ -1105,12 +1101,12 @@ public class BaseConverter : IConverter
         }
         catch
         {
-            // do nothing
+            // continue
         }
 
         try
         {
-            TypeConverter inputConverter = TypeDescriptor.GetConverter(inputType);
+            var inputConverter = TypeDescriptor.GetConverter(inputType);
             if (inputConverter != null && inputConverter.CanConvertTo(conversionType))
             {
                 value = inputConverter.ConvertTo(null, provider as CultureInfo, input, conversionType);
@@ -1119,7 +1115,7 @@ public class BaseConverter : IConverter
         }
         catch
         {
-            // do nothing
+            // continue
         }
 
         var defaultValue = conversionType.IsValueType ? Activator.CreateInstance(conversionType) : null;
@@ -1143,7 +1139,7 @@ public class BaseConverter : IConverter
         }
         catch
         {
-            // do nothing
+            // continue
         }
 
         value = defaultValue;

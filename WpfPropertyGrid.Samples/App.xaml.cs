@@ -13,7 +13,7 @@ public partial class App : Application
     private void OnEditorWindowCloseCanExecute(object? sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;
     private void OnEditorWindowCloseExecuted(object? sender, ExecutedRoutedEventArgs e)
     {
-        var window = (Window)sender;
+        var window = (Window)sender!;
         window.DialogResult = false;
         window.Close();
     }

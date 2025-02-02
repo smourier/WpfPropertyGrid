@@ -75,11 +75,11 @@ public static class Utilities
         SetUpdatingPassword(passwordBox, false);
     }
 
-    public static string ConvertToUnsecureString(this SecureString securePassword)
+    public static string? ConvertToUnsecureString(this SecureString securePassword)
     {
         ArgumentNullException.ThrowIfNull(securePassword);
 
-        IntPtr unmanagedString = IntPtr.Zero;
+        var unmanagedString = IntPtr.Zero;
         try
         {
             unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(securePassword);
@@ -98,14 +98,15 @@ public class BooleanValueProvider : MarkupExtension
 
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
-        var items = new ObservableCollection<KeyValuePair<string, object>>
+        var items = new ObservableCollection<KeyValuePair<string, object?>>
         {
             new("Yes", true),
             new("No", false)
         };
+
         if (IsNullable)
         {
-            items.Add(new KeyValuePair<string, object>("", null));
+            items.Add(new KeyValuePair<string, object?>(string.Empty, null));
         }
         return items;
     }

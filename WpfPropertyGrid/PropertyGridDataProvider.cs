@@ -63,10 +63,6 @@ public class PropertyGridDataProvider : IListSource
         property.Descriptor = descriptor;
         property.Name = descriptor.Name;
         property.PropertyType = descriptor.PropertyType;
-
-        // unset by default. conversion service does the default job
-        //property.Converter = descriptor.Converter;
-
         property.Category = string.IsNullOrWhiteSpace(descriptor.Category) || descriptor.Category.EqualsIgnoreCase(CategoryAttribute.Default.Category) ? Grid.DefaultCategoryName : descriptor.Category;
         property.IsReadOnly = descriptor.IsReadOnly;
         property.Description = descriptor.Description;

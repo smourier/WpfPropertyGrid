@@ -99,10 +99,9 @@ public class UniversalConverterInput
                         break;
                     }
 
-                    // use string comparison (to compare "" to null or similar)
                     v = ValueToCompareToString(provider, false);
                     ret = v == null;
-                    break; // false
+                    break;
                 }
 
                 if (Value.Equals(ValueToCompare))
@@ -121,7 +120,7 @@ public class UniversalConverterInput
 
                 if ((Options & UniversalConverterOptions.Convert) == UniversalConverterOptions.Convert)
                 {
-                    if (ConversionService.TryChangeType(ValueToCompare, Value.GetType(), provider, out object cvalue))
+                    if (ConversionService.TryChangeType(ValueToCompare, Value.GetType(), provider, out object? cvalue))
                     {
                         if (Value.Equals(cvalue))
                         {
@@ -131,7 +130,7 @@ public class UniversalConverterInput
 
                         if (Value is string)
                         {
-                            var sv = (string)cvalue;
+                            var sv = (string)cvalue!;
                             if ((Options & UniversalConverterOptions.Trim) == UniversalConverterOptions.Trim)
                             {
                                 sv = sv.Trim();
@@ -218,7 +217,7 @@ public class UniversalConverterInput
 
                 int comparison;
                 v = Value as string;
-                if (StringComparison != StringComparison.CurrentCulture) // not the default? use the special string comparer
+                if (StringComparison != StringComparison.CurrentCulture)
                 {
                     vtc = ValueToCompareToString(provider, true);
                     comparison = string.Compare(v, vtc, StringComparison);

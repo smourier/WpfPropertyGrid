@@ -6,10 +6,10 @@ public class ByteArrayControl : ScrollViewer, IDisposable
         new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsMeasure, OnSourceChanged));
 
     public static readonly DependencyProperty RowCountProperty = DependencyProperty.Register("RowCount", typeof(int), typeof(ByteArrayControl),
-        new FrameworkPropertyMetadata(16, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange, OnRowCountChanged, OnRowCountCoerce));
+        new FrameworkPropertyMetadata(16, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange, OnRowCountChanged, (d, o) => OnRowCountCoerce(o)));
 
     public static readonly DependencyProperty OffsetProperty = DependencyProperty.Register("Offset", typeof(long), typeof(ByteArrayControl),
-        new FrameworkPropertyMetadata(0L, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange, OnOffsetChanged, OnOffsetCoerce));
+        new FrameworkPropertyMetadata(0L, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange, OnOffsetChanged, (d, o) => OnOffsetCoerce(d, o)));
 
     public static readonly DependencyProperty AddHeaderProperty = DependencyProperty.Register("AddHeader", typeof(bool), typeof(ByteArrayControl),
         new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange, OnAddHeaderChanged));
@@ -33,10 +33,7 @@ public class ByteArrayControl : ScrollViewer, IDisposable
         HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
         VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
         FontFamily = new FontFamily("Lucida Console");
-
-        // NOTE: text is *not* a canvas child because there are rounding issues with big (really big) values for Canvas.SetTop...
         _text = new TextBlock();
-
         _canvas = new Canvas();
         Content = _canvas;
     }
@@ -46,7 +43,6 @@ public class ByteArrayControl : ScrollViewer, IDisposable
         var size = base.ArrangeOverride(arrangeSize);
         _text.Arrange(new Rect(size));
 
-        // adjust canvas width so the h scrollbar can automatically appear
         _canvas.Width = _text.DesiredSize.Width + HorizontalOffset;
 
         var bufferSize = ComputeNeededBufferSize();
@@ -60,15 +56,13 @@ public class ByteArrayControl : ScrollViewer, IDisposable
     private int ComputeNeededBufferSize()
     {
         if (_text.FontSize == 0 || DesiredSize.Height == 0)
-            return 512; // whatever...
+            return 512;
 
-        // it's in fact a bit more than what's really needed (if the h scrollbar is displayed, roundings, etc.)
         var maxLines = DesiredSize.Height / _text.FontSize;
         return RowCount * (int)maxLines;
     }
 
-#pragma warning disable CA1859 // Use concrete types when possible for improved performance
-    private static object OnRowCountCoerce(DependencyObject d, object baseValue)
+    private static int OnRowCountCoerce(object baseValue)
     {
         var i = (int)baseValue;
         if (i < 8)
@@ -80,7 +74,7 @@ public class ByteArrayControl : ScrollViewer, IDisposable
         return i;
     }
 
-    private static object OnOffsetCoerce(DependencyObject d, object baseValue)
+    private static long OnOffsetCoerce(DependencyObject d, object baseValue)
     {
         var bac = (ByteArrayControl)d;
         if (bac._stream == null)
@@ -92,7 +86,6 @@ public class ByteArrayControl : ScrollViewer, IDisposable
 
         return l;
     }
-#pragma warning restore CA1859 // Use concrete types when possible for improved performance
 
     private static void OnOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -148,12 +141,10 @@ public class ByteArrayControl : ScrollViewer, IDisposable
             return;
         }
 
-        // read bytes and set the text content with it
         var pos = _stream.Position;
         var read = _buffer != null ? _stream.Read(_buffer, 0, _buffer.Length) : 0;
         _text.Text = ToHexaDump(_buffer, 0, read, AddHeader, RowCount, pos);
 
-        // display some tooltip
         if (VerticalScrollBar != null)
         {
             VerticalScrollBar.ToolTip = _stream.Position + " / " + _stream.Length + " (" + 100 * _stream.Position / _stream.Length + "%)";
@@ -170,7 +161,6 @@ public class ByteArrayControl : ScrollViewer, IDisposable
 
     protected override int VisualChildrenCount => base.VisualChildrenCount + 1;
 
-    // lazy
     private ScrollBar? VerticalScrollBar
     {
         get

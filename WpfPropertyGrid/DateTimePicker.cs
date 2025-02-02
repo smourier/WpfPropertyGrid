@@ -77,7 +77,6 @@ public class DateTimePicker : DatePicker
         }
     }
 
-    // it's a DateTime (not a TimeSpan so we can use the exact same bindings as for SelectedDate)
     public DateTime? SelectedDateTime { get => (DateTime?)GetValue(SelectedDateTimeProperty); set => SetValue(SelectedDateTimeProperty, value); }
     public TimeSpan StartTime { get => (TimeSpan)GetValue(StartTimeProperty); set => SetValue(StartTimeProperty, value); }
     public TimeSpan EndTime { get => (TimeSpan)GetValue(EndTimeProperty); set => SetValue(EndTimeProperty, value); }
@@ -108,7 +107,6 @@ public class DateTimePicker : DatePicker
                 }
                 else
                 {
-                    // select first
                     _timeControl.SelectedIndex = 0;
                 }
 
@@ -118,7 +116,6 @@ public class DateTimePicker : DatePicker
             prev = ts;
         }
 
-        // select last
         _timeControl.SelectedIndex = _timeControl.Items.Count - 1;
         _timeControl.ScrollIntoView(_timeControl.SelectedItem);
     }
@@ -200,7 +197,6 @@ public class DateTimePicker : DatePicker
     protected override void OnCalendarOpened(RoutedEventArgs e)
     {
         base.OnCalendarOpened(e);
-        // small hack when date is 1
         if (SelectedDate.HasValue && (SelectedDate.Value.Year == 1 || SelectedDate.Value.Year == 9999))
         {
             DisplayDate = DateTime.Now;
@@ -208,7 +204,8 @@ public class DateTimePicker : DatePicker
 
         if (_timeControl != null && _calendar != null)
         {
-            _timeControl.Height = _calendar.RenderSize.Height - 6; // I'd like to improve this
+            // TODO: unhardcode
+            _timeControl.Height = _calendar.RenderSize.Height - 6;
         }
 
         SelectedTimesChanged(this, new DependencyPropertyChangedEventArgs());
@@ -243,7 +240,8 @@ public class DateTimePicker : DatePicker
             grid.ColumnDefinitions.Add(new ColumnDefinition());
 
             _timeControl.VerticalAlignment = VerticalAlignment.Top;
-            _timeControl.Margin = new Thickness(3); // I'd like to improve this too
+            // TODO: unhardcode
+            _timeControl.Margin = new Thickness(3);
             Grid.SetColumn(_timeControl, 1);
 
             grid.Children.Add(_calendar);
