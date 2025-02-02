@@ -1,12 +1,9 @@
-﻿using System.Windows;
+﻿namespace WpfPropertyGrid.Samples;
 
-namespace WpfPropertyGrid.Samples
+public partial class MainWindow : Window
 {
-    public partial class MainWindow : Window
+    public MainWindow()
     {
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

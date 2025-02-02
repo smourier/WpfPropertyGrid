@@ -1,14 +1,12 @@
-﻿namespace WpfPropertyGrid.Samples;
+﻿namespace WpfPropertyGrid.Samples.Utilities;
 
-public static class Utilities
+public static class WpfUtilities
 {
     public static readonly DependencyProperty BindableSourceProperty =
-        DependencyProperty.RegisterAttached("BindableSource", typeof(string), typeof(Utilities), new UIPropertyMetadata(null, BindableSourcePropertyChanged));
+        DependencyProperty.RegisterAttached("BindableSource", typeof(string), typeof(WpfUtilities), new UIPropertyMetadata(null, BindableSourcePropertyChanged));
 
     public static string GetBindableSource(DependencyObject obj) => (string)obj.GetValue(BindableSourceProperty);
-
     public static void SetBindableSource(DependencyObject obj, string value) => obj.SetValue(BindableSourceProperty, value);
-
     public static void BindableSourcePropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
     {
         if (o is WebBrowser browser)
@@ -18,24 +16,33 @@ public static class Utilities
         }
     }
 
-    public static readonly DependencyProperty BindablePasswordProperty = DependencyProperty.RegisterAttached("BindablePassword", typeof(SecureString), typeof(Utilities), new FrameworkPropertyMetadata(null, OnPasswordPropertyChanged));
+    public static readonly DependencyProperty BindablePasswordProperty = DependencyProperty.RegisterAttached("BindablePassword", typeof(SecureString), typeof(WpfUtilities), new FrameworkPropertyMetadata(null, OnPasswordPropertyChanged));
+    public static readonly DependencyProperty BindPasswordProperty = DependencyProperty.RegisterAttached("BindPassword", typeof(bool), typeof(WpfUtilities), new PropertyMetadata(false, BindPassword));
+    private static readonly DependencyProperty UpdatingPasswordProperty = DependencyProperty.RegisterAttached("UpdatingPassword", typeof(bool), typeof(WpfUtilities));
 
-    public static readonly DependencyProperty BindPasswordProperty = DependencyProperty.RegisterAttached("BindPassword", typeof(bool), typeof(Utilities), new PropertyMetadata(false, BindPassword));
+    public static string? ConvertToUnsecureString(this SecureString securePassword)
+    {
+        ArgumentNullException.ThrowIfNull(securePassword);
 
-    private static readonly DependencyProperty UpdatingPasswordProperty = DependencyProperty.RegisterAttached("UpdatingPassword", typeof(bool), typeof(Utilities));
+        var unmanagedString = nint.Zero;
+        try
+        {
+            unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(securePassword);
+            return Marshal.PtrToStringUni(unmanagedString);
+        }
+        finally
+        {
+            Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+        }
+    }
 
     public static void SetBindPassword(DependencyObject dp, bool value) => dp.SetValue(BindPasswordProperty, value);
-
     public static bool GetBindPassword(DependencyObject dp) => (bool)dp.GetValue(BindPasswordProperty);
-
     public static string GetBindablePassword(DependencyObject dp) => (string)dp.GetValue(BindablePasswordProperty);
-
     public static void SetBindablePassword(DependencyObject dp, SecureString value) => dp.SetValue(BindablePasswordProperty, value);
 
     private static bool GetUpdatingPassword(DependencyObject dp) => (bool)dp.GetValue(UpdatingPasswordProperty);
-
     private static void SetUpdatingPassword(DependencyObject dp, bool value) => dp.SetValue(UpdatingPasswordProperty, value);
-
     private static void OnPasswordPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
     {
         if (sender is not PasswordBox passwordBox)
@@ -73,41 +80,5 @@ public static class Utilities
         SetUpdatingPassword(passwordBox, true);
         SetBindablePassword(passwordBox, passwordBox.SecurePassword);
         SetUpdatingPassword(passwordBox, false);
-    }
-
-    public static string? ConvertToUnsecureString(this SecureString securePassword)
-    {
-        ArgumentNullException.ThrowIfNull(securePassword);
-
-        var unmanagedString = IntPtr.Zero;
-        try
-        {
-            unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(securePassword);
-            return Marshal.PtrToStringUni(unmanagedString);
-        }
-        finally
-        {
-            Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
-        }
-    }
-}
-
-public class BooleanValueProvider : MarkupExtension
-{
-    public bool IsNullable { get; set; }
-
-    public override object ProvideValue(IServiceProvider serviceProvider)
-    {
-        var items = new ObservableCollection<KeyValuePair<string, object?>>
-        {
-            new("Yes", true),
-            new("No", false)
-        };
-
-        if (IsNullable)
-        {
-            items.Add(new KeyValuePair<string, object?>(string.Empty, null));
-        }
-        return items;
     }
 }

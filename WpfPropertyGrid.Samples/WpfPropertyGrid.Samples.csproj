@@ -6,7 +6,20 @@
 		<Nullable>enable</Nullable>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWPF>true</UseWPF>
+		<ApplicationIcon>WpfPropertyGrid.ico</ApplicationIcon>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Include="..\WpfPropertyGrid\Properties\AssemblyVersionInfo.cs" Link="Properties\AssemblyVersionInfo.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="WpfPropertyGrid.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2957.106" />
+	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\WpfPropertyGrid\WpfPropertyGrid.csproj" />

@@ -4,9 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:pg="clr-namespace:WpfPropertyGrid;assembly=WpfPropertyGrid"
     xmlns:samples="clr-namespace:WpfPropertyGrid.Samples"
-    Title="MainWindow"
-    Width="608"
-    Height="638">
+    Title="WPF Property Grid"
+    Width="700"
+    Height="900"
+    WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.Resources>
             <samples:Customer x:Key="Customer" />

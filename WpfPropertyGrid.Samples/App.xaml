@@ -6,7 +6,10 @@
     xmlns:pg="clr-namespace:WpfPropertyGrid;assembly=WpfPropertyGrid"
     xmlns:samples="clr-namespace:WpfPropertyGrid.Samples"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    StartupUri="MainWindow.xaml">
+    xmlns:util="clr-namespace:WpfPropertyGrid.Samples.Utilities"
+    xmlns:wv="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+    StartupUri="MainWindow.xaml"
+    ThemeMode="Dark">
     <Application.Resources>
 
         <pg:UniversalConverter x:Key="BoolToDefaultValueBackgroundConverter">
@@ -38,7 +41,7 @@
         <DataTemplate x:Key="BooleanDropDownListEditor">
             <ComboBox
                 DisplayMemberPath="Key"
-                ItemsSource="{samples:BooleanValueProvider IsNullable=False}"
+                ItemsSource="{util:BooleanValueProvider IsNullable=False}"
                 SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedValuePath="Value" />
         </DataTemplate>
@@ -46,7 +49,7 @@
         <DataTemplate x:Key="NullableBooleanDropDownListEditor">
             <ComboBox
                 DisplayMemberPath="Key"
-                ItemsSource="{samples:BooleanValueProvider IsNullable=True}"
+                ItemsSource="{util:BooleanValueProvider IsNullable=True}"
                 SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedValuePath="Value" />
         </DataTemplate>
@@ -98,7 +101,7 @@
                 <KeyBinding Key="Escape" Command="Close" />
             </Window.InputBindings>
             <Grid>
-                <WebBrowser samples:Utilities.BindableSource="{Binding Value, Mode=OneWay}" />
+                <wv:WebView2 util:WpfUtilities.BindableSource="{Binding Value, Mode=OneWay}" />
             </Grid>
         </Window>
 
@@ -222,7 +225,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="PasswordEditor">
-            <PasswordBox samples:Utilities.BindPassword="True" samples:Utilities.BindablePassword="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <PasswordBox util:WpfUtilities.BindPassword="True" util:WpfUtilities.BindablePassword="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </DataTemplate>
     </Application.Resources>
 </Application>

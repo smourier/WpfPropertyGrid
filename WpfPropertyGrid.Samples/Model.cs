@@ -1,4 +1,6 @@
-﻿namespace WpfPropertyGrid.Samples;
+﻿using WpfPropertyGrid.Samples.Utilities;
+
+namespace WpfPropertyGrid.Samples;
 
 public class Customer : AutoObject
 {
