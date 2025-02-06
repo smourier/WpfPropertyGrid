@@ -155,7 +155,7 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
         var split = text.Split(',', ';', '|', ' ');
         if (split.Length >= 0)
         {
-            foreach (string sp in split)
+            foreach (var sp in split)
             {
                 if (string.IsNullOrWhiteSpace(sp))
                     continue;
@@ -269,11 +269,11 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                 for (var i = 0; i < names.Length; i++)
                 {
                     var name = names[i];
-                    ulong nameValue = EnumToUInt64(property, values.GetValue(i));
+                    var nameValue = EnumToUInt64(property, values.GetValue(i));
                     if (!ShowEnumField(property, enumType2, names[i], out var displayName))
                         continue;
 
-                    PropertyGridItem item = CreateItem();
+                    var item = CreateItem();
                     item.Property = property;
                     item.Name = displayName;
                     item.Value = nameValue;

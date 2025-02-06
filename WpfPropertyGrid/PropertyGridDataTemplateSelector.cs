@@ -32,7 +32,7 @@ public class PropertyGridDataTemplateSelector : DataTemplateSelector
         if (template.IsError.HasValue && template.IsError.Value != property.IsError)
             return true;
 
-        if (template.IsValid.HasValue && template.IsValid.Value != property.IsValid)
+        if (template.IsValid.HasValue && template.IsValid.Value != property.HasNoError)
             return true;
 
         if (template.IsFlagsEnum.HasValue && template.IsFlagsEnum.Value != property.IsFlagsEnum)

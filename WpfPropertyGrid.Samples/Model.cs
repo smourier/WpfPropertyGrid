@@ -2,7 +2,7 @@
 
 namespace WpfPropertyGrid.Samples;
 
-public class Customer : AutoObject
+public class Customer : DictionaryObject
 {
     public Customer()
     {
@@ -26,18 +26,18 @@ public class Customer : AutoObject
     }
 
     [DisplayName("Guid (see menu on right-click)")]
-    public Guid Id { get => GetProperty<Guid>(); set => SetProperty(value); }
+    public Guid Id { get => DictionaryObjectGetPropertyValue<Guid>(); set => DictionaryObjectSetPropertyValue(value); }
 
     //[ReadOnly(true)]
     [Category("Dates and Times")]
     [PropertyGridOptions(EditorDataTemplateResourceKey = "DateTimePicker")]
-    public DateTime CreationDateAndTime { get => GetProperty<DateTime>(); set => SetProperty(value); }
+    public DateTime CreationDateAndTime { get => DictionaryObjectGetPropertyValue<DateTime>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [DisplayName("Sub Object (Address)")]
     [PropertyGridOptions(ForcePropertyChanged = true)]
     public Address? SubObject
     {
-        get => GetProperty<Address>();
+        get => DictionaryObjectGetPropertyValue<Address>();
         set
         {
             var so = SubObject;
@@ -46,7 +46,7 @@ public class Customer : AutoObject
                 so.PropertyChanged -= OnSubObjectPropertyChanged;
             }
 
-            if (SetProperty(value))
+            if (DictionaryObjectSetPropertyValue(value))
             {
                 so = SubObject;
                 if (so != null)
@@ -61,8 +61,8 @@ public class Customer : AutoObject
 
     private void OnSubObjectPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        OnPropertyChanged(nameof(SubObject), false, true);
-        OnPropertyChanged(nameof(SubObjectAsObject), false, true);
+        OnPropertyChanged(nameof(SubObject));
+        OnPropertyChanged(nameof(SubObjectAsObject));
     }
 
     [DisplayName("Sub Object (Address as Object)")]
@@ -70,26 +70,26 @@ public class Customer : AutoObject
     public Address? SubObjectAsObject { get => SubObject; set => SubObject = value; }
 
     [PropertyGridOptions(SortOrder = 10)]
-    public string? FirstName { get => GetProperty<string>(); set => SetProperty(value); }
+    public string? FirstName { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [PropertyGridOptions(SortOrder = 20)]
-    public string? LastName { get => GetProperty<string>(); set => SetProperty(value); }
+    public string? LastName { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [Category("Dates and Times")]
     [PropertyGridOptions(SortOrder = 40)]
-    public DateTime DateOfBirth { get => GetProperty<DateTime>(); set => SetProperty(value); }
+    public DateTime DateOfBirth { get => DictionaryObjectGetPropertyValue<DateTime>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [Category("Enums")]
     [PropertyGridOptions(SortOrder = 30)]
-    public Gender Gender { get => GetProperty<Gender>(); set => SetProperty(value); }
+    public Gender Gender { get => DictionaryObjectGetPropertyValue<Gender>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [Category("Enums")]
     public Status Status
     {
-        get => GetProperty<Status>();
+        get => DictionaryObjectGetPropertyValue<Status>();
         set
         {
-            if (SetProperty(value))
+            if (DictionaryObjectSetPropertyValue(value))
             {
                 OnPropertyChanged(nameof(StatusColor));
                 OnPropertyChanged(nameof(StatusColorString));
@@ -110,39 +110,39 @@ public class Customer : AutoObject
 
     [PropertyGridOptions(IsEnum = true, IsFlagsEnum = true, EnumNames = ["First", "Second", "Third"])]
     [Category("Enums")]
-    public string? MultiEnumString { get => GetProperty<string>(); set => SetProperty(value); }
+    public string? MultiEnumString { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
-    [PropertyGridOptions(IsEnum = true, IsFlagsEnum = true, EnumNames = ["None", "My First", "My Second", "My Third"], EnumValues = [0, 1, 2, 4])]
+    [PropertyGridOptions(IsEnum = true, IsFlagsEnum = true, EnumNames = ["None", "My First", "My Second", "My Third"], EnumValues = [1, 2, 4, 8])]
     [Category("Enums")]
-    public string? MultiEnumStringWithDisplay { get => GetProperty<string>(); set => SetProperty(value); }
+    public string? MultiEnumStringWithDisplay { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [Category("Dates and Times")]
     [Description("This is the timespan tooltip")]
-    public TimeSpan TimeSpan { get => GetProperty<TimeSpan>(); set => SetProperty(value); }
+    public TimeSpan TimeSpan { get => DictionaryObjectGetPropertyValue<TimeSpan>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [Category("Security")]
     [PropertyGridOptions(EditorDataTemplateResourceKey = "PasswordEditor")]
     [DisplayName("Password (SecureString)")]
-    public SecureString? Password { get => GetProperty<SecureString>(); set { if (SetProperty(value)) { OnPropertyChanged(nameof(PasswordString)); } } }
+    public SecureString? Password { get => DictionaryObjectGetPropertyValue<SecureString>(); set { if (DictionaryObjectSetPropertyValue(value)) { OnPropertyChanged(nameof(PasswordString)); } } }
 
     [Category("Security")]
     [DisplayName("Password (String)")]
     public string? PasswordString => Password?.ConvertToUnsecureString();
 
     [Browsable(false)]
-    public string? NotBrowsable { get => GetProperty<string>(); set => SetProperty(value); }
+    public string? NotBrowsable { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [DisplayName("Description (multi-line)")]
     [PropertyGrid(Name = "Foreground", Value = "White")]
     [PropertyGrid(Name = "Background", Value = "Black")]
     [PropertyGridOptions(EditorDataTemplateResourceKey = "BigTextEditor")]
-    public string? Description { get => GetProperty<string>(); set => SetProperty(value); }
+    public string? Description { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "FormatTextEditor")]
     [PropertyGrid(Name = "Format", Value = "0x{0}")]
     [ReadOnly(true)]
     [DisplayName("Byte Array (hex format)")]
-    public byte[]? ByteArray1 { get => GetProperty<byte[]>(); set => SetProperty(value); }
+    public byte[]? ByteArray1 { get => DictionaryObjectGetPropertyValue<byte[]>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [ReadOnly(true)]
     [DisplayName("Byte Array (press button for hex dump)")]
@@ -150,86 +150,84 @@ public class Customer : AutoObject
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "CustomEditor", SortOrder = -10)]
     [DisplayName("Web Site (custom sort order)")]
-    public string? WebSite { get => GetProperty<string>(); set => SetProperty(value); }
+    public string? WebSite { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [Category("Collections")]
-    public string[]? ArrayOfStrings { get => GetProperty<string[]>(); set => SetProperty(value); }
+    public string[]? ArrayOfStrings { get => DictionaryObjectGetPropertyValue<string[]>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [Category("Collections")]
-    public List<string>? ListOfStrings { get => GetProperty<List<string>>(); set => SetProperty(value); }
+    public List<string>? ListOfStrings { get => DictionaryObjectGetPropertyValue<List<string>>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "AddressListEditor", SortOrder = 10)]
     [DisplayName("Addresses (custom editor)")]
     [Category("Collections")]
-    public ObservableCollection<Address>? Addresses { get => GetProperty<ObservableCollection<Address>>(); set => SetProperty(value); }
+    public ObservableCollection<Address>? Addresses { get => DictionaryObjectGetPropertyValue<ObservableCollection<Address>>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [DisplayName("Days Of Week (multi-valued enum)")]
     [Category("Enums")]
-    public DaysOfWeek DaysOfWeek { get => GetProperty<DaysOfWeek>(); set => SetProperty(value); }
+    public DaysOfWeek DaysOfWeek { get => DictionaryObjectGetPropertyValue<DaysOfWeek>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "PercentEditor")]
     [DisplayName("Percentage Of Satisfaction (int)")]
-    public int PercentageOfSatisfactionInt { get => GetProperty<int>(0, "PercentageOfSatisfaction"); set => SetProperty("PercentageOfSatisfaction", value); }
+    public int PercentageOfSatisfactionInt { get => DictionaryObjectGetPropertyValue(0, nameof(PercentageOfSatisfaction)); set => DictionaryObjectSetPropertyValue(value, nameof(PercentageOfSatisfaction)); }
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "PercentEditor")]
     [DisplayName("Percentage Of Satisfaction (double)")]
-    public double PercentageOfSatisfaction { get => GetProperty<double>(); set { if (SetProperty(value)) { OnPropertyChanged(nameof(PercentageOfSatisfactionInt)); } } }
+    public double PercentageOfSatisfaction { get => DictionaryObjectGetPropertyValue<double>(); set { if (DictionaryObjectSetPropertyValue(value)) { OnPropertyChanged(nameof(PercentageOfSatisfactionInt)); } } }
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "ColorEditor")]
     [DisplayName("Preferred Color Name (custom editor)")]
-    public string? PreferredColorName { get => GetProperty<string>(); set => SetProperty(value); }
+    public string? PreferredColorName { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [PropertyGridOptions(EditorDataTemplateResourceKey = "FontEditor")]
     [DisplayName("Preferred Font (custom editor)")]
-    public FontFamily? PreferredFont { get => GetProperty<FontFamily>(); set => SetProperty(value); }
+    public FontFamily? PreferredFont { get => DictionaryObjectGetPropertyValue<FontFamily>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [DisplayName("Point (auto type converter)")]
-    public Point Point { get => GetProperty<Point>(); set => SetProperty(value); }
+    public Point Point { get => DictionaryObjectGetPropertyValue<Point>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [DisplayName("Nullable Int32 (supports empty string)")]
-    public int? NullableInt32 { get => GetProperty<int?>(); set => SetProperty(value); }
+    public int? NullableInt32 { get => DictionaryObjectGetPropertyValue<int?>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [DisplayName("Boolean (Checkbox)")]
     [Category("Booleans")]
-    public bool SampleBoolean { get => GetProperty<bool>(); set => SetProperty(value); }
+    public bool SampleBoolean { get => DictionaryObjectGetPropertyValue<bool>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [DisplayName("Boolean (Checkbox three states)")]
     [Category("Booleans")]
-    public bool? SampleNullableBoolean { get => GetProperty<bool?>(); set => SetProperty(value); }
+    public bool? SampleNullableBoolean { get => DictionaryObjectGetPropertyValue<bool?>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [DisplayName("Boolean (DropDownList)")]
     [Category("Booleans")]
     [PropertyGridOptions(EditorDataTemplateResourceKey = "BooleanDropDownListEditor")]
-    public bool SampleBooleanDropDownList { get => GetProperty<bool>(); set => SetProperty(value); }
+    public bool SampleBooleanDropDownList { get => DictionaryObjectGetPropertyValue<bool>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [DisplayName("Boolean (DropDownList 3 states)")]
     [Category("Booleans")]
     [PropertyGridOptions(EditorDataTemplateResourceKey = "NullableBooleanDropDownListEditor")]
-    public bool? SampleNullableBooleanDropDownList { get => GetProperty<bool?>(); set => SetProperty(value); }
+    public bool? SampleNullableBooleanDropDownList { get => DictionaryObjectGetPropertyValue<bool?>(); set => DictionaryObjectSetPropertyValue(value); }
 }
 
 [TypeConverter(typeof(AddressConverter))]
-public class Address : AutoObject
+public class Address : DictionaryObject
 {
     [PropertyGridOptions(SortOrder = 10)]
-    public string? Line1 { get => GetProperty<string>(); set => SetProperty(value); }
+    public string? Line1 { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [PropertyGridOptions(SortOrder = 20)]
-    public string? Line2 { get => GetProperty<string>(); set => SetProperty(value); }
+    public string? Line2 { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [PropertyGridOptions(SortOrder = 30)]
-    public int? ZipCode { get => GetProperty<int?>(); set => SetProperty(value); }
+    public int? ZipCode { get => DictionaryObjectGetPropertyValue<int?>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [PropertyGridOptions(SortOrder = 40)]
-    public string? City { get => GetProperty<string>(); set => SetProperty(value); }
+    public string? City { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [PropertyGridOptions(SortOrder = 50)]
-    public string? State { get => GetProperty<string>(); set => SetProperty(value); }
+    public string? State { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [PropertyGridOptions(SortOrder = 60)]
-    public string? Country { get => GetProperty<string>(); set => SetProperty(value); }
-
-    protected override bool OnPropertyChanged(string name, bool setChanged, bool forceRaise) => base.OnPropertyChanged(name, setChanged, forceRaise);
+    public string? Country { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
     public static Address Parse(string text)
     {
@@ -300,7 +298,7 @@ public class Address : AutoObject
             if (s.Length == 0)
                 continue;
 
-            SetProperty(properties[i], (object)s);
+            DictionaryObjectSetPropertyValue(s, properties[i]);
         }
     }
 

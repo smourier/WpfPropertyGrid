@@ -348,9 +348,9 @@ public partial class PropertyGrid : UserControl
         set => SetValue(ValueEditorTemplateSelectorProperty, value);
     }
 
-    public virtual PropertyGridDataProvider CreateDataProvider(object value) => ActivatorService.CreateInstance<PropertyGridDataProvider>(this, value)!;
+    public virtual PropertyGridDataProvider CreateDataProvider(object value) => ActivatorService.CreateInstance<PropertyGridDataProvider>(this, value) ?? throw new NotSupportedException();
 
-    public virtual PropertyGridEventArgs CreateEventArgs(PropertyGridProperty property) => ActivatorService.CreateInstance<PropertyGridEventArgs>(property)!;
+    public virtual PropertyGridEventArgs CreateEventArgs(PropertyGridProperty property, object? context = null) => ActivatorService.CreateInstance<PropertyGridEventArgs>(property, context) ?? throw new NotSupportedException();
 
     private static void IsReadOnlyPropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
     {

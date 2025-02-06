@@ -53,7 +53,7 @@ public class PropertyGridDataProvider : IListSource
 
     public virtual Utilities.DynamicObject? CreateDynamicObject() => ActivatorService.CreateInstance<Utilities.DynamicObject>();
 
-    public virtual PropertyGridProperty? CreateProperty() => ActivatorService.CreateInstance<PropertyGridProperty>(this);
+    public virtual PropertyGridProperty CreateProperty() => ActivatorService.CreateInstance<PropertyGridProperty>(this) ?? throw new NotSupportedException();
 
     protected virtual void Describe(PropertyGridProperty property, PropertyDescriptor descriptor)
     {
@@ -141,7 +141,7 @@ public class PropertyGridDataProvider : IListSource
             forceReadWrite = options.ForceReadWrite;
             if (options.PropertyType != null)
             {
-                property = (PropertyGridProperty?)Activator.CreateInstance(options.PropertyType, this);
+                property = Activator.CreateInstance(options.PropertyType, this) as PropertyGridProperty;
             }
         }
 
@@ -156,12 +156,12 @@ public class PropertyGridDataProvider : IListSource
                 }
                 if (options.PropertyType != null)
                 {
-                    property = (PropertyGridProperty?)Activator.CreateInstance(options.PropertyType, this);
+                    property = Activator.CreateInstance(options.PropertyType, this) as PropertyGridProperty;
                 }
             }
         }
 
-        property ??= CreateProperty() ?? throw new NotSupportedException();
+        property ??= CreateProperty();
 
         Describe(property, descriptor);
         if (forceReadWrite)

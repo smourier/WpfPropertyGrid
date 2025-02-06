@@ -1,6 +1,6 @@
 namespace WpfPropertyGrid;
 
-public class PropertyGridProperty : AutoObject, IComparable, IComparable<PropertyGridProperty>
+public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<PropertyGridProperty>
 {
     public event EventHandler<PropertyGridEventArgs>? Event;
     private string? _defaultEditorResourceKey;
@@ -85,27 +85,26 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
     public virtual PropertyGridOptionsAttribute? Options { get; set; }
     public virtual object? Tag { get; set; }
 
-    public virtual Type? PropertyType { get => GetProperty<Type>(); set => SetProperty(value); }
-    public virtual string? Name { get => GetProperty<string>(); set => SetProperty(value); }
-    public virtual bool IsError { get => GetProperty<bool>(); set => SetProperty(value); }
-    public virtual bool IsEnum { get => GetProperty<bool>(); set => SetProperty(value); }
-    public virtual bool IsFlagsEnum { get => GetProperty<bool>(); set => SetProperty(value); }
-    public virtual string? Category { get => GetProperty<string>(); set => SetProperty(value); }
-    public virtual string? DisplayName { get => GetProperty<string>(); set => SetProperty(value); }
-    public virtual string? Description { get => GetProperty<string>(); set => SetProperty(value); }
-    public virtual bool HasDefaultValue { get => GetProperty<bool>(); set => SetProperty(value); }
-    public virtual PropertyDescriptor? Descriptor { get => GetProperty<PropertyDescriptor>(); set => SetProperty(value); }
-    public virtual TypeConverter? Converter { get => GetProperty<TypeConverter>(); set => SetProperty(value); }
+    public virtual Type? PropertyType { get => DictionaryObjectGetPropertyValue<Type>(); set => DictionaryObjectSetPropertyValue(value); }
+    public virtual string? Name { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
+    public virtual bool IsError { get => DictionaryObjectGetPropertyValue<bool>(); set => DictionaryObjectSetPropertyValue(value); }
+    public virtual bool IsEnum { get => DictionaryObjectGetPropertyValue<bool>(); set => DictionaryObjectSetPropertyValue(value); }
+    public virtual bool IsFlagsEnum { get => DictionaryObjectGetPropertyValue<bool>(); set => DictionaryObjectSetPropertyValue(value); }
+    public virtual string? Category { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
+    public virtual string? DisplayName { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
+    public virtual string? Description { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
+    public virtual bool HasDefaultValue { get => DictionaryObjectGetPropertyValue<bool>(); set => DictionaryObjectSetPropertyValue(value); }
+    public virtual PropertyDescriptor? Descriptor { get => DictionaryObjectGetPropertyValue<PropertyDescriptor>(); set => DictionaryObjectSetPropertyValue(value); }
+    public virtual TypeConverter? Converter { get => DictionaryObjectGetPropertyValue<TypeConverter>(); set => DictionaryObjectSetPropertyValue(value); }
 
     public virtual object? DefaultValue
     {
-        get => GetProperty<object>();
+        get => DictionaryObjectGetPropertyValue<object>();
         set
         {
-            if (SetProperty(value))
+            if (DictionaryObjectSetPropertyValue(value))
             {
-                DefaultValues["Value"] = value;
-                OnPropertyChanged("IsDefaultValue");
+                OnPropertyChanged(nameof(IsDefaultValue));
             }
         }
     }
@@ -161,11 +160,11 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
                 def = true;
             }
 
-            return GetProperty(def);
+            return DictionaryObjectGetPropertyValue(def);
         }
         set
         {
-            if (SetProperty(value))
+            if (DictionaryObjectSetPropertyValue(value))
             {
                 OnPropertyChanged(nameof(IsReadWrite));
             }
@@ -269,15 +268,6 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
         OnPropertyChanged(nameof(IsDefaultValue));
     }
 
-    public virtual void SetValue(object? value, bool setChanged, bool forceRaise, bool trackChanged)
-    {
-        var set = SetProperty("Value", value, setChanged, forceRaise, trackChanged);
-        if (set || forceRaise)
-        {
-            OnValueChanged();
-        }
-    }
-
     public void ResetClonedValue() => _valueCloned = false;
 
     public virtual void CloneValue(bool refresh)
@@ -300,7 +290,7 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
 
     public virtual object? Value
     {
-        get => GetProperty<object>();
+        get => DictionaryObjectGetPropertyValue<object>();
         set
         {
             object? changedValue = null;
@@ -313,7 +303,7 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
                 {
                     Descriptor.SetValue(DataProvider.Data, changedValue);
                     var finalValue = Descriptor.GetValue(DataProvider.Data);
-                    SetValue(finalValue, true, false, true);
+                    DictionaryObjectSetPropertyValue(finalValue);
                 }
                 catch (Exception e)
                 {
@@ -329,8 +319,6 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
         return ConversionService.TryChangeType(value, type, provider, out changedValue);
     }
 
-    public virtual bool RaiseOnPropertyChanged(string name) => OnPropertyChanged(name);
-
     public virtual void OnDescribed()
     {
     }
@@ -343,7 +331,8 @@ public class PropertyGridProperty : AutoObject, IComparable, IComparable<Propert
         try
         {
             var value = Descriptor.GetValue(DataProvider.Data);
-            SetValue(value, setChanged, forceRaise, trackChanged);
+            var options = DictionaryObjectPropertySetOptions.None;
+            DictionaryObjectSetPropertyValue(value, options);
         }
         catch (Exception e)
         {

@@ -8,9 +8,5 @@ public static class ActivatorService
         return ServiceProvider.Current.GetService<IActivator>().CreateInstance(type, args);
     }
 
-    public static T? CreateInstance<T>(params object?[]? args) => (T?)CreateInstance(typeof(T), args);
-
-    public static object? CreateInstance(Type type) => CreateInstance(type, null);
-
-    public static T? CreateInstance<T>() => (T?)CreateInstance(typeof(T), null);
+    public static T? CreateInstance<T>(params object?[]? args) => ServiceProvider.Current.GetService<IActivator>().CreateInstance<T>(args);
 }
