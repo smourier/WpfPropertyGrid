@@ -1,6 +1,4 @@
-﻿using Microsoft.Web.WebView2.Wpf;
-
-namespace WpfPropertyGrid.Samples.Utilities;
+﻿namespace WpfPropertyGrid.Samples.Utilities;
 
 public static class WpfUtilities
 {

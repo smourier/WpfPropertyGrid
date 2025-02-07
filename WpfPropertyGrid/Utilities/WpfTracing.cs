@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace WpfPropertyGrid.Utilities;
+﻿namespace WpfPropertyGrid.Utilities;
 
 public static class WpfTracing
 {

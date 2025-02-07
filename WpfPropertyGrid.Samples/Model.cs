@@ -1,6 +1,4 @@
-﻿using WpfPropertyGrid.Samples.Utilities;
-
-namespace WpfPropertyGrid.Samples;
+﻿namespace WpfPropertyGrid.Samples;
 
 public class Customer : DictionaryObject
 {

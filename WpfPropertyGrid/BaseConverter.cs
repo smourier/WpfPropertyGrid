@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace WpfPropertyGrid;
+﻿namespace WpfPropertyGrid;
 
 public class BaseConverter : IConverter
 {

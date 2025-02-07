@@ -42,7 +42,9 @@
 		<Using Include="System.Windows.Input" />
 		<Using Include="System.Windows.Markup" />
 		<Using Include="System.Windows.Media" />
+		<Using Include="Microsoft.Web.WebView2.Wpf" />
 		<Using Include="WpfPropertyGrid.Utilities" />
+		<Using Include="WpfPropertyGrid.Samples.Utilities" />
 	</ItemGroup>
 
 </Project>

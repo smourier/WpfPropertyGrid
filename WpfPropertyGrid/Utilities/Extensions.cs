@@ -1,7 +1,4 @@
-﻿using System.Windows.Markup.Primitives;
-using System.Windows.Media.Media3D;
-
-namespace WpfPropertyGrid.Utilities;
+﻿namespace WpfPropertyGrid.Utilities;
 
 public static class Extensions
 {
