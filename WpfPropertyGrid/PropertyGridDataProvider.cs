@@ -52,7 +52,6 @@ public class PropertyGridDataProvider : IListSource
     }
 
     public virtual Utilities.DynamicObject? CreateDynamicObject() => ActivatorService.CreateInstance<Utilities.DynamicObject>();
-
     public virtual PropertyGridProperty CreateProperty() => ActivatorService.CreateInstance<PropertyGridProperty>(this) ?? throw new NotSupportedException();
 
     protected virtual void Describe(PropertyGridProperty property, PropertyDescriptor descriptor)
@@ -169,7 +168,7 @@ public class PropertyGridDataProvider : IListSource
             property.IsReadOnly = false;
         }
         property.OnDescribed();
-        property.RefreshValueFromDescriptor(true, false, true);
+        property.RefreshValueFromDescriptor();
         return property;
     }
 

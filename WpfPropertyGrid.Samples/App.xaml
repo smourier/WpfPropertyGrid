@@ -8,8 +8,7 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:util="clr-namespace:WpfPropertyGrid.Samples.Utilities"
     xmlns:wv="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
-    StartupUri="MainWindow.xaml"
-    >
+    StartupUri="MainWindow.xaml">
     <Application.Resources>
 
         <pg:UniversalConverter x:Key="BoolToDefaultValueBackgroundConverter">
@@ -58,7 +57,6 @@
 
         <DataTemplate x:Key="CustomEditor">
             <DockPanel LastChildFill="true" ToolTip="{Binding Value, Mode=OneWay}">
-
                 <Button
                     Width="24"
                     HorizontalContentAlignment="Center"

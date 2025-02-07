@@ -170,11 +170,6 @@ public abstract class DictionaryObject : INotifyPropertyChanged, INotifyProperty
         DictionaryObjectProperty? oldProp = null;
         var finalProp = DictionaryObjectProperties.AddOrUpdate(name, newProp, (k, o) =>
         {
-            if (name == "IsChecked")
-            {
-            }
-
-
             oldProp = o;
             var updating = DictionaryObjectUpdatingProperty(options, k, o, newProp);
             if (updating != null)
@@ -182,7 +177,10 @@ public abstract class DictionaryObject : INotifyPropertyChanged, INotifyProperty
 
             var testEquality = !options.HasFlag(DictionaryObjectPropertySetOptions.DontTestValuesForEquality);
             if (testEquality && o != null && DictionaryObjectAreValuesEqual(value, o.Value))
+            {
+                onChanged = false;
                 return o;
+            }
 
             var onChanging = !options.HasFlag(DictionaryObjectPropertySetOptions.DontRaiseOnPropertyChanging);
             if (!DictionaryObjectRaiseOnPropertyChanging)
@@ -205,7 +203,7 @@ public abstract class DictionaryObject : INotifyPropertyChanged, INotifyProperty
             return newProp;
         });
 
-        if (forceChanged || onChanged && ReferenceEquals(finalProp, newProp))
+        if (forceChanged || onChanged)
         {
             var rollbacked = false;
             if (rollbackOnError)

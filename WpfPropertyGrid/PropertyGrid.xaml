@@ -568,6 +568,7 @@
                             </pg:PropertyGridDataTemplate>
                             <pg:PropertyGridDataTemplate>
                                 <DataTemplate>
+                                    <!--  the default one  -->
                                     <TextBox Style="{StaticResource ValidationTextBox2}" Text="{Binding TextValue, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
                                 </DataTemplate>
                             </pg:PropertyGridDataTemplate>

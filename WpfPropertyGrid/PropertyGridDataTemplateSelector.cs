@@ -3,14 +3,9 @@
 [ContentProperty("DataTemplates")]
 public class PropertyGridDataTemplateSelector : DataTemplateSelector
 {
-    private PropertyGrid? _propertyGrid;
-
-    public PropertyGridDataTemplateSelector()
-    {
-        DataTemplates = [];
-    }
-
-    public PropertyGrid? PropertyGrid => _propertyGrid;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+    public ObservableCollection<PropertyGridDataTemplate> DataTemplates { get; } = [];
+    public PropertyGrid? PropertyGrid { get; private set; }
 
     protected virtual bool Filter(PropertyGridDataTemplate template, PropertyGridProperty property)
     {
@@ -97,16 +92,15 @@ public class PropertyGridDataTemplateSelector : DataTemplateSelector
         if (propTemplate != null)
             return propTemplate;
 
-        _propertyGrid ??= container.GetVisualSelfOrParent<PropertyGrid>();
-
-        if (_propertyGrid != null && _propertyGrid.ValueEditorTemplateSelector != null && _propertyGrid.ValueEditorTemplateSelector != this)
+        PropertyGrid ??= container.GetVisualSelfOrParent<PropertyGrid>();
+        if (PropertyGrid != null && PropertyGrid.ValueEditorTemplateSelector != null && PropertyGrid.ValueEditorTemplateSelector != this)
         {
-            DataTemplate template = _propertyGrid.ValueEditorTemplateSelector.SelectTemplate(item, container);
+            var template = PropertyGrid.ValueEditorTemplateSelector.SelectTemplate(item, container);
             if (template != null)
                 return template;
         }
 
-        foreach (PropertyGridDataTemplate template in DataTemplates)
+        foreach (var template in DataTemplates)
         {
             if (Filter(template, property))
                 continue;
@@ -139,7 +133,4 @@ public class PropertyGridDataTemplateSelector : DataTemplateSelector
         }
         return base.SelectTemplate(item, container);
     }
-
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-    public ObservableCollection<PropertyGridDataTemplate> DataTemplates { get; private set; }
 }

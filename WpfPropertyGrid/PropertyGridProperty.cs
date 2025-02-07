@@ -304,6 +304,7 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
                     Descriptor.SetValue(DataProvider.Data, changedValue);
                     var finalValue = Descriptor.GetValue(DataProvider.Data);
                     DictionaryObjectSetPropertyValue(finalValue);
+                    OnValueChanged();
                 }
                 catch (Exception e)
                 {
@@ -323,7 +324,7 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
     {
     }
 
-    public virtual void RefreshValueFromDescriptor(bool setChanged, bool forceRaise, bool trackChanged)
+    public virtual void RefreshValueFromDescriptor(DictionaryObjectPropertySetOptions options = DictionaryObjectPropertySetOptions.None)
     {
         if (Descriptor == null)
             return;
@@ -331,8 +332,7 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
         try
         {
             var value = Descriptor.GetValue(DataProvider.Data);
-            var options = DictionaryObjectPropertySetOptions.None;
-            DictionaryObjectSetPropertyValue(value, options);
+            DictionaryObjectSetPropertyValue(value, options, nameof(Value));
         }
         catch (Exception e)
         {

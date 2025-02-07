@@ -1,29 +1,35 @@
-﻿namespace WpfPropertyGrid.Samples.Utilities;
+﻿using Microsoft.Web.WebView2.Wpf;
+
+namespace WpfPropertyGrid.Samples.Utilities;
 
 public static class WpfUtilities
 {
     public static readonly DependencyProperty BindableSourceProperty =
         DependencyProperty.RegisterAttached("BindableSource", typeof(string), typeof(WpfUtilities), new UIPropertyMetadata(null, BindableSourcePropertyChanged));
 
+    public static readonly DependencyProperty BindablePasswordProperty =
+        DependencyProperty.RegisterAttached("BindablePassword", typeof(SecureString), typeof(WpfUtilities), new FrameworkPropertyMetadata(null, OnPasswordPropertyChanged));
+
+    public static readonly DependencyProperty BindPasswordProperty =
+        DependencyProperty.RegisterAttached("BindPassword", typeof(bool), typeof(WpfUtilities), new PropertyMetadata(false, BindPassword));
+
+    private static readonly DependencyProperty UpdatingPasswordProperty =
+        DependencyProperty.RegisterAttached("UpdatingPassword", typeof(bool), typeof(WpfUtilities));
+
     public static string GetBindableSource(DependencyObject obj) => (string)obj.GetValue(BindableSourceProperty);
     public static void SetBindableSource(DependencyObject obj, string value) => obj.SetValue(BindableSourceProperty, value);
     public static void BindableSourcePropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
     {
-        if (o is WebBrowser browser)
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17763) && o is WebView2 browser)
         {
             var uri = e.NewValue as string;
             browser.Source = !string.IsNullOrEmpty(uri) ? new Uri(uri) : null;
         }
     }
 
-    public static readonly DependencyProperty BindablePasswordProperty = DependencyProperty.RegisterAttached("BindablePassword", typeof(SecureString), typeof(WpfUtilities), new FrameworkPropertyMetadata(null, OnPasswordPropertyChanged));
-    public static readonly DependencyProperty BindPasswordProperty = DependencyProperty.RegisterAttached("BindPassword", typeof(bool), typeof(WpfUtilities), new PropertyMetadata(false, BindPassword));
-    private static readonly DependencyProperty UpdatingPasswordProperty = DependencyProperty.RegisterAttached("UpdatingPassword", typeof(bool), typeof(WpfUtilities));
-
     public static string? ConvertToUnsecureString(this SecureString securePassword)
     {
         ArgumentNullException.ThrowIfNull(securePassword);
-
         var unmanagedString = nint.Zero;
         try
         {

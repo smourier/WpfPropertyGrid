@@ -1,6 +1,4 @@
-﻿using WpfPropertyGrid.Samples.Utilities;
-
-namespace WpfPropertyGrid.Samples;
+﻿namespace WpfPropertyGrid.Samples;
 
 public class Customer : DictionaryObject
 {
@@ -12,7 +10,7 @@ public class Customer : DictionaryObject
         CreationDateAndTime = DateTime.Now;
         Description = "press button to edit...";
         ByteArray1 = [1, 2, 3, 4, 5, 6, 7, 8];
-        WebSite = "http://www.simonmourier.com";
+        WebSite = "https://www.simonmourier.com";
         Status = Status.Valid;
         Addresses = [new Address { Line1 = "1 Microsoft Way", City = "Redmond", State = "WA", ZipCode = 98052, Country = "USA" }];
         DaysOfWeek = DaysOfWeek.WeekDays;
@@ -23,6 +21,7 @@ public class Customer : DictionaryObject
         SampleBooleanDropDownList = true;
         MultiEnumString = "First, Second";
         SubObject = Address.Parse("1600 Amphitheatre Parkway Mountain View, CA 94043, USA");
+        Password = "zozo";
     }
 
     [DisplayName("Guid (see menu on right-click)")]
@@ -112,7 +111,7 @@ public class Customer : DictionaryObject
     [Category("Enums")]
     public string? MultiEnumString { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
-    [PropertyGridOptions(IsEnum = true, IsFlagsEnum = true, EnumNames = ["None", "My First", "My Second", "My Third"], EnumValues = [1, 2, 4, 8])]
+    [PropertyGridOptions(IsEnum = true, IsFlagsEnum = true, EnumNames = ["None", "My First", "My Second", "My Third"], EnumValues = [0, 1, 2, 4])]
     [Category("Enums")]
     public string? MultiEnumStringWithDisplay { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
@@ -121,13 +120,15 @@ public class Customer : DictionaryObject
     public TimeSpan TimeSpan { get => DictionaryObjectGetPropertyValue<TimeSpan>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [Category("Security")]
-    [PropertyGridOptions(EditorDataTemplateResourceKey = "PasswordEditor")]
+    //[PropertyGridOptions(EditorDataTemplateResourceKey = "PasswordEditor")]
     [DisplayName("Password (SecureString)")]
-    public SecureString? Password { get => DictionaryObjectGetPropertyValue<SecureString>(); set { if (DictionaryObjectSetPropertyValue(value)) { OnPropertyChanged(nameof(PasswordString)); } } }
+    //public SecureString? Password { get => DictionaryObjectGetPropertyValue<SecureString>(); set { if (DictionaryObjectSetPropertyValue(value)) { OnPropertyChanged(nameof(PasswordString)); } } }
+    public string? Password { get => DictionaryObjectGetPropertyValue<string>(); set { if (DictionaryObjectSetPropertyValue(value)) { OnPropertyChanged(nameof(PasswordString)); } } }
 
     [Category("Security")]
     [DisplayName("Password (String)")]
-    public string? PasswordString => Password?.ConvertToUnsecureString();
+    //public string? PasswordString { get => Password?.ConvertToUnsecureString(); set { } }
+    public string? PasswordString { get => Password; set { } }
 
     [Browsable(false)]
     public string? NotBrowsable { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
