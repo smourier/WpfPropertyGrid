@@ -1,4 +1,6 @@
-﻿namespace WpfPropertyGrid.Samples;
+﻿using WpfPropertyGrid.Samples.Utilities;
+
+namespace WpfPropertyGrid.Samples;
 
 public class Customer : DictionaryObject
 {
@@ -21,7 +23,6 @@ public class Customer : DictionaryObject
         SampleBooleanDropDownList = true;
         MultiEnumString = "First, Second";
         SubObject = Address.Parse("1600 Amphitheatre Parkway Mountain View, CA 94043, USA");
-        Password = "zozo";
     }
 
     [DisplayName("Guid (see menu on right-click)")]
@@ -120,15 +121,13 @@ public class Customer : DictionaryObject
     public TimeSpan TimeSpan { get => DictionaryObjectGetPropertyValue<TimeSpan>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [Category("Security")]
-    //[PropertyGridOptions(EditorDataTemplateResourceKey = "PasswordEditor")]
+    [PropertyGridOptions(EditorDataTemplateResourceKey = "PasswordEditor")]
     [DisplayName("Password (SecureString)")]
-    //public SecureString? Password { get => DictionaryObjectGetPropertyValue<SecureString>(); set { if (DictionaryObjectSetPropertyValue(value)) { OnPropertyChanged(nameof(PasswordString)); } } }
-    public string? Password { get => DictionaryObjectGetPropertyValue<string>(); set { if (DictionaryObjectSetPropertyValue(value)) { OnPropertyChanged(nameof(PasswordString)); } } }
+    public SecureString? Password { get => DictionaryObjectGetPropertyValue<SecureString>(); set { if (DictionaryObjectSetPropertyValue(value)) { OnPropertyChanged(nameof(PasswordString)); } } }
 
     [Category("Security")]
-    [DisplayName("Password (String)")]
-    //public string? PasswordString { get => Password?.ConvertToUnsecureString(); set { } }
-    public string? PasswordString { get => Password; set { } }
+    [DisplayName("Password (clear string)")]
+    public string? PasswordString { get => Password?.ConvertToUnsecureString(); set { } }
 
     [Browsable(false)]
     public string? NotBrowsable { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }

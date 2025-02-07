@@ -333,6 +333,7 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
         {
             var value = Descriptor.GetValue(DataProvider.Data);
             DictionaryObjectSetPropertyValue(value, options, nameof(Value));
+            OnValueChanged();
         }
         catch (Exception e)
         {
