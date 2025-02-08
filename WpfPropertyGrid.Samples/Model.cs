@@ -21,6 +21,9 @@ public class Customer : DictionaryObject
         SampleBooleanDropDownList = true;
         MultiEnumString = "First, Second";
         SubObject = Address.Parse("1600 Amphitheatre Parkway Mountain View, CA 94043, USA");
+
+        var dw = DaysOfWeek.Wednesday | DaysOfWeek.Sunday;
+        var ts = dw.ToString();
     }
 
     [DisplayName("Guid (see menu on right-click)")]
@@ -110,7 +113,7 @@ public class Customer : DictionaryObject
     [Category("Enums")]
     public string? MultiEnumString { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
-    [PropertyGridOptions(IsEnum = true, IsFlagsEnum = true, EnumNames = ["None", "My First", "My Second", "My Third"], EnumValues = [0, 1, 2, 4])]
+    [PropertyGridOptions(IsEnum = true, IsFlagsEnum = true, EnumNames = ["No,nze", "My First", "My Second", "My Third"], EnumValues = [8, 1, 2, 4])]
     [Category("Enums")]
     public string? MultiEnumStringWithDisplay { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
@@ -120,12 +123,12 @@ public class Customer : DictionaryObject
 
     [Category("Security")]
     [PropertyGridOptions(EditorDataTemplateResourceKey = "PasswordEditor")]
-    [DisplayName("Password (SecureString)")]
+    [DisplayName("Password (in SecureString)")]
     public SecureString? Password { get => DictionaryObjectGetPropertyValue<SecureString>(); set { if (DictionaryObjectSetPropertyValue(value)) { OnPropertyChanged(nameof(PasswordString)); } } }
 
     [Category("Security")]
-    [DisplayName("Password (clear string)")]
-    public string? PasswordString { get => Password?.ConvertToUnsecureString(); set { } }
+    [DisplayName("Password (readonly clear string)")]
+    public string? PasswordString { get => Password?.ConvertToUnsecureString(); }
 
     [Browsable(false)]
     public string? NotBrowsable { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }

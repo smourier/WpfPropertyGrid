@@ -3,7 +3,27 @@ namespace WpfPropertyGrid;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class PropertyGridOptionsAttribute : Attribute
 {
-    public string[]? EnumNames { get; set; }
+    private Lazy<string[]?> _finalEnumNames;
+    private string[]? _enumNames;
+
+    public PropertyGridOptionsAttribute()
+    {
+        _finalEnumNames = new(GetFinalEnumNames);
+    }
+
+    public string[]? EnumNames
+    {
+        get => _enumNames;
+        set
+        {
+            if (_enumNames == value)
+                return;
+
+            _enumNames = value;
+            _finalEnumNames = new(GetFinalEnumNames);
+        }
+    }
+
     public object[]? EnumValues { get; set; }
     public bool IsEnum { get; set; }
     public bool IsFlagsEnum { get; set; }
@@ -20,7 +40,25 @@ public class PropertyGridOptionsAttribute : Attribute
     public bool HasDefaultValue { get; set; }
     public bool ForcePropertyChanged { get; set; }
     public object? DefaultValue { get; set; }
-    public string? EnumSeparator { get; set; } = ", ";
+
+    internal string[]? FinalEnumNames => _finalEnumNames.Value;
+    private string[]? GetFinalEnumNames()
+    {
+        if (EnumNames == null)
+            return null;
+
+        var list = new List<string>();
+        foreach (var name in EnumNames)
+        {
+            if (name != null)
+            {
+                // note the second char is not a comma (unicode character #44), it's unicode character #130 but it looks the same
+                // it's a trick so we can still use commas in enum names and it doesn't break parsing
+                list.Add(name.Replace(',', '‚'));
+            }
+        }
+        return [.. list];
+    }
 
     public static DataTemplate? SelectTemplate(PropertyGridProperty property, object? item, DependencyObject container)
     {

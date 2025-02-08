@@ -7,7 +7,9 @@ namespace WpfPropertyGrid
             IsChecked = false;
         }
 
-        internal new bool DictionaryObjectRaiseOnPropertyChanged { get => base.DictionaryObjectRaiseOnPropertyChanged; set => base.DictionaryObjectRaiseOnPropertyChanged = value; }
+        public new bool DictionaryObjectRaiseOnPropertyChanged { get => base.DictionaryObjectRaiseOnPropertyChanged; set => base.DictionaryObjectRaiseOnPropertyChanged = value; }
+        public new bool DictionaryObjectRaiseOnPropertyChanging { get => base.DictionaryObjectRaiseOnPropertyChanging; set => base.DictionaryObjectRaiseOnPropertyChanging = value; }
+        public new bool DictionaryObjectRaiseOnErrorsChanged { get => base.DictionaryObjectRaiseOnErrorsChanged; set => base.DictionaryObjectRaiseOnErrorsChanged = value; }
 
         public virtual bool IsUnset { get => DictionaryObjectGetPropertyValue<bool>(); set => DictionaryObjectSetPropertyValue(value); }
         public virtual bool IsZero { get => DictionaryObjectGetPropertyValue<bool>(); set => DictionaryObjectSetPropertyValue(value); }

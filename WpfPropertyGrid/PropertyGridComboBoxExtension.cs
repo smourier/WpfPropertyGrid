@@ -81,11 +81,13 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
         if (propertyType != typeof(string))
             return ConversionService.ChangeType(value, propertyType);
 
-        if (options == null || options.EnumNames == null || options.EnumValues == null || options.EnumValues.Length != options.EnumNames.Length)
+        if (options == null || options.FinalEnumNames == null || options.EnumValues == null || options.EnumValues.Length != options.FinalEnumNames.Length)
             return ConversionService.ChangeType(value, propertyType);
 
         if (BaseConverter.IsNullOrEmptyString(value))
             return string.Empty;
+
+        const string enumSeparatorText = ", ";
 
         var sb = new StringBuilder();
         var svalue = string.Format("{0}", value);
@@ -96,21 +98,21 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                 return string.Empty;
 
             var enumValues = options.EnumValues.Select(v => string.Format("{0}", v)).ToArray();
-            foreach (string enumValue in enums)
+            foreach (var enumValue in enums)
             {
                 var index = IndexOf(enumValues, enumValue);
                 if (index < 0)
                 {
-                    index = IndexOf(options.EnumNames, enumValue);
+                    index = IndexOf(options.FinalEnumNames, enumValue);
                 }
 
                 if (index >= 0)
                 {
-                    if (sb.Length > 0 && options.EnumSeparator != null)
+                    if (sb.Length > 0)
                     {
-                        sb.Append(options.EnumSeparator);
+                        sb.Append(enumSeparatorText);
                     }
-                    sb.Append(options.EnumNames[index]);
+                    sb.Append(options.FinalEnumNames[index]);
                 }
             }
         }
@@ -125,11 +127,11 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                     var index = IndexOf(options.EnumValues, b);
                     if (index >= 0)
                     {
-                        if (sb.Length > 0 && options.EnumSeparator != null)
+                        if (sb.Length > 0)
                         {
-                            sb.Append(options.EnumSeparator);
+                            sb.Append(enumSeparatorText);
                         }
-                        sb.Append(options.EnumNames[index]);
+                        sb.Append(options.FinalEnumNames[index]);
                     }
                 }
                 b *= 2;
@@ -142,7 +144,7 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
             var index = IndexOf(options.EnumValues, 0);
             if (index >= 0)
             {
-                s = options.EnumNames[index];
+                s = options.FinalEnumNames[index];
             }
         }
 
@@ -152,7 +154,7 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
     private static List<string> ParseEnum(string text)
     {
         var enums = new List<string>();
-        var split = text.Split(',', ';', '|', ' ');
+        var split = text.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (split.Length >= 0)
         {
             foreach (var sp in split)
@@ -193,7 +195,7 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
         }
 
         var att = PropertyGridOptionsAttribute.FromProperty(property);
-        if (att == null || att.EnumNames == null)
+        if (att == null || att.FinalEnumNames == null)
             return 0;
 
         var svalue = string.Format("{0}", value);
@@ -206,7 +208,7 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
 
         foreach (var name in enums)
         {
-            var index = IndexOf(att.EnumNames, name);
+            var index = IndexOf(att.FinalEnumNames, name);
             if (index < 0)
                 continue;
 
@@ -228,9 +230,9 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
         if (options == null || !options.IsEnum && !options.IsFlagsEnum)
             return false;
 
-        if (options.EnumNames != null && options.EnumNames.Length > 0)
+        if (options.FinalEnumNames != null && options.FinalEnumNames.Length > 0)
         {
-            value = options.EnumNames.First();
+            value = options.FinalEnumNames.First();
             return true;
         }
         return false;
@@ -338,27 +340,28 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
             if (att != null && att.IsEnum)
             {
                 var manualFlags = false;
-                if (att.EnumNames == null || att.EnumNames.Length == 0)
+                if (att.FinalEnumNames == null || att.FinalEnumNames.Length == 0)
                 {
                     if (att.EnumValues == null || att.EnumValues.Length == 0)
                         return items;
 
-                    att.EnumNames = new string[att.EnumValues.Length];
+                    var enumNames = new List<string>();
                     for (var i = 0; i < att.EnumValues.Length; i++)
                     {
-                        att.EnumNames[i] = string.Format("{0}", att.EnumValues[i]);
+                        enumNames.Add(string.Format("{0}", att.EnumValues[i]));
                     }
+                    att.EnumNames = [.. enumNames];
                 }
                 else
                 {
-                    if (att.EnumValues == null || att.EnumValues.Length != att.EnumNames.Length)
+                    if (att.EnumValues == null || att.EnumValues.Length != att.FinalEnumNames.Length)
                     {
-                        att.EnumValues = new object[att.EnumNames.Length];
+                        att.EnumValues = new object[att.FinalEnumNames.Length];
                         if (att.IsFlagsEnum)
                         {
                             ulong current = 1;
                             manualFlags = true;
-                            for (var i = 0; i < att.EnumNames.Length; i++)
+                            for (var i = 0; i < att.FinalEnumNames.Length; i++)
                             {
                                 att.EnumValues[i] = current;
                                 current *= 2;
@@ -366,9 +369,9 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                         }
                         else
                         {
-                            for (var i = 0; i < att.EnumNames.Length; i++)
+                            for (var i = 0; i < att.FinalEnumNames.Length; i++)
                             {
-                                att.EnumValues[i] = string.Format("{0}", att.EnumNames[i]);
+                                att.EnumValues[i] = string.Format("{0}", att.FinalEnumNames[i]);
                             }
                         }
                     }
@@ -396,41 +399,44 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                 {
                     var uvalue = EnumToUInt64(property, property.Value);
 
-                    for (var i = 0; i < att.EnumNames.Length; i++)
+                    if (att.FinalEnumNames != null)
                     {
-                        var nameValue = EnumToUInt64(property, att.EnumValues[i]);
+                        for (var i = 0; i < att.FinalEnumNames.Length; i++)
+                        {
+                            var nameValue = EnumToUInt64(property, att.EnumValues[i]);
 
-                        var item = CreateItem();
-                        item.Property = property;
-                        item.Name = att.EnumNames[i];
-                        item.Value = valueConverter(att.EnumValues[i]);
-                        if (manualFlags)
-                        {
-                            item.IsZero = i == 0;
-                        }
-                        else
-                        {
-                            item.IsZero = nameValue == 0;
-                        }
-
-                        if (nameValue == 0)
-                        {
-                            zero = item;
-                        }
-
-                        var bitsCount = (ulong)GetEnumMaxPower(att) - 1;
-                        ulong b = 1;
-                        for (ulong bit = 1; bit < bitsCount; bit++)
-                        {
-                            if ((uvalue & b) == 0)
+                            var item = CreateItem();
+                            item.Property = property;
+                            item.Name = att.FinalEnumNames[i];
+                            item.Value = valueConverter(att.EnumValues[i]);
+                            if (manualFlags)
                             {
+                                item.IsZero = i == 0;
                             }
-                            b *= 2;
-                        }
+                            else
+                            {
+                                item.IsZero = nameValue == 0;
+                            }
 
-                        var isChecked = (uvalue & nameValue) != 0;
-                        item.IsChecked = isChecked;
-                        items.Add(item);
+                            if (nameValue == 0)
+                            {
+                                zero = item;
+                            }
+
+                            var bitsCount = (ulong)GetEnumMaxPower(att) - 1;
+                            ulong b = 1;
+                            for (ulong bit = 1; bit < bitsCount; bit++)
+                            {
+                                if ((uvalue & b) == 0)
+                                {
+                                }
+                                b *= 2;
+                            }
+
+                            var isChecked = (uvalue & nameValue) != 0;
+                            item.IsChecked = isChecked;
+                            items.Add(item);
+                        }
                     }
 
                     if (items.Count == 0)
@@ -450,14 +456,17 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                 }
                 else
                 {
-                    for (var i = 0; i < att.EnumNames.Length; i++)
+                    if (att.FinalEnumNames != null)
                     {
-                        var item = CreateItem();
-                        item.Property = property;
-                        item.Name = att.EnumNames[i];
-                        item.Value = valueConverter(att.EnumValues[i]);
-                        item.IsZero = i == 0;
-                        items.Add(item);
+                        for (var i = 0; i < att.FinalEnumNames.Length; i++)
+                        {
+                            var item = CreateItem();
+                            item.Property = property;
+                            item.Name = att.FinalEnumNames[i];
+                            item.Value = valueConverter(att.EnumValues[i]);
+                            item.IsZero = i == 0;
+                            items.Add(item);
+                        }
                     }
                 }
             }

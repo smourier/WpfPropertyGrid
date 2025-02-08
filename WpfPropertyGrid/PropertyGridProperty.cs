@@ -18,6 +18,8 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
     }
 
     public PropertyGridDataProvider DataProvider { get; }
+    public bool HasErrors => DictionaryObjectHasErrors;
+    public bool HasNoError => DictionaryObjectHasNoError;
     public virtual int SortOrder { get; set; }
     public virtual Utilities.DynamicObject Attributes { get; }
     public virtual Utilities.DynamicObject TypeAttributes { get; }

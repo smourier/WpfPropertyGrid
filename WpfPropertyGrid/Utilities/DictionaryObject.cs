@@ -21,8 +21,8 @@ public abstract class DictionaryObject : INotifyPropertyChanged, INotifyProperty
     protected virtual bool DictionaryObjectRaiseOnErrorsChanged { get; set; }
 
     protected string? DictionaryObjectError => DictionaryObjectGetError(null);
-    public bool HasErrors => DictionaryObjectGetErrors(null)?.OfType<object>().Any() == true;
-    public bool HasNoError => !HasErrors;
+    protected bool DictionaryObjectHasErrors => DictionaryObjectGetErrors(null)?.OfType<object>().Any() == true;
+    protected bool DictionaryObjectHasNoError => !DictionaryObjectHasErrors;
 
     protected virtual string? DictionaryObjectGetError(string? propertyName)
     {
@@ -36,11 +36,11 @@ public abstract class DictionaryObject : INotifyPropertyChanged, INotifyProperty
 
     protected virtual IEnumerable DictionaryObjectGetErrors(string? propertyName) => Enumerable.Empty<object>();
 
-    protected void OnErrorsChanged(string? name)
+    protected virtual void OnErrorsChanged(string? name)
     {
         OnErrorsChanged(this, new DataErrorsChangedEventArgs(name));
-        OnPropertyChanged(nameof(HasErrors));
-        OnPropertyChanged(nameof(HasNoError));
+        OnPropertyChanged(nameof(DictionaryObjectHasErrors));
+        OnPropertyChanged(nameof(DictionaryObjectHasNoError));
     }
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null) => OnPropertyChanged(this, new PropertyChangedEventArgs(name));
@@ -248,6 +248,6 @@ public abstract class DictionaryObject : INotifyPropertyChanged, INotifyProperty
 
     string IDataErrorInfo.Error => DictionaryObjectError!;
     string IDataErrorInfo.this[string columnName] => DictionaryObjectGetError(columnName)!;
-    bool INotifyDataErrorInfo.HasErrors => !HasErrors;
+    bool INotifyDataErrorInfo.HasErrors => !DictionaryObjectHasErrors;
     IEnumerable INotifyDataErrorInfo.GetErrors(string? propertyName) => DictionaryObjectGetErrors(propertyName);
 }
