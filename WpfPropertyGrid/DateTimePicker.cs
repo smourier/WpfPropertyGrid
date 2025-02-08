@@ -95,7 +95,7 @@ public class DateTimePicker : DatePicker
         }
 
         TimeSpan? prev = null;
-        foreach (TimeSpan ts in _timeControl.Items)
+        foreach (var ts in _timeControl.Items.OfType<TimeSpan>())
         {
             if (ts > SelectedTime.Value)
             {
@@ -233,7 +233,7 @@ public class DateTimePicker : DatePicker
         {
             _calendar = (System.Windows.Controls.Calendar)_popup.Child;
             _popup.Child = null;
-            Grid grid = new();
+            var grid = new Grid();
             _popup.Child = grid;
 
             grid.ColumnDefinitions.Add(new ColumnDefinition());

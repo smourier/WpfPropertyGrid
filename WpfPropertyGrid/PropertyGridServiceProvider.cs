@@ -1,11 +1,13 @@
 ﻿namespace WpfPropertyGrid;
 
-public class ServiceProvider : IServiceProvider
+public class PropertyGridServiceProvider : IServiceProvider
 {
-    private readonly ConcurrentDictionary<Type, object?> _services = new();
-    private static readonly ServiceProvider _current = new();
+    public static PropertyGridServiceProvider Current => _current;
 
-    public ServiceProvider()
+    private readonly ConcurrentDictionary<Type, object?> _services = new();
+    private static readonly PropertyGridServiceProvider _current = new();
+
+    public PropertyGridServiceProvider()
     {
         ResetDefaultServices();
     }
@@ -32,8 +34,6 @@ public class ServiceProvider : IServiceProvider
             _services[typeof(IActivator)] = new BaseActivator();
         }
     }
-
-    public static ServiceProvider Current => _current;
 
     public T GetService<T>() => (T)GetService(typeof(T))!;
 

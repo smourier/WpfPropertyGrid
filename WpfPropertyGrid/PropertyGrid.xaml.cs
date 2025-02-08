@@ -26,11 +26,29 @@ public partial class PropertyGrid : UserControl
 
     public event EventHandler<PropertyGridEventArgs>? PropertyChanged;
 
+    public PropertyGrid()
+    {
+        DefaultCategoryName = CategoryAttribute.Default.Category;
+        ChildEditorWindowOffset = 20;
+        InitializeComponent();
+        PropertiesSource = (CollectionViewSource)FindResource("PropertiesSource");
+        CommandBindings.Add(new CommandBinding(NewGuidCommand, OnGuidCommandExecuted, OnGuidCommandCanExecute));
+        CommandBindings.Add(new CommandBinding(EmptyGuidCommand, OnGuidCommandExecuted, OnGuidCommandCanExecute));
+        CommandBindings.Add(new CommandBinding(IncrementGuidCommand, OnGuidCommandExecuted, OnGuidCommandCanExecute));
+        CommandBindings.Add(new CommandBinding(BrowseCommand, OnBrowseCommandExecuted));
+        DecamelizePropertiesDisplayNames = true;
+    }
+
+    public CollectionViewSource PropertiesSource { get; }
+    public virtual string DefaultCategoryName { get; set; }
+    public virtual double ChildEditorWindowOffset { get; set; }
+    public virtual bool DecamelizePropertiesDisplayNames { get; set; }
     public DataGrid BaseGrid => PropertiesGrid;
     public event RoutedEventHandler Browse { add => AddHandler(BrowseEvent, value); remove => RemoveHandler(BrowseEvent, value); }
     public Brush ReadOnlyBackground { get => (Brush)GetValue(ReadOnlyBackgroundProperty); set => SetValue(ReadOnlyBackgroundProperty, value); }
     public object SelectedObject { get => GetValue(SelectedObjectProperty); set => SetValue(SelectedObjectProperty, value); }
     public bool IsReadOnly { get => (bool)GetValue(IsReadOnlyProperty); set => SetValue(IsReadOnlyProperty, value); }
+    public DataTemplateSelector ValueEditorTemplateSelector { get => (DataTemplateSelector)GetValue(ValueEditorTemplateSelectorProperty); set => SetValue(ValueEditorTemplateSelectorProperty, value); }
 
     public bool GroupByCategory
     {
@@ -54,31 +72,10 @@ public partial class PropertyGrid : UserControl
         }
     }
 
-    public CollectionViewSource PropertiesSource { get; private set; }
-
-    public PropertyGrid()
-    {
-        DefaultCategoryName = CategoryAttribute.Default.Category;
-        ChildEditorWindowOffset = 20;
-        InitializeComponent();
-        PropertiesSource = (CollectionViewSource)FindResource("PropertiesSource");
-        CommandBindings.Add(new CommandBinding(NewGuidCommand, OnGuidCommandExecuted, OnGuidCommandCanExecute));
-        CommandBindings.Add(new CommandBinding(EmptyGuidCommand, OnGuidCommandExecuted, OnGuidCommandCanExecute));
-        CommandBindings.Add(new CommandBinding(IncrementGuidCommand, OnGuidCommandExecuted, OnGuidCommandCanExecute));
-        CommandBindings.Add(new CommandBinding(BrowseCommand, OnBrowseCommandExecuted));
-        DecamelizePropertiesDisplayNames = true;
-    }
-
-    public virtual string DefaultCategoryName { get; set; }
-    public virtual double ChildEditorWindowOffset { get; set; }
-    public virtual bool DecamelizePropertiesDisplayNames { get; set; }
-
     public virtual DataGridColumn? GetValueColumn() => PropertiesGrid.Columns.OfType<DataGridTemplateColumn>().FirstOrDefault(c => c.CellTemplateSelector is PropertyGridDataTemplateSelector);
-
     public virtual FrameworkElement? GetValueCellContent(object dataItem)
     {
         ArgumentNullException.ThrowIfNull(dataItem);
-
         var column = GetValueColumn();
         if (column == null)
             return null;
@@ -157,8 +154,8 @@ public partial class PropertyGrid : UserControl
             editor.Owner = this.GetVisualSelfOrParent<Window>();
             if (editor.Owner != null)
             {
-                var wo = PropertyGridWindowManager.GetOptions(editor);
-                if ((wo & PropertyGridWindowOptions.UseDefinedSize) == PropertyGridWindowOptions.UseDefinedSize)
+                var options = PropertyGridWindowManager.GetOptions(editor);
+                if ((options & PropertyGridWindowOptions.UseDefinedSize) == PropertyGridWindowOptions.UseDefinedSize)
                 {
                     if (double.IsNaN(editor.Left))
                     {
@@ -340,12 +337,6 @@ public partial class PropertyGrid : UserControl
         {
             e.CanExecute = true;
         }
-    }
-
-    public DataTemplateSelector ValueEditorTemplateSelector
-    {
-        get => (DataTemplateSelector)GetValue(ValueEditorTemplateSelectorProperty);
-        set => SetValue(ValueEditorTemplateSelectorProperty, value);
     }
 
     public virtual PropertyGridDataProvider CreateDataProvider(object value) => ActivatorService.CreateInstance<PropertyGridDataProvider>(this, value) ?? throw new NotSupportedException();

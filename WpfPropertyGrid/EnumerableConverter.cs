@@ -33,7 +33,7 @@ public class EnumerableConverter : DependencyObject, IValueConverter
         return ConversionService.ChangeType(value, targetType);
     }
 
-    public int MaxItems { get => (int)GetValue(MaxItemsProperty); set => SetValue(MaxItemsProperty, value); }
-    public string Format { get => (string)GetValue(FormatProperty); set => SetValue(FormatProperty, value); }
-    public string Separator { get => (string)GetValue(SeparatorProperty); set => SetValue(SeparatorProperty, value); }
+    public virtual int MaxItems { get => (int)GetValue(MaxItemsProperty); set => SetValue(MaxItemsProperty, value); }
+    public virtual string Format { get => (string)GetValue(FormatProperty); set => SetValue(FormatProperty, value); }
+    public virtual string Separator { get => (string)GetValue(SeparatorProperty); set => SetValue(SeparatorProperty, value); }
 }

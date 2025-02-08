@@ -499,7 +499,7 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
 
     protected class Converter(PropertyGridComboBoxExtension extension) : IValueConverter
     {
-        public PropertyGridComboBoxExtension Extension { get; private set; } = extension;
+        public PropertyGridComboBoxExtension Extension { get; } = extension;
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

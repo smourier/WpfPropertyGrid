@@ -4,8 +4,8 @@ public static class ConversionService
 {
     public static bool TryChangeType<T>(object? input, IFormatProvider? provider, out T? value)
     {
-        var b = ServiceProvider.Current.GetService<IConverter>().TryChangeType(input, typeof(T), provider, out object? v);
-        if (!b)
+        var result = PropertyGridServiceProvider.Current.GetService<IConverter>().TryChangeType(input, typeof(T), provider, out object? v);
+        if (!result)
         {
             if (v == null)
             {
@@ -26,19 +26,14 @@ public static class ConversionService
         }
 
         value = (T?)v;
-        return b;
+        return result;
     }
 
     public static bool TryChangeType<T>(object? input, out T? value) => TryChangeType(input, null, out value);
-
     public static bool TryChangeType(object? input, Type conversionType, out object? value) => TryChangeType(input, conversionType, null, out value);
-
-    public static bool TryChangeType(object? input, Type conversionType, IFormatProvider? provider, out object? value) => ServiceProvider.Current.GetService<IConverter>().TryChangeType(input, conversionType, provider, out value);
-
+    public static bool TryChangeType(object? input, Type conversionType, IFormatProvider? provider, out object? value) => PropertyGridServiceProvider.Current.GetService<IConverter>().TryChangeType(input, conversionType, provider, out value);
     public static object? ChangeType(object? input, Type conversionType) => ChangeType(input, conversionType, null, null);
-
     public static object? ChangeType(object? input, Type conversionType, object? defaultValue) => ChangeType(input, conversionType, defaultValue, null);
-
     public static object? ChangeType(object? input, Type conversionType, object? defaultValue, IFormatProvider? provider)
     {
         ArgumentNullException.ThrowIfNull(conversionType);
@@ -54,9 +49,7 @@ public static class ConversionService
     }
 
     public static T? ChangeType<T>(object? input) => ChangeType(input, default(T));
-
     public static T? ChangeType<T>(object? input, T? defaultValue) => ChangeType(input, defaultValue, null);
-
     public static T? ChangeType<T>(object? input, T? defaultValue, IFormatProvider? provider)
     {
         if (TryChangeType(input, provider, out T? value))

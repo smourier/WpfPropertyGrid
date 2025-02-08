@@ -6,16 +6,18 @@ public static class WpfTracing
     {
         listener ??= new DefaultTraceListener();
         PresentationTraceSources.Refresh();
-        foreach (var pi in typeof(PresentationTraceSources).GetProperties(BindingFlags.Static | BindingFlags.Public))
+        foreach (var property in typeof(PresentationTraceSources).GetProperties(BindingFlags.Static | BindingFlags.Public))
         {
-            if (pi.Name == "FreezableSource")
+            if (property.Name == "FreezableSource")
                 continue;
 
-            if (typeof(TraceSource).IsAssignableFrom(pi.PropertyType))
+            if (typeof(TraceSource).IsAssignableFrom(property.PropertyType))
             {
-                var ts = (TraceSource)pi.GetValue(null, null)!;
-                ts.Listeners.Add(listener);
-                ts.Switch.Level = levels;
+                if (property.GetValue(null, null) is TraceSource source)
+                {
+                    source.Listeners.Add(listener);
+                    source.Switch.Level = levels;
+                }
             }
         }
     }

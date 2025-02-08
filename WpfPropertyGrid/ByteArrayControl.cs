@@ -364,6 +364,5 @@ public class ByteArrayControl : ScrollViewer, IDisposable
             _stream = null;
             _dontDisposeStream = false;
         }
-
     }
 }

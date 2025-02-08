@@ -17,74 +17,12 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
         TypeAttributes = dataProvider.CreateDynamicObject() ?? throw new NotSupportedException();
     }
 
-    public override string ToString() => Name ?? string.Empty;
-
-    public virtual void CanExecute(object? sender, CanExecuteRoutedEventArgs e)
-    {
-        if (Value is IPropertyGridCommandHandler handler)
-        {
-            handler.CanExecute(this, sender, e);
-        }
-    }
-
-    public virtual void Executed(object? sender, ExecutedRoutedEventArgs e)
-    {
-        if (Value is IPropertyGridCommandHandler handler)
-        {
-            handler.Executed(this, sender, e);
-        }
-    }
-
-    public virtual void OnEvent(object? sender, PropertyGridEventArgs e) => Event?.Invoke(sender, e);
-
-    public void UpdateCellBindings(Action<BindingExpression> action) => UpdateCellBindings(null, null, action);
-    public void UpdateCellBindings(string? childName, Action<BindingExpression> action) => UpdateCellBindings(childName, null, action);
-    public virtual void UpdateCellBindings(string? childName, Func<Binding, bool>? where, Action<BindingExpression> action) => DataProvider.Grid.UpdateCellBindings(this, childName, where, action);
-
-    public static bool IsEnumOrNullableEnum(Type type, [NotNullWhen(true)] out Type? enumType, out bool nullable)
-    {
-        ArgumentNullException.ThrowIfNull(type);
-
-        nullable = false;
-        if (type.IsEnum)
-        {
-            enumType = type;
-            return true;
-        }
-
-        if (type.Name == typeof(Nullable<>).Name)
-        {
-            var args = type.GetGenericArguments();
-            if (args.Length == 1 && args[0].IsEnum)
-            {
-                enumType = args[0];
-                nullable = true;
-                return true;
-            }
-        }
-
-        enumType = null;
-        return false;
-    }
-
-    public static PropertyGridProperty? FromEvent(RoutedEventArgs e)
-    {
-        if (e == null)
-            return null;
-
-        if (e.OriginalSource is not FrameworkElement fe)
-            return null;
-
-        return fe.DataContext as PropertyGridProperty;
-    }
-
     public PropertyGridDataProvider DataProvider { get; }
     public virtual int SortOrder { get; set; }
     public virtual Utilities.DynamicObject Attributes { get; }
     public virtual Utilities.DynamicObject TypeAttributes { get; }
     public virtual PropertyGridOptionsAttribute? Options { get; set; }
     public virtual object? Tag { get; set; }
-
     public virtual Type? PropertyType { get => DictionaryObjectGetPropertyValue<Type>(); set => DictionaryObjectSetPropertyValue(value); }
     public virtual string? Name { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
     public virtual bool IsError { get => DictionaryObjectGetPropertyValue<bool>(); set => DictionaryObjectSetPropertyValue(value); }
@@ -221,6 +159,41 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
         }
     }
 
+    public virtual object? ClonedValue
+    {
+        get
+        {
+            CloneValue(false);
+            return _clonedValue;
+        }
+    }
+
+    public virtual object? Value
+    {
+        get => DictionaryObjectGetPropertyValue<object>();
+        set
+        {
+            object? changedValue = null;
+            if (PropertyType != null && !TryChangeType(value, PropertyType, CultureInfo.CurrentCulture, out changedValue))
+                throw new ArgumentException("Cannot convert value {" + value + "} to type '" + PropertyType.FullName + "'.");
+
+            if (Descriptor != null)
+            {
+                try
+                {
+                    Descriptor.SetValue(DataProvider.Data, changedValue);
+                    var finalValue = Descriptor.GetValue(DataProvider.Data);
+                    DictionaryObjectSetPropertyValue(finalValue);
+                    OnValueChanged();
+                }
+                catch (Exception e)
+                {
+                    throw new ArgumentException("Cannot set value {" + value + "} to object.", e);
+                }
+            }
+        }
+    }
+
     public virtual string? TextValue
     {
         get
@@ -259,6 +232,8 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
         }
     }
 
+    public override string ToString() => Name ?? string.Empty;
+
     public virtual void OnValueChanged()
     {
         OnPropertyChanged(nameof(TextValue));
@@ -269,7 +244,6 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
     }
 
     public void ResetClonedValue() => _valueCloned = false;
-
     public virtual void CloneValue(bool refresh)
     {
         if (_valueCloned && !refresh)
@@ -279,41 +253,26 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
         _valueCloned = true;
     }
 
-    public virtual object? ClonedValue
+    public virtual void CanExecute(object? sender, CanExecuteRoutedEventArgs e)
     {
-        get
+        if (Value is IPropertyGridCommandHandler handler)
         {
-            CloneValue(false);
-            return _clonedValue;
+            handler.CanExecute(this, sender, e);
         }
     }
 
-    public virtual object? Value
+    public virtual void Executed(object? sender, ExecutedRoutedEventArgs e)
     {
-        get => DictionaryObjectGetPropertyValue<object>();
-        set
+        if (Value is IPropertyGridCommandHandler handler)
         {
-            object? changedValue = null;
-            if (PropertyType != null && !TryChangeType(value, PropertyType, CultureInfo.CurrentCulture, out changedValue))
-                throw new ArgumentException("Cannot convert value {" + value + "} to type '" + PropertyType.FullName + "'.");
-
-            if (Descriptor != null)
-            {
-                try
-                {
-                    Descriptor.SetValue(DataProvider.Data, changedValue);
-                    var finalValue = Descriptor.GetValue(DataProvider.Data);
-                    DictionaryObjectSetPropertyValue(finalValue);
-                    OnValueChanged();
-                }
-                catch (Exception e)
-                {
-                    throw new ArgumentException("Cannot set value {" + value + "} to object.", e);
-                }
-            }
+            handler.Executed(this, sender, e);
         }
     }
 
+    public virtual void OnEvent(object? sender, PropertyGridEventArgs e) => Event?.Invoke(sender, e);
+    public void UpdateCellBindings(Action<BindingExpression> action) => UpdateCellBindings(null, null, action);
+    public void UpdateCellBindings(string? childName, Action<BindingExpression> action) => UpdateCellBindings(childName, null, action);
+    public virtual void UpdateCellBindings(string? childName, Func<Binding, bool>? where, Action<BindingExpression> action) => DataProvider.Grid.UpdateCellBindings(this, childName, where, action);
     protected virtual bool TryChangeType(object? value, Type type, IFormatProvider? provider, out object? changedValue)
     {
         ArgumentNullException.ThrowIfNull(type);
@@ -360,5 +319,42 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
             return 1;
 
         return string.Compare(DisplayName, other.DisplayName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static bool IsEnumOrNullableEnum(Type type, [NotNullWhen(true)] out Type? enumType, out bool nullable)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+
+        nullable = false;
+        if (type.IsEnum)
+        {
+            enumType = type;
+            return true;
+        }
+
+        if (type.Name == typeof(Nullable<>).Name)
+        {
+            var args = type.GetGenericArguments();
+            if (args.Length == 1 && args[0].IsEnum)
+            {
+                enumType = args[0];
+                nullable = true;
+                return true;
+            }
+        }
+
+        enumType = null;
+        return false;
+    }
+
+    public static PropertyGridProperty? FromEvent(RoutedEventArgs e)
+    {
+        if (e == null)
+            return null;
+
+        if (e.OriginalSource is not FrameworkElement fe)
+            return null;
+
+        return fe.DataContext as PropertyGridProperty;
     }
 }

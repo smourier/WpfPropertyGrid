@@ -27,8 +27,9 @@ public class PropertyGridDataTemplate
     public bool? IsValueType { get; set; }
     public string? Category { get; set; }
     public string? Name { get; set; }
-
     public virtual IReadOnlyList<Type> ResolvedPropertyTypes => _resolvedPropertyTypes.Value;
+    public virtual IReadOnlyList<Type> ResolvedCollectionItemPropertyTypes => _resolvedCollectionItemPropertyTypes.Value;
+
     private List<Type> GetResolvedPropertyTypes()
     {
         var types = new List<Type>();
@@ -47,6 +48,7 @@ public class PropertyGridDataTemplate
             {
                 type = TypeResolutionService.ResolveType(name);
             }
+
             if (type != null)
             {
                 types.Add(type);
@@ -55,7 +57,6 @@ public class PropertyGridDataTemplate
         return types;
     }
 
-    public virtual IReadOnlyList<Type> ResolvedCollectionItemPropertyTypes => _resolvedCollectionItemPropertyTypes.Value;
     private List<Type> GetResolvedCollectionItemPropertyTypes()
     {
         var types = new List<Type>();

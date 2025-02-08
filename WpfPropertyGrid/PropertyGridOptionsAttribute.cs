@@ -1,12 +1,8 @@
 namespace WpfPropertyGrid;
 
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class PropertyGridOptionsAttribute : Attribute
 {
-    public PropertyGridOptionsAttribute()
-    {
-        EnumSeparator = ", ";
-    }
-
     public string[]? EnumNames { get; set; }
     public object[]? EnumValues { get; set; }
     public bool IsEnum { get; set; }
@@ -24,7 +20,7 @@ public class PropertyGridOptionsAttribute : Attribute
     public bool HasDefaultValue { get; set; }
     public bool ForcePropertyChanged { get; set; }
     public object? DefaultValue { get; set; }
-    public string? EnumSeparator { get; set; }
+    public string? EnumSeparator { get; set; } = ", ";
 
     public static DataTemplate? SelectTemplate(PropertyGridProperty property, object? item, DependencyObject container)
     {

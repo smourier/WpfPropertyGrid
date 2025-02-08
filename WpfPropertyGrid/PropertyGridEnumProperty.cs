@@ -2,6 +2,8 @@ namespace WpfPropertyGrid;
 
 public class PropertyGridEnumProperty(PropertyGridDataProvider provider) : PropertyGridProperty(provider)
 {
+    public virtual Utilities.DynamicObject EnumAttributes { get; } = provider.CreateDynamicObject() ?? throw new NotSupportedException();
+
     public override void OnValueChanged()
     {
         base.OnValueChanged();
@@ -17,6 +19,4 @@ public class PropertyGridEnumProperty(PropertyGridDataProvider provider) : Prope
             }
         }
     }
-
-    public virtual Utilities.DynamicObject EnumAttributes { get; private set; } = provider.CreateDynamicObject() ?? throw new NotSupportedException();
 }

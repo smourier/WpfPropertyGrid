@@ -9,19 +9,20 @@ public class PropertyGridDataProvider : IListSource
 
         Grid = grid;
         Data = data;
-        Properties = [];
         ScanProperties();
     }
 
-    public PropertyGrid Grid { get; private set; }
-    public object Data { get; private set; }
-    public virtual ObservableCollection<PropertyGridProperty> Properties { get; private set; }
+    bool IListSource.ContainsListCollection => false;
+    IList IListSource.GetList() => Properties;
+    public PropertyGrid Grid { get; }
+    public object Data { get; }
+    public virtual ObservableCollection<PropertyGridProperty> Properties { get; } = [];
 
     public static bool HasProperties(Type type)
     {
         ArgumentNullException.ThrowIfNull(type);
 
-        foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(type))
+        foreach (var descriptor in TypeDescriptor.GetProperties(type).OfType<PropertyDescriptor>())
         {
             if (!descriptor.IsBrowsable)
                 continue;
@@ -118,13 +119,13 @@ public class PropertyGridDataProvider : IListSource
         if (attributes == null || dynamicObject == null)
             return;
 
-        foreach (var pga in attributes)
+        foreach (var attribute in attributes)
         {
-            if (string.IsNullOrWhiteSpace(pga.Name) || pga.Type == null)
+            if (string.IsNullOrWhiteSpace(attribute.Name) || attribute.Type == null)
                 continue;
 
-            var prop = dynamicObject.AddProperty(pga.Name, pga.Type, null);
-            prop.SetValue(dynamicObject, pga.Value);
+            var prop = dynamicObject.AddProperty(attribute.Name, attribute.Type, null);
+            prop.SetValue(dynamicObject, attribute.Value);
         }
     }
 
@@ -176,7 +177,7 @@ public class PropertyGridDataProvider : IListSource
     {
         Properties.Clear();
         var props = new List<PropertyGridProperty>();
-        foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(Data))
+        foreach (var descriptor in TypeDescriptor.GetProperties(Data).OfType<PropertyDescriptor>())
         {
             if (!descriptor.IsBrowsable)
                 continue;
@@ -199,7 +200,4 @@ public class PropertyGridDataProvider : IListSource
             Properties.Add(property);
         }
     }
-
-    bool IListSource.ContainsListCollection => false;
-    IList IListSource.GetList() => Properties;
 }

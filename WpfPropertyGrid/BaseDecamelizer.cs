@@ -10,7 +10,6 @@ public class BaseDecamelizer : IDecamelizer
         options ??= new DecamelizeOptions();
 
         var sb = new StringBuilder(text.Length);
-
         var lastCategory = CharUnicodeInfo.GetUnicodeCategory(text[0]);
         var prevCategory = lastCategory;
         if (lastCategory == UnicodeCategory.UppercaseLetter)
