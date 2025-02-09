@@ -85,4 +85,48 @@ public static class WpfUtilities
         SetBindablePassword(passwordBox, passwordBox.SecurePassword);
         SetUpdatingPassword(passwordBox, false);
     }
+
+    // https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/ui/apply-windows-themes
+    public static bool IsColorLight(Windows.UI.Color color) => ((5 * color.G) + (2 * color.R) + color.B) > (8 * 128);
+
+    public static bool? IsDarkMode()
+    {
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 10240))
+            return IsColorLight(new UISettings().GetColorValue(UIColorType.Foreground));
+
+        return null;
+    }
+
+#pragma warning disable WPF0001 // Type is for evaluation purposes only and is subject to change or removal in future updates
+    public static WpfTheme GetTheme(ThemeMode mode)
+    {
+        if (mode == ThemeMode.System)
+            return IsDarkMode() == true ? WpfTheme.Dark : WpfTheme.Light;
+
+        if (mode == ThemeMode.Dark)
+            return WpfTheme.Dark;
+
+        if (mode == ThemeMode.Light)
+            return WpfTheme.Light;
+
+        return WpfTheme.None;
+    }
+
+    // returns only none or dark or light
+    public static WpfTheme GetTheme(Application application)
+    {
+        ArgumentNullException.ThrowIfNull(application);
+        return GetTheme(application.ThemeMode);
+    }
+
+    public static WpfTheme GetTheme(DependencyObject obj)
+    {
+        ArgumentNullException.ThrowIfNull(obj);
+        var tm = Window.GetWindow(obj).ThemeMode;
+        if (tm == ThemeMode.None)
+            return GetTheme(Application.Current);
+
+        return GetTheme(tm);
+    }
+#pragma warning restore WPF0001 // Type is for evaluation purposes only and is subject to change or removal in future updates
 }

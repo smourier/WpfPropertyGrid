@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net9.0-windows</TargetFramework>
+		<TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWPF>true</UseWPF>
@@ -34,6 +34,7 @@
 		<Using Include="System.Linq" />
 		<Using Include="System.Reflection" />
 		<Using Include="System.Runtime.InteropServices" />
+		<Using Include="System.Runtime.Versioning" />
 		<Using Include="System.Security" />
 		<Using Include="System.Text" />
 		<Using Include="System.Windows" />
@@ -43,6 +44,7 @@
 		<Using Include="System.Windows.Markup" />
 		<Using Include="System.Windows.Media" />
 		<Using Include="Microsoft.Web.WebView2.Wpf" />
+		<Using Include="Windows.UI.ViewManagement" />
 		<Using Include="WpfPropertyGrid.Utilities" />
 		<Using Include="WpfPropertyGrid.Samples.Utilities" />
 	</ItemGroup>

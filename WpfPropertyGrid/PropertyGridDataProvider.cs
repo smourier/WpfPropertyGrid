@@ -85,6 +85,17 @@ public class PropertyGridDataProvider : IListSource
 
             property.IsEnum = options.IsEnum;
             property.IsFlagsEnum = options.IsFlagsEnum;
+
+            var getMethod = options.GetValueMethodName.Nullify();
+            if (getMethod != null)
+            {
+                var type = property.DataProvider.Data.GetType();
+                var method = type.GetMethod(getMethod, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static) ?? throw new InvalidOperationException($"Cannot find method '{getMethod}' on object of type '{type.FullName}'.");
+                if (method.GetParameters().Length > 1)
+                    throw new InvalidOperationException($"Method '{getMethod}' on object of type '{type.FullName}' must have zero argument or one argument of type '{nameof(PropertyGridProperty)}'.");
+
+                property.GetMethod = method;
+            }
         }
 
         var att = descriptor.Attributes.OfType<DefaultValueAttribute>().FirstOrDefault();

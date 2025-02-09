@@ -8,222 +8,224 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:util="clr-namespace:WpfPropertyGrid.Samples.Utilities"
     xmlns:wv="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
-    StartupUri="MainWindow.xaml">
+    StartupUri="MainWindow.xaml"
+    ThemeMode="None">
     <Application.Resources>
+        <ResourceDictionary>
 
-        <pg:UniversalConverter x:Key="BoolToDefaultValueBackgroundConverter">
-            <pg:UniversalConverter.Switch>
-                <pg:UniversalConverterCase ConvertedValue="#F0F0F0" Value="true" />
-            </pg:UniversalConverter.Switch>
-        </pg:UniversalConverter>
+            <pg:UniversalConverter x:Key="BoolToDefaultValueBackgroundConverter">
+                <pg:UniversalConverter.Switch>
+                    <pg:UniversalConverterCase ConvertedValue="#F0F0F0" Value="true" />
+                </pg:UniversalConverter.Switch>
+            </pg:UniversalConverter>
 
-        <pg:ChangeTypeConverter x:Key="ChangeTypeConverter" />
+            <pg:ChangeTypeConverter x:Key="ChangeTypeConverter" />
 
-        <DataTemplate x:Key="AddressListEditor">
-            <DockPanel LastChildFill="true" ToolTip="{Binding Value, Mode=OneWay}">
-                <Button
-                    Width="24"
-                    HorizontalContentAlignment="Center"
-                    Command="{x:Static pg:PropertyGrid.BrowseCommand}"
-                    CommandParameter="AddressListEditorWindow"
-                    Content="..."
-                    DockPanel.Dock="Right"
-                    IsEnabled="{Binding IsReadWrite}" />
-                <TextBox
+            <DataTemplate x:Key="AddressListEditor">
+                <DockPanel LastChildFill="true" ToolTip="{Binding Value, Mode=OneWay}">
+                    <Button
+                        Width="24"
+                        HorizontalContentAlignment="Center"
+                        Command="{x:Static pg:PropertyGrid.BrowseCommand}"
+                        CommandParameter="AddressListEditorWindow"
+                        Content="..."
+                        DockPanel.Dock="Right"
+                        IsEnabled="{Binding IsReadWrite}" />
+                    <TextBox
+                        Background="{Binding IsDefaultValue, Converter={StaticResource BoolToDefaultValueBackgroundConverter}}"
+                        DockPanel.Dock="Left"
+                        IsReadOnly="True"
+                        Text="{Binding TextValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+            </DataTemplate>
+
+            <DataTemplate x:Key="BooleanDropDownListEditor">
+                <ComboBox
+                    DisplayMemberPath="Key"
+                    ItemsSource="{util:BooleanValueProvider IsNullable=False}"
+                    SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedValuePath="Value" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="NullableBooleanDropDownListEditor">
+                <ComboBox
+                    DisplayMemberPath="Key"
+                    ItemsSource="{util:BooleanValueProvider IsNullable=True}"
+                    SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedValuePath="Value" />
+            </DataTemplate>
+
+            <samples:AddressListEditorWindow x:Key="AddressListEditorWindow" x:Shared="False" />
+
+            <DataTemplate x:Key="CustomEditor">
+                <DockPanel LastChildFill="true" ToolTip="{Binding Value, Mode=OneWay}">
+                    <Button
+                        Width="24"
+                        HorizontalContentAlignment="Center"
+                        Command="{x:Static pg:PropertyGrid.BrowseCommand}"
+                        CommandParameter="CustomEditorWindow"
+                        Content="..."
+                        DockPanel.Dock="Right"
+                        IsEnabled="{Binding IsReadWrite}" />
+
+                    <Button
+                        Width="Auto"
+                        HorizontalContentAlignment="Center"
+                        Command="{x:Static pg:PropertyGrid.BrowseCommand}"
+                        CommandParameter="UrlPreviewWindow"
+                        Content="Preview"
+                        DockPanel.Dock="Right" />
+
+                    <TextBox
+                        Background="{Binding IsDefaultValue, Converter={StaticResource BoolToDefaultValueBackgroundConverter}}"
+                        DockPanel.Dock="Left"
+                        IsReadOnly="{Binding IsReadOnly}"
+                        Text="{Binding TextValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+            </DataTemplate>
+
+            <Window
+                x:Key="UrlPreviewWindow"
+                Name="UrlPreviewWindow"
+                Title="Text"
+                Width="400"
+                Height="400"
+                x:Shared="false">
+                <Window.CommandBindings>
+                    <CommandBinding
+                        CanExecute="OnEditorWindowCloseCanExecute"
+                        Command="Close"
+                        Executed="OnEditorWindowCloseExecuted" />
+                </Window.CommandBindings>
+                <Window.InputBindings>
+                    <KeyBinding Key="Escape" Command="Close" />
+                </Window.InputBindings>
+                <Grid>
+                    <wv:WebView2 util:WpfUtilities.BindableSource="{Binding Value, Mode=OneWay}" />
+                </Grid>
+            </Window>
+
+            <Window
+                x:Key="CustomEditorWindow"
+                Name="CustomEditorWindow"
+                Title="Text"
+                Width="400"
+                Height="400"
+                x:Shared="false">
+                <Window.CommandBindings>
+                    <CommandBinding
+                        CanExecute="OnEditorWindowCloseCanExecute"
+                        Command="Close"
+                        Executed="OnEditorWindowCloseExecuted" />
+                </Window.CommandBindings>
+                <Window.InputBindings>
+                    <KeyBinding Key="Escape" Command="Close" />
+                </Window.InputBindings>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="45" />
+                    </Grid.RowDefinitions>
+                    <TextBox
+                        Grid.Row="0"
+                        AcceptsReturn="True"
+                        FontFamily="{Binding Attributes.FontFamily}"
+                        IsReadOnly="{Binding IsReadOnly}"
+                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        Text="{Binding Value}" />
+                    <Button
+                        Name="CustomEditorWindowClose"
+                        Grid.Row="1"
+                        Width="75"
+                        Height="23"
+                        Margin="0,0,10,10"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Command="Close"
+                        Content="Close"
+                        IsDefault="True" />
+                </Grid>
+            </Window>
+
+            <DataTemplate x:Key="PercentEditor">
+                <Slider
                     Background="{Binding IsDefaultValue, Converter={StaticResource BoolToDefaultValueBackgroundConverter}}"
-                    DockPanel.Dock="Left"
-                    IsReadOnly="True"
-                    Text="{Binding TextValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            </DockPanel>
-        </DataTemplate>
+                    Interval="1"
+                    IsEnabled="{Binding IsReadWrite}"
+                    IsSnapToTickEnabled="True"
+                    Maximum="100"
+                    Minimum="0"
+                    Orientation="Horizontal"
+                    ToolTip="{Binding TextValue}"
+                    Value="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ChangeTypeConverter}, ConverterParameter={x:Type sys:Double}}" />
+            </DataTemplate>
 
-        <DataTemplate x:Key="BooleanDropDownListEditor">
-            <ComboBox
-                DisplayMemberPath="Key"
-                ItemsSource="{util:BooleanValueProvider IsNullable=False}"
-                SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedValuePath="Value" />
-        </DataTemplate>
+            <DataTemplate x:Key="ColorEditor">
+                <DataTemplate.Resources>
+                    <ObjectDataProvider
+                        x:Key="colorPropertiesOdp"
+                        MethodName="GetProperties"
+                        ObjectInstance="{x:Type Colors}" />
+                </DataTemplate.Resources>
 
-        <DataTemplate x:Key="NullableBooleanDropDownListEditor">
-            <ComboBox
-                DisplayMemberPath="Key"
-                ItemsSource="{util:BooleanValueProvider IsNullable=True}"
-                SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedValuePath="Value" />
-        </DataTemplate>
+                <ComboBox
+                    ItemsSource="{Binding Source={StaticResource colorPropertiesOdp}}"
+                    SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedValuePath="Name">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel
+                                Height="18"
+                                Margin="0,0,0,2"
+                                Orientation="Horizontal">
+                                <Border
+                                    Width="50"
+                                    VerticalAlignment="Stretch"
+                                    Background="{Binding Name}"
+                                    BorderThickness="1"
+                                    CornerRadius="2" />
+                                <TextBlock Margin="8,0,0,0" Text="{Binding Name}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
-        <samples:AddressListEditorWindow x:Key="AddressListEditorWindow" x:Shared="False" />
+            </DataTemplate>
 
-        <DataTemplate x:Key="CustomEditor">
-            <DockPanel LastChildFill="true" ToolTip="{Binding Value, Mode=OneWay}">
-                <Button
-                    Width="24"
-                    HorizontalContentAlignment="Center"
-                    Command="{x:Static pg:PropertyGrid.BrowseCommand}"
-                    CommandParameter="CustomEditorWindow"
-                    Content="..."
-                    DockPanel.Dock="Right"
-                    IsEnabled="{Binding IsReadWrite}" />
+            <DataTemplate x:Key="FontEditor">
+                <ComboBox ItemTemplate="{DynamicResource FontTemplate}" SelectedItem="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBox.Resources>
+                        <CollectionViewSource x:Key="Fonts" Source="{Binding Source={x:Static Fonts.SystemFontFamilies}}">
+                            <CollectionViewSource.SortDescriptions>
+                                <componentModel:SortDescription PropertyName="Source" />
+                            </CollectionViewSource.SortDescriptions>
+                        </CollectionViewSource>
 
-                <Button
-                    Width="Auto"
-                    HorizontalContentAlignment="Center"
-                    Command="{x:Static pg:PropertyGrid.BrowseCommand}"
-                    CommandParameter="UrlPreviewWindow"
-                    Content="Preview"
-                    DockPanel.Dock="Right" />
+                        <Style x:Key="FontStyle">
+                            <Setter Property="Control.FontFamily" Value="{Binding Source}" />
+                            <Setter Property="Control.FontSize" Value="16" />
+                        </Style>
 
-                <TextBox
-                    Background="{Binding IsDefaultValue, Converter={StaticResource BoolToDefaultValueBackgroundConverter}}"
-                    DockPanel.Dock="Left"
-                    IsReadOnly="{Binding IsReadOnly}"
-                    Text="{Binding TextValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            </DockPanel>
-        </DataTemplate>
+                        <DataTemplate x:Key="FontTemplate">
+                            <StackPanel VirtualizingStackPanel.IsVirtualizing="True">
+                                <TextBlock
+                                    Style="{StaticResource FontStyle}"
+                                    Text="{Binding Source}"
+                                    ToolTip="{Binding Source}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.Resources>
 
-        <Window
-            x:Key="UrlPreviewWindow"
-            Name="UrlPreviewWindow"
-            Title="Text"
-            Width="400"
-            Height="400"
-            x:Shared="false">
-            <Window.CommandBindings>
-                <CommandBinding
-                    CanExecute="OnEditorWindowCloseCanExecute"
-                    Command="Close"
-                    Executed="OnEditorWindowCloseExecuted" />
-            </Window.CommandBindings>
-            <Window.InputBindings>
-                <KeyBinding Key="Escape" Command="Close" />
-            </Window.InputBindings>
-            <Grid>
-                <wv:WebView2 util:WpfUtilities.BindableSource="{Binding Value, Mode=OneWay}" />
-            </Grid>
-        </Window>
+                    <ComboBox.ItemsSource>
+                        <Binding Source="{StaticResource Fonts}" />
+                    </ComboBox.ItemsSource>
+                </ComboBox>
+            </DataTemplate>
 
-        <Window
-            x:Key="CustomEditorWindow"
-            Name="CustomEditorWindow"
-            Title="Text"
-            Width="400"
-            Height="400"
-            x:Shared="false">
-            <Window.CommandBindings>
-                <CommandBinding
-                    CanExecute="OnEditorWindowCloseCanExecute"
-                    Command="Close"
-                    Executed="OnEditorWindowCloseExecuted" />
-            </Window.CommandBindings>
-            <Window.InputBindings>
-                <KeyBinding Key="Escape" Command="Close" />
-            </Window.InputBindings>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="45" />
-                </Grid.RowDefinitions>
-                <TextBox
-                    Grid.Row="0"
-                    AcceptsReturn="True"
-                    FontFamily="{Binding Attributes.FontFamily}"
-                    IsReadOnly="{Binding IsReadOnly}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    Text="{Binding Value}" />
-                <Button
-                    Name="CustomEditorWindowClose"
-                    Grid.Row="1"
-                    Width="75"
-                    Height="23"
-                    Margin="0,0,10,10"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Command="Close"
-                    Content="Close"
-                    IsDefault="True" />
-            </Grid>
-        </Window>
-
-        <DataTemplate x:Key="PercentEditor">
-            <Slider
-                Background="{Binding IsDefaultValue, Converter={StaticResource BoolToDefaultValueBackgroundConverter}}"
-                Interval="1"
-                IsEnabled="{Binding IsReadWrite}"
-                IsSnapToTickEnabled="True"
-                Maximum="100"
-                Minimum="0"
-                Orientation="Horizontal"
-                ToolTip="{Binding TextValue}"
-                Value="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ChangeTypeConverter}, ConverterParameter={x:Type sys:Double}}" />
-        </DataTemplate>
-
-        <DataTemplate x:Key="ColorEditor">
-            <DataTemplate.Resources>
-                <ObjectDataProvider
-                    x:Key="colorPropertiesOdp"
-                    MethodName="GetProperties"
-                    ObjectInstance="{x:Type Colors}" />
-            </DataTemplate.Resources>
-
-            <ComboBox
-                ItemsSource="{Binding Source={StaticResource colorPropertiesOdp}}"
-                SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedValuePath="Name">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel
-                            Height="18"
-                            Margin="0,0,0,2"
-                            Orientation="Horizontal">
-                            <Border
-                                Width="50"
-                                VerticalAlignment="Stretch"
-                                Background="{Binding Name}"
-                                BorderBrush="Black"
-                                BorderThickness="1"
-                                CornerRadius="2" />
-                            <TextBlock Margin="8,0,0,0" Text="{Binding Name}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-
-        </DataTemplate>
-
-        <DataTemplate x:Key="FontEditor">
-            <ComboBox ItemTemplate="{DynamicResource FontTemplate}" SelectedItem="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <ComboBox.Resources>
-                    <CollectionViewSource x:Key="Fonts" Source="{Binding Source={x:Static Fonts.SystemFontFamilies}}">
-                        <CollectionViewSource.SortDescriptions>
-                            <componentModel:SortDescription PropertyName="Source" />
-                        </CollectionViewSource.SortDescriptions>
-                    </CollectionViewSource>
-
-                    <Style x:Key="FontStyle">
-                        <Setter Property="Control.FontFamily" Value="{Binding Source}" />
-                        <Setter Property="Control.FontSize" Value="16" />
-                    </Style>
-
-                    <DataTemplate x:Key="FontTemplate">
-                        <StackPanel VirtualizingStackPanel.IsVirtualizing="True">
-                            <TextBlock
-                                Style="{StaticResource FontStyle}"
-                                Text="{Binding Source}"
-                                ToolTip="{Binding Source}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.Resources>
-
-                <ComboBox.ItemsSource>
-                    <Binding Source="{StaticResource Fonts}" />
-                </ComboBox.ItemsSource>
-            </ComboBox>
-        </DataTemplate>
-
-        <DataTemplate x:Key="PasswordEditor">
-            <PasswordBox util:WpfUtilities.BindPassword="True" util:WpfUtilities.BindablePassword="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </DataTemplate>
+            <DataTemplate x:Key="PasswordEditor">
+                <PasswordBox util:WpfUtilities.BindPassword="True" util:WpfUtilities.BindablePassword="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

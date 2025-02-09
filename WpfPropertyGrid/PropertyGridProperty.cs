@@ -36,6 +36,7 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
     public virtual bool HasDefaultValue { get => DictionaryObjectGetPropertyValue<bool>(); set => DictionaryObjectSetPropertyValue(value); }
     public virtual PropertyDescriptor? Descriptor { get => DictionaryObjectGetPropertyValue<PropertyDescriptor>(); set => DictionaryObjectSetPropertyValue(value); }
     public virtual TypeConverter? Converter { get => DictionaryObjectGetPropertyValue<TypeConverter>(); set => DictionaryObjectSetPropertyValue(value); }
+    public virtual MethodInfo? GetMethod { get => DictionaryObjectGetPropertyValue<MethodInfo>(); set => DictionaryObjectSetPropertyValue(value); }
 
     public virtual object? DefaultValue
     {
@@ -287,12 +288,45 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
 
     public virtual void RefreshValueFromDescriptor(DictionaryObjectPropertySetOptions options = DictionaryObjectPropertySetOptions.None)
     {
-        if (Descriptor == null)
+        if (Descriptor == null && GetMethod == null)
             return;
 
         try
         {
-            var value = Descriptor.GetValue(DataProvider.Data);
+            var valueSet = false;
+            object? value = null;
+            if (GetMethod != null)
+            {
+                var objects = new List<object?>();
+                var parameters = GetMethod.GetParameters();
+                if (parameters.Length == 0)
+                {
+                    valueSet = true;
+                }
+                else if (parameters.Length == 1)
+                {
+                    objects.Add(this);
+                    valueSet = true;
+                }
+
+                if (valueSet)
+                {
+                    if (GetMethod.IsStatic)
+                    {
+                        value = GetMethod.Invoke(null, [.. objects]);
+                    }
+                    else
+                    {
+                        value = GetMethod.Invoke(DataProvider.Data, [.. objects]);
+                    }
+                }
+            }
+
+            if (!valueSet)
+            {
+                value = Descriptor!.GetValue(DataProvider.Data);
+            }
+
             DictionaryObjectSetPropertyValue(value, options, nameof(Value));
             OnValueChanged();
         }

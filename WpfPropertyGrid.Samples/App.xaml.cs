@@ -8,6 +8,19 @@ public partial class App : Application
 #if DEBUG
         WpfTracing.Enable();
 #endif
+
+        // WPF doesn't (currently?) do this automatically 
+        var theme = WpfUtilities.GetTheme(this);
+        switch (theme)
+        {
+            case WpfTheme.Dark:
+                Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/WpfPropertyGrid;component/Themes/Fluent.Dark.xaml", UriKind.RelativeOrAbsolute) });
+                break;
+
+            case WpfTheme.Light:
+                Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/WpfPropertyGrid;component/Themes/Fluent.Light.xaml", UriKind.RelativeOrAbsolute) });
+                break;
+        }
     }
 
     private void OnEditorWindowCloseCanExecute(object? sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;

@@ -80,11 +80,11 @@ public class ByteArrayControl : ScrollViewer, IDisposable
         if (bac._stream == null)
             return 0L;
 
-        var l = (long)baseValue;
-        if (l > bac._stream.Length || l < 0)
+        var value = (long)baseValue;
+        if (value > bac._stream.Length || value < 0)
             return bac._stream.Length;
 
-        return l;
+        return value;
     }
 
     private static void OnOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

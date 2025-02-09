@@ -21,10 +21,22 @@ public class Customer : DictionaryObject
         SampleBooleanDropDownList = true;
         MultiEnumString = "First, Second";
         SubObject = Address.Parse("1600 Amphitheatre Parkway Mountain View, CA 94043, USA");
-
-        var dw = DaysOfWeek.Wednesday | DaysOfWeek.Sunday;
-        var ts = dw.ToString();
     }
+
+    [DisplayName("System In Dark Mode")]
+    [Category("Theming")]
+#pragma warning disable CA1822 // Mark members as static
+    public bool IsSystemDarkMode => WpfUtilities.IsDarkMode() == true;
+#pragma warning restore CA1822 // Mark members as static
+
+    [DisplayName("Window Theme Mode")]
+    [Category("Theming")]
+    [PropertyGridOptions(GetValueMethodName = nameof(GetCurrentThemeMode))]
+#pragma warning disable CA1822 // Mark members as static
+    public WpfTheme? CurrentThemeMode => null;
+#pragma warning restore CA1822 // Mark members as static
+
+    private static WpfTheme GetCurrentThemeMode(PropertyGridProperty property) => WpfUtilities.GetTheme(property.DataProvider.Grid);
 
     [DisplayName("Guid (see menu on right-click)")]
     public Guid Id { get => DictionaryObjectGetPropertyValue<Guid>(); set => DictionaryObjectSetPropertyValue(value); }

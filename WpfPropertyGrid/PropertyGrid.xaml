@@ -27,27 +27,6 @@
         <Style x:Key="ValidationLabel" TargetType="{x:Type Label}">
             <Setter Property="DataGridCell.ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}" />
         </Style>
-        <Style x:Key="ValidationTextBox2" TargetType="{x:Type TextBox}">
-            <Setter Property="DataGridCell.ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}" />
-        </Style>
-        <Style x:Key="ValidationTextBox" TargetType="{x:Type TextBox}">
-            <Setter Property="Validation.ErrorTemplate">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Border
-                            Width="1"
-                            Height="23"
-                            BorderBrush="Red"
-                            BorderThickness="1" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="true">
-                    <Setter Property="DataGridCell.ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
 
         <CollectionViewSource x:Key="PropertiesSource">
             <CollectionViewSource.GroupDescriptions>
@@ -392,15 +371,14 @@
                     FontFamily="{Binding Attributes.FontFamily}"
                     FontSize="{Binding Attributes.FontSize}"
                     Foreground="{Binding Attributes.Foreground}"
-                    Style="{StaticResource ValidationTextBox2}"
+                    Style="{StaticResource {ComponentResourceKey {x:Type pg:PropertyGrid},
+                                                                 ValidationTextBox}}"
                     Text="{Binding TextValue, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="FormatTextEditor">
             <Grid>
                 <Label
-                    Height="20"
-                    Padding="3,0,0,0"
                     VerticalContentAlignment="Center"
                     Background="{Binding Attributes.Background}"
                     Content="{Binding TextValue, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
@@ -415,13 +393,13 @@
     </UserControl.Resources>
     <ScrollViewer>
         <DataGrid
-            Name="PropertiesGrid"
+            x:Name="PropertiesGrid"
+            x:FieldModifier="public"
             AutoGenerateColumns="False"
             CanUserReorderColumns="False"
             CanUserResizeRows="False"
             FrozenColumnCount="1"
             HeadersVisibility="None"
-            HorizontalGridLinesBrush="#D0D0D0"
             ItemsSource="{Binding Source={StaticResource PropertiesSource}}"
             MinRowHeight="24"
             PreviewKeyUp="OnUIElementPreviewKeyUp"
@@ -429,13 +407,11 @@
             SelectionUnit="Cell"
             ToggleButton.Checked="OnToggleButtonIsCheckedChanged"
             ToggleButton.Indeterminate="OnToggleButtonIsCheckedChanged"
-            ToggleButton.Unchecked="OnToggleButtonIsCheckedChanged"
-            VerticalGridLinesBrush="#D0D0D0">
+            ToggleButton.Unchecked="OnToggleButtonIsCheckedChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn
                     Width="SizeToCells"
                     Binding="{Binding DisplayName}"
-                    Foreground="Black"
                     Header="Name"
                     IsReadOnly="True">
                     <DataGridTextColumn.CellStyle>
@@ -538,7 +514,8 @@
                                         CharacterCasing="Upper"
                                         FontFamily="Lucida Console"
                                         MaxLength="32"
-                                        Style="{StaticResource ValidationTextBox}"
+                                        Style="{StaticResource {ComponentResourceKey {x:Type pg:PropertyGrid},
+                                                                                     ValidationTextBox}}"
                                         Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N}">
                                         <TextBox.ContextMenu>
                                             <ContextMenu>
@@ -549,10 +526,6 @@
                                                 <MenuItem Command="{x:Static pg:PropertyGrid.EmptyGuidCommand}" Header="Empty" />
                                                 <MenuItem Command="{x:Static pg:PropertyGrid.IncrementGuidCommand}" Header="Increment Guid" />
                                                 <MenuItem Command="{x:Static pg:PropertyGrid.NewGuidCommand}" Header="New Guid" />
-                                                <!--<MenuItem Header="New Guid 00000000-0000-0000-0000-000000000000" CommandParameter="D" Command="{x:Static ssb:PropertyGrid.NewGuidCommand}" />
-                                            <MenuItem Header="New Guid {00000000-0000-0000-0000-000000000000}" CommandParameter="B" Command="{x:Static ssb:PropertyGrid.NewGuidCommand}" />
-                                            <MenuItem Header="New Guid (00000000-0000-0000-0000-000000000000)" CommandParameter="P" Command="{x:Static ssb:PropertyGrid.NewGuidCommand}" />
-                                            <MenuItem Header="New Guid {0x00000000,0x0000,0x0000,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}}" CommandParameter="X" Command="{x:Static ssb:PropertyGrid.NewGuidCommand}" />-->
                                             </ContextMenu>
                                         </TextBox.ContextMenu>
                                     </TextBox>
@@ -569,7 +542,7 @@
                             <pg:PropertyGridDataTemplate>
                                 <DataTemplate>
                                     <!--  the default one  -->
-                                    <TextBox Style="{StaticResource ValidationTextBox2}" Text="{Binding TextValue, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
+                                    <TextBox Style="{StaticResource {ComponentResourceKey {x:Type pg:PropertyGrid}, ValidationTextBox}}" Text="{Binding TextValue, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
                                 </DataTemplate>
                             </pg:PropertyGridDataTemplate>
                         </pg:PropertyGridDataTemplateSelector>
@@ -577,41 +550,7 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
             <DataGrid.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Margin" Value="0,0,0,5" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander Padding="2" IsExpanded="True">
-                                            <Expander.Header>
-                                                <DockPanel>
-                                                    <TextBlock
-                                                        Margin="5,0,0,0"
-                                                        FontWeight="Bold"
-                                                        Text="{Binding Path=Name}" />
-                                                </DockPanel>
-                                            </Expander.Header>
-                                            <Expander.Content>
-                                                <ItemsPresenter />
-                                            </Expander.Content>
-                                        </Expander>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.HeaderTemplate>
-                        <DataTemplate>
-                            <DockPanel Background="LightBlue">
-                                <TextBlock Margin="30,0,0,0" Text="{Binding Path=Name}" />
-                            </DockPanel>
-                        </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
-                </GroupStyle>
+                <GroupStyle ContainerStyle="{StaticResource {ComponentResourceKey {x:Type pg:PropertyGrid}, CategoryGroupStyle}}" />
             </DataGrid.GroupStyle>
         </DataGrid>
     </ScrollViewer>

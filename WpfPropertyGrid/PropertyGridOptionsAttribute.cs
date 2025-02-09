@@ -40,6 +40,7 @@ public class PropertyGridOptionsAttribute : Attribute
     public bool HasDefaultValue { get; set; }
     public bool ForcePropertyChanged { get; set; }
     public object? DefaultValue { get; set; }
+    public string? GetValueMethodName { get; set; }
 
     internal string[]? FinalEnumNames => _finalEnumNames.Value;
     private string[]? GetFinalEnumNames()

@@ -12,6 +12,6 @@
         <Grid.Resources>
             <samples:Customer x:Key="Customer" />
         </Grid.Resources>
-        <pg:PropertyGrid Name="MyGrid" SelectedObject="{StaticResource Customer}" />
+        <pg:PropertyGrid x:Name="MyGrid" SelectedObject="{StaticResource Customer}" />
     </Grid>
 </Window>
