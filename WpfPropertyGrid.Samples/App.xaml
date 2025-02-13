@@ -10,6 +10,7 @@
     xmlns:wv="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
     StartupUri="MainWindow.xaml"
     ThemeMode="None">
+    <!--  change upper ThemeMode to test different theme modes  -->
     <Application.Resources>
         <ResourceDictionary>
 
@@ -24,8 +25,9 @@
             <DataTemplate x:Key="AddressListEditor">
                 <DockPanel LastChildFill="true" ToolTip="{Binding Value, Mode=OneWay}">
                     <Button
-                        Width="24"
-                        HorizontalContentAlignment="Center"
+                        Padding="4,0,4,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
                         Command="{x:Static pg:PropertyGrid.BrowseCommand}"
                         CommandParameter="AddressListEditorWindow"
                         Content="..."
@@ -60,8 +62,9 @@
             <DataTemplate x:Key="CustomEditor">
                 <DockPanel LastChildFill="true" ToolTip="{Binding Value, Mode=OneWay}">
                     <Button
-                        Width="24"
-                        HorizontalContentAlignment="Center"
+                        Padding="4,0,4,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
                         Command="{x:Static pg:PropertyGrid.BrowseCommand}"
                         CommandParameter="CustomEditorWindow"
                         Content="..."
@@ -69,7 +72,6 @@
                         IsEnabled="{Binding IsReadWrite}" />
 
                     <Button
-                        Width="Auto"
                         HorizontalContentAlignment="Center"
                         Command="{x:Static pg:PropertyGrid.BrowseCommand}"
                         CommandParameter="UrlPreviewWindow"

@@ -4,24 +4,22 @@
     xmlns:pg="clr-namespace:WpfPropertyGrid">
 
     <BooleanToVisibilityConverter x:Key="BoolToVis" />
-    <SolidColorBrush x:Key="CategoryExpanderBackgroundBrush" Color="#7A7BB3" />
 
     <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, CategoryGroupStyle}" TargetType="{x:Type GroupItem}">
-        <Setter Property="Margin" Value="0,0,0,5" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type GroupItem}">
                     <Expander
                         x:Name="GroupItem"
-                        Padding="2"
+                        Padding="0"
                         IsExpanded="True">
                         <Expander.Header>
                             <DockPanel>
                                 <TextBlock
-                                    Margin="5,0,0,0"
-                                    Foreground="White"
-                                    Background="{StaticResource CategoryExpanderBackgroundBrush}"
+                                    Padding="5,5,20,5"
+                                    Background="#7A7BB3"
                                     FontWeight="Bold"
+                                    Foreground="White"
                                     Text="{Binding Path=Name}" />
                             </DockPanel>
                         </Expander.Header>
@@ -33,6 +31,24 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, GridTextColumn}" TargetType="DataGridCell">
+        <Setter Property="ToolTip" Value="{Binding ToolTip}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="8" />
+    </Style>
+
+    <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, GridStyle}" TargetType="DataGrid">
+        <Setter Property="RowHeight" Value="36" />
+        <Setter Property="HeadersVisibility" Value="None" />
+        <Setter Property="FrozenColumnCount" Value="1" />
+        <Setter Property="CanUserResizeRows" Value="False" />
+        <Setter Property="CanUserReorderColumns" Value="False" />
+        <Setter Property="SelectionMode" Value="Single" />
+        <Setter Property="SelectionUnit" Value="Cell" />
+        <Setter Property="HorizontalGridLinesBrush" Value="Transparent" />
+        <Setter Property="VerticalGridLinesBrush" Value="Transparent" />
     </Style>
 
 </ResourceDictionary>

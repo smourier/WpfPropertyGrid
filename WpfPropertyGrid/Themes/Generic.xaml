@@ -4,7 +4,8 @@
     xmlns:pg="clr-namespace:WpfPropertyGrid">
 
     <BooleanToVisibilityConverter x:Key="BoolToVis" />
-    <SolidColorBrush x:Key="CategoryExpanderBackgroundBrush" Color="Pink" />
+
+    <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, PropertyGrid}" TargetType="UserControl" />
 
     <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, CategoryGroupStyle}" TargetType="GroupItem">
         <Setter Property="Template">
@@ -16,9 +17,7 @@
                         IsExpanded="True">
                         <Expander.Header>
                             <DockPanel>
-                                <TextBlock
-                                    FontWeight="Bold"
-                                    Text="{Binding Path=Name}" />
+                                <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" />
                             </DockPanel>
                         </Expander.Header>
                         <Expander.Content>
@@ -58,8 +57,13 @@
         <Setter Property="ToolTip" Value="{Binding ToolTip}" />
     </Style>
 
+    <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, GridTemplateColumn}" TargetType="DataGridCell">
+        <Setter Property="ToolTip" Value="{Binding TextValue}" />
+    </Style>
+
+    <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, GridRowStyle}" TargetType="DataGridRow" />
+
     <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, GridStyle}" TargetType="DataGrid">
-        <Setter Property="MinRowHeight" Value="24" />
         <Setter Property="RowHeight" Value="26" />
         <Setter Property="HeadersVisibility" Value="None" />
         <Setter Property="FrozenColumnCount" Value="1" />

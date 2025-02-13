@@ -9,6 +9,8 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     d:DesignHeight="300"
     d:DesignWidth="300"
+    Style="{StaticResource {ComponentResourceKey {x:Type pg:PropertyGrid},
+                                                 PropertyGrid}}"
     mc:Ignorable="d">
     <UserControl.Resources>
 
@@ -312,8 +314,9 @@
                     MaxLines="1"
                     Text="{Binding TextValue, Mode=OneWay}" />
                 <Button
-                    Width="24"
+                    Padding="4,0,4,0"
                     HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
                     Command="{x:Static pg:PropertyGrid.BrowseCommand}"
                     CommandParameter="BigTextEditorWindow"
                     Content="..." />
@@ -323,8 +326,9 @@
             <Grid>
                 <TextBox IsReadOnly="True" Text="{Binding TextValue, Mode=OneWay}" />
                 <Button
-                    Width="24"
+                    Padding="4,0,4,0"
                     HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
                     Command="{x:Static pg:PropertyGrid.BrowseCommand}"
                     CommandParameter="ObjectEditorWindow"
                     Content="..." />
@@ -334,8 +338,9 @@
             <Grid>
                 <TextBox IsReadOnly="True" Text="{Binding TextValue, Mode=TwoWay}" />
                 <Button
-                    Width="24"
+                    Padding="4,0,4,0"
                     HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
                     Command="{x:Static pg:PropertyGrid.BrowseCommand}"
                     CommandParameter="SavableObjectEditorWindow"
                     Content="..." />
@@ -345,8 +350,9 @@
             <Grid>
                 <TextBox IsReadOnly="True" Text="{Binding TextValue, Mode=OneWay}" />
                 <Button
-                    Width="24"
+                    Padding="4,0,4,0"
                     HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
                     Command="{x:Static pg:PropertyGrid.BrowseCommand}"
                     CommandParameter="ReadOnlyObjectEditorWindow"
                     Content="..." />
@@ -395,8 +401,12 @@
             x:Name="PropertiesGrid"
             x:FieldModifier="public"
             AutoGenerateColumns="False"
+            CellStyle="{StaticResource {ComponentResourceKey {x:Type pg:PropertyGrid},
+                                                             GridStyle}}"
             ItemsSource="{Binding Source={StaticResource PropertiesSource}}"
             PreviewKeyUp="OnUIElementPreviewKeyUp"
+            RowStyle="{StaticResource {ComponentResourceKey {x:Type pg:PropertyGrid},
+                                                            GridRowStyle}}"
             Style="{StaticResource {ComponentResourceKey {x:Type pg:PropertyGrid},
                                                          GridStyle}}"
             ToggleButton.Checked="OnToggleButtonIsCheckedChanged"
@@ -410,7 +420,11 @@
                                                                      GridTextColumn}}"
                     Header="Name"
                     IsReadOnly="True" />
-                <DataGridTemplateColumn Width="*" Header="Value">
+                <DataGridTemplateColumn
+                    Width="*"
+                    CellStyle="{StaticResource {ComponentResourceKey {x:Type pg:PropertyGrid},
+                                                                     GridTemplateColumn}}"
+                    Header="Value">
                     <DataGridTemplateColumn.CellTemplateSelector>
                         <pg:PropertyGridDataTemplateSelector>
                             <pg:PropertyGridDataTemplate CollectionItemPropertyType="System.Byte" IsCollection="True">
@@ -418,8 +432,9 @@
                                     <Grid>
                                         <TextBox IsReadOnly="True" Text="{Binding CollectionCount, Mode=OneWay}" />
                                         <Button
-                                            Width="24"
+                                            Padding="4,0,4,0"
                                             HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
                                             Command="{x:Static pg:PropertyGrid.BrowseCommand}"
                                             CommandParameter="ByteArrayEditorWindow"
                                             Content="..." />
@@ -431,8 +446,9 @@
                                     <Grid>
                                         <TextBox IsReadOnly="True" Text="{Binding CollectionCount, Mode=OneWay}" />
                                         <Button
-                                            Width="24"
+                                            Padding="4,0,4,0"
                                             HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
                                             Command="{x:Static pg:PropertyGrid.BrowseCommand}"
                                             Content="..." />
                                     </Grid>
