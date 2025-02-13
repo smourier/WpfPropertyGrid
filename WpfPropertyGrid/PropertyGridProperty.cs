@@ -37,6 +37,7 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
     public virtual PropertyDescriptor? Descriptor { get => DictionaryObjectGetPropertyValue<PropertyDescriptor>(); set => DictionaryObjectSetPropertyValue(value); }
     public virtual TypeConverter? Converter { get => DictionaryObjectGetPropertyValue<TypeConverter>(); set => DictionaryObjectSetPropertyValue(value); }
     public virtual MethodInfo? GetMethod { get => DictionaryObjectGetPropertyValue<MethodInfo>(); set => DictionaryObjectSetPropertyValue(value); }
+    public virtual string? ToolTip => Description.Nullify() ?? DisplayName.Nullify() ?? Name;
 
     public virtual object? DefaultValue
     {

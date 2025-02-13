@@ -24,9 +24,6 @@
         </Style>
 
         <pg:PropertyGridConverter x:Key="PropertyGridConverter" />
-        <Style x:Key="ValidationLabel" TargetType="{x:Type Label}">
-            <Setter Property="DataGridCell.ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}" />
-        </Style>
 
         <CollectionViewSource x:Key="PropertiesSource">
             <CollectionViewSource.GroupDescriptions>
@@ -379,6 +376,7 @@
         <DataTemplate x:Key="FormatTextEditor">
             <Grid>
                 <Label
+                    Padding="2,0,2,0"
                     VerticalContentAlignment="Center"
                     Background="{Binding Attributes.Background}"
                     Content="{Binding TextValue, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
@@ -386,7 +384,8 @@
                     FontFamily="{Binding Attributes.FontFamily}"
                     FontSize="{Binding Attributes.FontSize}"
                     Foreground="{Binding Attributes.Foreground}"
-                    Style="{StaticResource ValidationLabel}" />
+                    Style="{StaticResource {ComponentResourceKey {x:Type pg:PropertyGrid},
+                                                                 ValidationLabel}}" />
             </Grid>
         </DataTemplate>
 
@@ -396,15 +395,10 @@
             x:Name="PropertiesGrid"
             x:FieldModifier="public"
             AutoGenerateColumns="False"
-            CanUserReorderColumns="False"
-            CanUserResizeRows="False"
-            FrozenColumnCount="1"
-            HeadersVisibility="None"
             ItemsSource="{Binding Source={StaticResource PropertiesSource}}"
-            MinRowHeight="24"
             PreviewKeyUp="OnUIElementPreviewKeyUp"
-            SelectionMode="Single"
-            SelectionUnit="Cell"
+            Style="{StaticResource {ComponentResourceKey {x:Type pg:PropertyGrid},
+                                                         GridStyle}}"
             ToggleButton.Checked="OnToggleButtonIsCheckedChanged"
             ToggleButton.Indeterminate="OnToggleButtonIsCheckedChanged"
             ToggleButton.Unchecked="OnToggleButtonIsCheckedChanged">
@@ -412,14 +406,10 @@
                 <DataGridTextColumn
                     Width="SizeToCells"
                     Binding="{Binding DisplayName}"
+                    CellStyle="{StaticResource {ComponentResourceKey {x:Type pg:PropertyGrid},
+                                                                     GridTextColumn}}"
                     Header="Name"
-                    IsReadOnly="True">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="ToolTip" Value="{Binding Description}" />
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
+                    IsReadOnly="True" />
                 <DataGridTemplateColumn Width="*" Header="Value">
                     <DataGridTemplateColumn.CellTemplateSelector>
                         <pg:PropertyGridDataTemplateSelector>

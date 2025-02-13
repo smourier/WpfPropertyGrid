@@ -6,8 +6,7 @@
     <BooleanToVisibilityConverter x:Key="BoolToVis" />
     <SolidColorBrush x:Key="CategoryExpanderBackgroundBrush" Color="Pink" />
 
-    <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, CategoryGroupStyle}" TargetType="{x:Type GroupItem}">
-        <Setter Property="Margin" Value="0,0,0,5" />
+    <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, CategoryGroupStyle}" TargetType="GroupItem">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type GroupItem}">
@@ -18,7 +17,6 @@
                         <Expander.Header>
                             <DockPanel>
                                 <TextBlock
-                                    Margin="5,0,0,0"
                                     FontWeight="Bold"
                                     Text="{Binding Path=Name}" />
                             </DockPanel>
@@ -32,11 +30,18 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, ValidationTextBox}" TargetType="{x:Type TextBox}">
+    <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, ValidationLabel}" TargetType="Label">
+        <Setter Property="DataGridCell.ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}" />
+    </Style>
+
+    <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, ValidationTextBox}" TargetType="TextBox">
         <Setter Property="Validation.ErrorTemplate">
             <Setter.Value>
                 <ControlTemplate>
-                    <Border Background="Red" Opacity="0.2" IsHitTestVisible="False">
+                    <Border
+                        Background="Red"
+                        IsHitTestVisible="False"
+                        Opacity="0.2">
                         <AdornedElementPlaceholder />
                     </Border>
                 </ControlTemplate>
@@ -47,6 +52,23 @@
                 <Setter Property="DataGridCell.ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}" />
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, GridTextColumn}" TargetType="DataGridCell">
+        <Setter Property="ToolTip" Value="{Binding ToolTip}" />
+    </Style>
+
+    <Style x:Key="{ComponentResourceKey {x:Type pg:PropertyGrid}, GridStyle}" TargetType="DataGrid">
+        <Setter Property="MinRowHeight" Value="24" />
+        <Setter Property="RowHeight" Value="26" />
+        <Setter Property="HeadersVisibility" Value="None" />
+        <Setter Property="FrozenColumnCount" Value="1" />
+        <Setter Property="CanUserResizeRows" Value="False" />
+        <Setter Property="CanUserReorderColumns" Value="False" />
+        <Setter Property="SelectionMode" Value="Single" />
+        <Setter Property="SelectionUnit" Value="Cell" />
+        <Setter Property="HorizontalGridLinesBrush" Value="LightGray" />
+        <Setter Property="VerticalGridLinesBrush" Value="LightGray" />
     </Style>
 
 </ResourceDictionary>
