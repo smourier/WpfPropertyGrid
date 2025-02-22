@@ -48,28 +48,28 @@ public static class Extensions
 
         var underlyingType = Enum.GetUnderlyingType(enumType);
         if (underlyingType == typeof(long))
-            return Enum.ToObject(enumType, ConversionService.ChangeType<long>(value));
+            return Enum.ToObject(enumType, ConversionService.ConvertType<long>(value));
 
         if (underlyingType == typeof(ulong))
-            return Enum.ToObject(enumType, ConversionService.ChangeType<ulong>(value));
+            return Enum.ToObject(enumType, ConversionService.ConvertType<ulong>(value));
 
         if (underlyingType == typeof(int))
-            return Enum.ToObject(enumType, ConversionService.ChangeType<int>(value));
+            return Enum.ToObject(enumType, ConversionService.ConvertType<int>(value));
 
         if (underlyingType == typeof(uint))
-            return Enum.ToObject(enumType, ConversionService.ChangeType<uint>(value));
+            return Enum.ToObject(enumType, ConversionService.ConvertType<uint>(value));
 
         if (underlyingType == typeof(short))
-            return Enum.ToObject(enumType, ConversionService.ChangeType<short>(value));
+            return Enum.ToObject(enumType, ConversionService.ConvertType<short>(value));
 
         if (underlyingType == typeof(ushort))
-            return Enum.ToObject(enumType, ConversionService.ChangeType<ushort>(value));
+            return Enum.ToObject(enumType, ConversionService.ConvertType<ushort>(value));
 
         if (underlyingType == typeof(byte))
-            return Enum.ToObject(enumType, ConversionService.ChangeType<byte>(value));
+            return Enum.ToObject(enumType, ConversionService.ConvertType<byte>(value));
 
         if (underlyingType == typeof(sbyte))
-            return Enum.ToObject(enumType, ConversionService.ChangeType<sbyte>(value));
+            return Enum.ToObject(enumType, ConversionService.ConvertType<sbyte>(value));
 
         throw new ArgumentException(null, nameof(enumType));
     }
@@ -132,7 +132,7 @@ public static class Extensions
                     sb.Append(pi.Name);
                 }
                 sb.Append(sep2);
-                sb.Append(ConversionService.ChangeType(value, string.Format("{0}", value), formatProvider));
+                sb.Append(ConversionService.ConvertType(value, string.Format("{0}", value), formatProvider));
             }
             return sb.ToString();
         }
@@ -315,7 +315,7 @@ public static class Extensions
         {
             TypeCode.SByte or TypeCode.Int16 or TypeCode.Int32 or TypeCode.Int64 => (ulong)Convert.ToInt64(value, CultureInfo.InvariantCulture),
             TypeCode.Byte or TypeCode.UInt16 or TypeCode.UInt32 or TypeCode.UInt64 => Convert.ToUInt64(value, CultureInfo.InvariantCulture),
-            _ => ConversionService.ChangeType<ulong>(value),
+            _ => ConversionService.ConvertType<ulong>(value),
         };
     }
 
@@ -336,7 +336,7 @@ public static class Extensions
         {
             foreach (var s in thisString.Split(separators))
             {
-                var item = ConversionService.ChangeType<T>(s);
+                var item = ConversionService.ConvertType<T>(s);
                 if (item != null)
                 {
                     list.Add(item);

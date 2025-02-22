@@ -58,11 +58,11 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
             throw new ArgumentException(null, nameof(property));
 
         if (property.PropertyType != typeof(string))
-            return ConversionService.ChangeType(value, property.PropertyType);
+            return ConversionService.ConvertObjectType(value, property.PropertyType);
 
         var options = PropertyGridOptionsAttribute.FromProperty(property);
         if (options == null)
-            return ConversionService.ChangeType(value, property.PropertyType);
+            return ConversionService.ConvertObjectType(value, property.PropertyType);
 
         return EnumToObject(options, property.PropertyType, value);
     }
@@ -79,10 +79,10 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
             return Extensions.EnumToObject(value.GetType(), value);
 
         if (propertyType != typeof(string))
-            return ConversionService.ChangeType(value, propertyType);
+            return ConversionService.ConvertObjectType(value, propertyType);
 
         if (options == null || options.FinalEnumNames == null || options.EnumValues == null || options.EnumValues.Length != options.FinalEnumNames.Length)
-            return ConversionService.ChangeType(value, propertyType);
+            return ConversionService.ConvertObjectType(value, propertyType);
 
         if (BaseConverter.IsNullOrEmptyString(value))
             return string.Empty;
@@ -392,7 +392,7 @@ public class PropertyGridComboBoxExtension(Binding binding) : MarkupExtension
                     if (propType.IsAssignableFrom(vType))
                         return v;
 
-                    return ConversionService.ChangeType(v, propType);
+                    return ConversionService.ConvertObjectType(v, propType);
                 }
 
                 if (att.IsFlagsEnum)

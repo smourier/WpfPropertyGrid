@@ -33,7 +33,7 @@ public class DynamicObject : ICustomTypeDescriptor, IFormattable, INotifyPropert
         List<Attribute> newAtts;
         if (attributes != null)
         {
-            newAtts = new List<Attribute>(attributes);
+            newAtts = [.. attributes];
         }
         else
         {
@@ -66,9 +66,9 @@ public class DynamicObject : ICustomTypeDescriptor, IFormattable, INotifyPropert
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(type);
 
-        defaultValue = ConversionService.ChangeType(defaultValue, type);
+        defaultValue = ConversionService.ConvertObjectType(defaultValue, type);
         if (_values.TryGetValue(name, out var obj))
-            return ConversionService.ChangeType(obj, type, defaultValue);
+            return ConversionService.ConvertObjectType(obj, type, defaultValue);
 
         return defaultValue;
     }
@@ -77,7 +77,7 @@ public class DynamicObject : ICustomTypeDescriptor, IFormattable, INotifyPropert
     {
         ArgumentNullException.ThrowIfNull(name);
         if (_values.TryGetValue(name, out var obj))
-            return ConversionService.ChangeType(obj, defaultValue);
+            return ConversionService.ConvertType(obj, defaultValue);
 
         return defaultValue;
     }

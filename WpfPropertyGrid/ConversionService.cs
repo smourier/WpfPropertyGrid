@@ -2,9 +2,10 @@
 
 public static class ConversionService
 {
-    public static bool TryChangeType<T>(object? input, IFormatProvider? provider, out T? value)
+    public static bool TryConvertType<T>(object? input, out T? value) => TryConvertType(input, null, out value);
+    public static bool TryConvertType<T>(object? input, IFormatProvider? provider, out T? value)
     {
-        var result = PropertyGridServiceProvider.Current.GetService<IConverter>().TryChangeType(input, typeof(T), provider, out object? v);
+        var result = PropertyGridServiceProvider.Current.GetService<IConverter>().TryConvert(input, typeof(T), provider, out object? v);
         if (!result)
         {
             if (v == null)
@@ -29,12 +30,9 @@ public static class ConversionService
         return result;
     }
 
-    public static bool TryChangeType<T>(object? input, out T? value) => TryChangeType(input, null, out value);
-    public static bool TryChangeType(object? input, Type conversionType, out object? value) => TryChangeType(input, conversionType, null, out value);
-    public static bool TryChangeType(object? input, Type conversionType, IFormatProvider? provider, out object? value) => PropertyGridServiceProvider.Current.GetService<IConverter>().TryChangeType(input, conversionType, provider, out value);
-    public static object? ChangeType(object? input, Type conversionType) => ChangeType(input, conversionType, null, null);
-    public static object? ChangeType(object? input, Type conversionType, object? defaultValue) => ChangeType(input, conversionType, defaultValue, null);
-    public static object? ChangeType(object? input, Type conversionType, object? defaultValue, IFormatProvider? provider)
+    public static bool TryConvertObjectType(object? input, Type conversionType, out object? value) => TryConvertObjectType(input, conversionType, null, out value);
+    public static bool TryConvertObjectType(object? input, Type conversionType, IFormatProvider? provider, out object? value) => PropertyGridServiceProvider.Current.GetService<IConverter>().TryConvert(input, conversionType, provider, out value);
+    public static object? ConvertObjectType(object? input, Type conversionType, object? defaultValue = null, IFormatProvider? provider = null)
     {
         ArgumentNullException.ThrowIfNull(conversionType);
         if (defaultValue == null && conversionType.IsValueType)
@@ -42,17 +40,15 @@ public static class ConversionService
             defaultValue = Activator.CreateInstance(conversionType);
         }
 
-        if (TryChangeType(input, conversionType, provider, out object? value))
+        if (TryConvertObjectType(input, conversionType, provider, out object? value))
             return value;
 
         return defaultValue;
     }
 
-    public static T? ChangeType<T>(object? input) => ChangeType(input, default(T));
-    public static T? ChangeType<T>(object? input, T? defaultValue) => ChangeType(input, defaultValue, null);
-    public static T? ChangeType<T>(object? input, T? defaultValue, IFormatProvider? provider)
+    public static T? ConvertType<T>(object? input, T? defaultValue = default, IFormatProvider? provider = null)
     {
-        if (TryChangeType(input, provider, out T? value))
+        if (TryConvertType(input, provider, out T? value))
             return value;
 
         return defaultValue;

@@ -181,7 +181,7 @@ public class ByteArrayControl : ScrollViewer, IDisposable
 
         var pos = _stream.Position;
         var newPos = ScrollableHeight == 0 ? (long)e.VerticalOffset : (long)(e.VerticalOffset * (_stream.Length - ComputeNeededBufferSize() / 2) / ScrollableHeight);
-        newPos -= (newPos % RowCount);
+        newPos -= newPos % RowCount;
         if (pos != newPos || newPos == 0)
         {
             _stream.Position = newPos;

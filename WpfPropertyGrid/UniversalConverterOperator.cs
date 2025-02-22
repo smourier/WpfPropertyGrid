@@ -2,6 +2,7 @@
 
 public enum UniversalConverterOperator
 {
+    AlwaysMatches,
     Equal,
     NotEqual,
     GreaterThan,

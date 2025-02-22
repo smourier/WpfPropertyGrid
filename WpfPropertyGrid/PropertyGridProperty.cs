@@ -148,8 +148,8 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
             if (Value == null)
                 return null;
 
-            var def = HasDefaultValue && ConversionService.ChangeType(DefaultValue, false);
-            return ConversionService.ChangeType(Value, def);
+            var def = HasDefaultValue && ConversionService.ConvertType(DefaultValue, false);
+            return ConversionService.ConvertType(Value, def);
         }
         set
         {
@@ -205,7 +205,7 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
             if (Converter != null && Converter.CanConvertTo(typeof(string)))
                 return Converter.ConvertTo(Value, typeof(string)) as string;
 
-            return ConversionService.ChangeType<string>(Value);
+            return ConversionService.ConvertType<string>(Value);
         }
         set
         {
@@ -226,7 +226,7 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
 
             if (Descriptor != null)
             {
-                if (ConversionService.TryChangeType(value, Descriptor.PropertyType, out object? v))
+                if (ConversionService.TryConvertObjectType(value, Descriptor.PropertyType, out var v))
                 {
                     Value = v;
                     return;
@@ -280,7 +280,7 @@ public class PropertyGridProperty : DictionaryObject, IComparable, IComparable<P
     protected virtual bool TryChangeType(object? value, Type type, IFormatProvider? provider, out object? changedValue)
     {
         ArgumentNullException.ThrowIfNull(type);
-        return ConversionService.TryChangeType(value, type, provider, out changedValue);
+        return ConversionService.TryConvertObjectType(value, type, provider, out changedValue);
     }
 
     public virtual void OnDescribed()

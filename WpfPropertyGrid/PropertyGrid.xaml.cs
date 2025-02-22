@@ -155,7 +155,7 @@ public partial class PropertyGrid : UserControl
             if (editor.Owner != null)
             {
                 var options = PropertyGridWindowManager.GetOptions(editor);
-                if ((options & PropertyGridWindowOptions.UseDefinedSize) == PropertyGridWindowOptions.UseDefinedSize)
+                if (options.HasFlag(PropertyGridWindowOptions.UseDefinedSize))
                 {
                     if (double.IsNaN(editor.Left))
                     {
@@ -310,8 +310,8 @@ public partial class PropertyGrid : UserControl
 
             if (IncrementGuidCommand.Equals(e.Command))
             {
-                Guid g = ConversionService.ChangeType(textBox.Text.Trim(), Guid.Empty);
-                byte[] bytes = g.ToByteArray();
+                var g = ConversionService.ConvertType(textBox.Text.Trim(), Guid.Empty);
+                var bytes = g.ToByteArray();
                 bytes[15]++;
                 textBox.Text = new Guid(bytes).ToString(NormalizeGuidParameter(e.Parameter));
                 return;

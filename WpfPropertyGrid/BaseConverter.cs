@@ -709,7 +709,7 @@ public class BaseConverter : IConverter
         return b;
     }
 
-    public virtual bool TryChangeType(object? input, Type conversionType, IFormatProvider? provider, out object? value) => TryConvert(input, conversionType, provider, out value);
+    bool IConverter.TryConvert(object? input, Type conversionType, IFormatProvider? provider, out object? value) => TryConvert(input, conversionType, provider, out value);
     public static bool TryConvert(object? input, Type conversionType, IFormatProvider? provider, out object? value)
     {
         ArgumentNullException.ThrowIfNull(conversionType);
@@ -788,8 +788,7 @@ public class BaseConverter : IConverter
         switch (conversionCode)
         {
             case TypeCode.Boolean:
-                bool boolValue;
-                if (TryConvert(input, provider, out boolValue))
+                if (TryConvert(input, provider, out bool boolValue))
                 {
                     value = boolValue;
                     return true;
@@ -797,8 +796,7 @@ public class BaseConverter : IConverter
                 break;
 
             case TypeCode.Byte:
-                byte byteValue;
-                if (TryConvert(input, provider, out byteValue))
+                if (TryConvert(input, provider, out byte byteValue))
                 {
                     value = byteValue;
                     return true;
@@ -806,8 +804,7 @@ public class BaseConverter : IConverter
                 break;
 
             case TypeCode.Char:
-                char charValue;
-                if (TryConvert(input, provider, out charValue))
+                if (TryConvert(input, provider, out char charValue))
                 {
                     value = charValue;
                     return true;
@@ -815,8 +812,7 @@ public class BaseConverter : IConverter
                 break;
 
             case TypeCode.DateTime:
-                DateTime dtValue;
-                if (TryConvert(input, provider, out dtValue))
+                if (TryConvert(input, provider, out DateTime dtValue))
                 {
                     value = dtValue;
                     return true;

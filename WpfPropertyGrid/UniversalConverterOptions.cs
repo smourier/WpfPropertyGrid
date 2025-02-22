@@ -9,4 +9,5 @@ public enum UniversalConverterOptions
     Nullify = 0x4,
     NullMatchesType = 0x8,
     ConvertedValueIsConverterParameter = 0x20,
+    ConvertedValueIsConverterValue = 0x40,
 }

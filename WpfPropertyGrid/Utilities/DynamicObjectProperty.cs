@@ -23,7 +23,7 @@ public class DynamicObjectProperty : PropertyDescriptor
         Construct(name, type, attributes);
     }
 
-    public virtual object? DefaultValue { get => _defaultValue; set { _defaultValue = ConversionService.ChangeType(value, _type); } }
+    public virtual object? DefaultValue { get => _defaultValue; set { _defaultValue = ConversionService.ConvertObjectType(value, _type); } }
     public virtual int SortOrder { get; set; }
     public virtual bool HasDefaultValue { get; set; }
     public override Type ComponentType => typeof(DynamicObject);
@@ -56,11 +56,11 @@ public class DynamicObjectProperty : PropertyDescriptor
         if (dv != null)
         {
             HasDefaultValue = true;
-            _defaultValue = ConversionService.ChangeType(dv.Value, _type);
+            _defaultValue = ConversionService.ConvertObjectType(dv.Value, _type);
         }
         else
         {
-            _defaultValue = ConversionService.ChangeType(null, _type);
+            _defaultValue = ConversionService.ConvertObjectType(null, _type);
         }
     }
 

@@ -2,5 +2,5 @@
 
 public interface IConverter
 {
-    bool TryChangeType(object? input, Type conversionType, IFormatProvider? provider, out object? value);
+    bool TryConvert(object? input, Type conversionType, IFormatProvider? provider, out object? value);
 }

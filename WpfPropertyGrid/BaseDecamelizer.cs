@@ -19,17 +19,17 @@ public class BaseDecamelizer : IDecamelizer
 
         var i = 0;
         var firstIsStillUnderscore = text[0] == '_';
-        if (((options.TextOptions & DecamelizeTextOptions.UnescapeUnicode) == DecamelizeTextOptions.UnescapeUnicode) && CanUnicodeEscape(text, 0))
+        if (options.TextOptions.HasFlag(DecamelizeTextOptions.UnescapeUnicode) && CanUnicodeEscape(text, 0))
         {
             sb.Append(GetUnicodeEscape(text, ref i));
         }
-        else if (((options.TextOptions & DecamelizeTextOptions.UnescapeHexadecimal) == DecamelizeTextOptions.UnescapeHexadecimal) && CanHexadecimalEscape(text, 0))
+        else if (options.TextOptions.HasFlag(DecamelizeTextOptions.UnescapeHexadecimal) && CanHexadecimalEscape(text, 0))
         {
             sb.Append(GetHexadecimalEscape(text, ref i));
         }
         else
         {
-            if ((options.TextOptions & DecamelizeTextOptions.ForceFirstUpper) == DecamelizeTextOptions.ForceFirstUpper)
+            if (options.TextOptions.HasFlag(DecamelizeTextOptions.ForceFirstUpper))
             {
                 sb.Append(char.ToUpper(text[0]));
             }
@@ -40,23 +40,23 @@ public class BaseDecamelizer : IDecamelizer
         }
 
         var separated = false;
-        var keepFormat = (options.TextOptions & DecamelizeTextOptions.KeepFormattingIndices) == DecamelizeTextOptions.KeepFormattingIndices;
+        var keepFormat = options.TextOptions.HasFlag(DecamelizeTextOptions.KeepFormattingIndices);
         for (i++; i < text.Length; i++)
         {
             var c = text[i];
-            if (((options.TextOptions & DecamelizeTextOptions.UnescapeUnicode) == DecamelizeTextOptions.UnescapeUnicode) && CanUnicodeEscape(text, i))
+            if (options.TextOptions.HasFlag(DecamelizeTextOptions.UnescapeUnicode) && CanUnicodeEscape(text, i))
             {
                 sb.Append(GetUnicodeEscape(text, ref i));
                 separated = true;
             }
-            else if (((options.TextOptions & DecamelizeTextOptions.UnescapeHexadecimal) == DecamelizeTextOptions.UnescapeHexadecimal) && CanHexadecimalEscape(text, i))
+            else if (options.TextOptions.HasFlag(DecamelizeTextOptions.UnescapeHexadecimal) && CanHexadecimalEscape(text, i))
             {
                 sb.Append(GetHexadecimalEscape(text, ref i));
                 separated = true;
             }
             else if (c == '_')
             {
-                if ((!firstIsStillUnderscore) || ((options.TextOptions & DecamelizeTextOptions.KeepFirstUnderscores) != DecamelizeTextOptions.KeepFirstUnderscores))
+                if ((!firstIsStillUnderscore) || !options.TextOptions.HasFlag(DecamelizeTextOptions.KeepFirstUnderscores))
                 {
                     sb.Append(' ');
                     separated = true;
@@ -96,7 +96,7 @@ public class BaseDecamelizer : IDecamelizer
                             break;
                         }
 
-                        if ((options.TextOptions & DecamelizeTextOptions.ForceRestLower) == DecamelizeTextOptions.ForceRestLower)
+                        if (options.TextOptions.HasFlag(DecamelizeTextOptions.ForceRestLower))
                         {
                             sb.Append(char.ToLower(c));
                         }
@@ -129,12 +129,12 @@ public class BaseDecamelizer : IDecamelizer
                         if ((category != lastCategory) && (c != ' ') && IsNewCategory(category, options))
                         {
                             if ((!separated) && (prevCategory != UnicodeCategory.UppercaseLetter) &&
-                                ((!firstIsStillUnderscore) || ((options.TextOptions & DecamelizeTextOptions.KeepFirstUnderscores) != DecamelizeTextOptions.KeepFirstUnderscores)))
+                                ((!firstIsStillUnderscore) || (!options.TextOptions.HasFlag(DecamelizeTextOptions.KeepFirstUnderscores))))
                             {
                                 sb.Append(' ');
                             }
 
-                            if ((options.TextOptions & DecamelizeTextOptions.ForceRestLower) != 0)
+                            if (options.TextOptions.HasFlag(DecamelizeTextOptions.ForceRestLower))
                             {
                                 sb.Append(char.ToLower(c));
                             }
@@ -149,7 +149,7 @@ public class BaseDecamelizer : IDecamelizer
                         }
                         else
                         {
-                            if ((options.TextOptions & DecamelizeTextOptions.ForceRestLower) == DecamelizeTextOptions.ForceRestLower)
+                            if (options.TextOptions.HasFlag(DecamelizeTextOptions.ForceRestLower))
                             {
                                 sb.Append(char.ToLower(c));
                             }
@@ -166,13 +166,13 @@ public class BaseDecamelizer : IDecamelizer
             }
         }
 
-        if ((options.TextOptions & DecamelizeTextOptions.ReplaceSpacesByUnderscore) == DecamelizeTextOptions.ReplaceSpacesByUnderscore)
+        if (options.TextOptions.HasFlag(DecamelizeTextOptions.ReplaceSpacesByUnderscore))
             return sb.Replace(' ', '_').ToString();
 
-        if ((options.TextOptions & DecamelizeTextOptions.ReplaceSpacesByMinus) == DecamelizeTextOptions.ReplaceSpacesByMinus)
+        if (options.TextOptions.HasFlag(DecamelizeTextOptions.ReplaceSpacesByMinus))
             return sb.Replace(' ', '-').ToString();
 
-        if ((options.TextOptions & DecamelizeTextOptions.ReplaceSpacesByDot) == DecamelizeTextOptions.ReplaceSpacesByDot)
+        if (options.TextOptions.HasFlag(DecamelizeTextOptions.ReplaceSpacesByDot))
             return sb.Replace(' ', '.').ToString();
 
         return sb.ToString();
@@ -216,7 +216,7 @@ public class BaseDecamelizer : IDecamelizer
     private static bool IsPureNumber(char c) => c >= '0' && c <= '9';
     private static bool IsNewCategory(UnicodeCategory category, DecamelizeOptions options)
     {
-        if ((options.TextOptions & DecamelizeTextOptions.DontDecamelizeNumbers) == DecamelizeTextOptions.DontDecamelizeNumbers)
+        if (options.TextOptions.HasFlag(DecamelizeTextOptions.DontDecamelizeNumbers))
         {
             if (category == UnicodeCategory.LetterNumber ||
                 category == UnicodeCategory.DecimalDigitNumber ||

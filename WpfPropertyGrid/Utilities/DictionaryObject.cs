@@ -77,7 +77,7 @@ public abstract class DictionaryObject : INotifyPropertyChanged, INotifyProperty
         if (property == null)
             return defaultValue;
 
-        if (!ConversionService.TryChangeType<T>(property.Value, out var value))
+        if (!ConversionService.TryConvertType<T>(property.Value, out var value))
             return defaultValue;
 
         return value;

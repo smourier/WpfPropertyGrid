@@ -30,7 +30,7 @@ public class EnumerableConverter : DependencyObject, IValueConverter
             }
             return sb.ToString();
         }
-        return ConversionService.ChangeType(value, targetType);
+        return ConversionService.ConvertObjectType(value, targetType, provider: culture);
     }
 
     public virtual int MaxItems { get => (int)GetValue(MaxItemsProperty); set => SetValue(MaxItemsProperty, value); }

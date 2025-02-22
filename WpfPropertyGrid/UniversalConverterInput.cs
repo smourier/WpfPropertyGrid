@@ -45,14 +45,14 @@ public class UniversalConverterInput
         var str = ValueToCompare as string;
         if (str == null)
         {
-            if (forceConvert || (Options & UniversalConverterOptions.Convert) == UniversalConverterOptions.Convert)
+            if (forceConvert || Options.HasFlag(UniversalConverterOptions.Convert))
             {
-                str = ConversionService.ChangeType<string>(ValueToCompare, null, provider);
+                str = ConversionService.ConvertType<string>(ValueToCompare, null, provider);
                 str ??= string.Format(provider, "{0}", ValueToCompare);
             }
         }
 
-        if ((Options & UniversalConverterOptions.Trim) == UniversalConverterOptions.Trim)
+        if (Options.HasFlag(UniversalConverterOptions.Trim))
         {
             if (str != null)
             {
@@ -60,7 +60,7 @@ public class UniversalConverterInput
             }
         }
 
-        if ((Options & UniversalConverterOptions.Nullify) == UniversalConverterOptions.Nullify)
+        if (Options.HasFlag(UniversalConverterOptions.Nullify))
         {
             if (str != null && str.Length == 0)
             {
@@ -77,7 +77,7 @@ public class UniversalConverterInput
 
         if (Value is not string str)
         {
-            str = ConversionService.ChangeType<string>(Value, null, provider) ?? string.Format(provider, "{0}", Value);
+            str = ConversionService.ConvertType<string>(Value, null, provider) ?? string.Format(provider, "{0}", Value);
         }
         return str;
     }
@@ -90,6 +90,10 @@ public class UniversalConverterInput
         UniversalConverterInput clone;
         switch (Operator)
         {
+            case UniversalConverterOperator.AlwaysMatches:
+                ret = true;
+                break;
+
             case UniversalConverterOperator.Equal:
                 if (Value == null)
                 {
@@ -118,9 +122,9 @@ public class UniversalConverterInput
                     break;
                 }
 
-                if ((Options & UniversalConverterOptions.Convert) == UniversalConverterOptions.Convert)
+                if (Options.HasFlag(UniversalConverterOptions.Convert))
                 {
-                    if (ConversionService.TryChangeType(ValueToCompare, Value.GetType(), provider, out object? cvalue))
+                    if (ConversionService.TryConvertObjectType(ValueToCompare, Value.GetType(), provider, out var cvalue))
                     {
                         if (Value.Equals(cvalue))
                         {
@@ -131,12 +135,12 @@ public class UniversalConverterInput
                         if (Value is string)
                         {
                             var sv = (string)cvalue!;
-                            if ((Options & UniversalConverterOptions.Trim) == UniversalConverterOptions.Trim)
+                            if (Options.HasFlag(UniversalConverterOptions.Trim))
                             {
                                 sv = sv.Trim();
                             }
 
-                            if ((Options & UniversalConverterOptions.Nullify) == UniversalConverterOptions.Nullify)
+                            if (Options.HasFlag(UniversalConverterOptions.Nullify))
                             {
                                 if (sv.Length == 0)
                                 {
@@ -206,7 +210,7 @@ public class UniversalConverterInput
                 IComparable? cvtc;
                 if (!Value.GetType().IsAssignableFrom(ValueToCompare.GetType()))
                 {
-                    cvtc = ConversionService.ChangeType(ValueToCompare, Value.GetType(), provider) as IComparable;
+                    cvtc = ConversionService.ConvertObjectType(ValueToCompare, Value.GetType(), null, provider) as IComparable;
                 }
                 else
                 {
@@ -266,7 +270,7 @@ public class UniversalConverterInput
                     if (tvtc.IsValueType)
                         break;
 
-                    ret = (Options & UniversalConverterOptions.NullMatchesType) == UniversalConverterOptions.NullMatchesType;
+                    ret = Options.HasFlag(UniversalConverterOptions.NullMatchesType);
                     break;
                 }
 
