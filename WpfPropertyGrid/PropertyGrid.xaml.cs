@@ -3,19 +3,19 @@
 public partial class PropertyGrid : UserControl
 {
     public static readonly DependencyProperty IsReadOnlyProperty =
-        DependencyProperty.Register("IsReadOnly", typeof(bool), typeof(PropertyGrid),
+        DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(PropertyGrid),
         new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure, IsReadOnlyPropertyChanged));
 
     public static readonly DependencyProperty ReadOnlyBackgroundProperty =
-        DependencyProperty.Register("ReadOnlyBackground", typeof(Brush), typeof(PropertyGrid),
+        DependencyProperty.Register(nameof(ReadOnlyBackground), typeof(Brush), typeof(PropertyGrid),
         new FrameworkPropertyMetadata(Brushes.LightSteelBlue, FrameworkPropertyMetadataOptions.AffectsRender));
 
     public static readonly DependencyProperty SelectedObjectProperty =
-        DependencyProperty.Register("SelectedObject", typeof(object), typeof(PropertyGrid),
+        DependencyProperty.Register(nameof(SelectedObject), typeof(object), typeof(PropertyGrid),
         new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure, SelectedObjectPropertyChanged));
 
     public static readonly DependencyProperty ValueEditorTemplateSelectorProperty =
-        DependencyProperty.Register("ValueEditorTemplateSelector", typeof(DataTemplateSelector), typeof(PropertyGrid), new FrameworkPropertyMetadata(null));
+        DependencyProperty.Register(nameof(ValueEditorTemplateSelector), typeof(DataTemplateSelector), typeof(PropertyGrid), new FrameworkPropertyMetadata(null));
 
     public static readonly RoutedEvent BrowseEvent = EventManager.RegisterRoutedEvent("Browse", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(PropertyGrid));
 
@@ -31,7 +31,7 @@ public partial class PropertyGrid : UserControl
         DefaultCategoryName = CategoryAttribute.Default.Category;
         ChildEditorWindowOffset = 20;
         InitializeComponent();
-        PropertiesSource = (CollectionViewSource)FindResource("PropertiesSource");
+        PropertiesSource = (CollectionViewSource)FindResource(nameof(PropertiesSource));
         CommandBindings.Add(new CommandBinding(NewGuidCommand, OnGuidCommandExecuted, OnGuidCommandCanExecute));
         CommandBindings.Add(new CommandBinding(EmptyGuidCommand, OnGuidCommandExecuted, OnGuidCommandCanExecute));
         CommandBindings.Add(new CommandBinding(IncrementGuidCommand, OnGuidCommandExecuted, OnGuidCommandCanExecute));
