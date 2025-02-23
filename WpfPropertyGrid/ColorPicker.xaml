@@ -5,10 +5,126 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:WpfPropertyGrid"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="600"
-    d:DesignWidth="400"
+    xmlns:utilities="clr-namespace:WpfPropertyGrid.Utilities"
+    x:Name="Root"
+    d:DesignHeight="400"
+    d:DesignWidth="600"
     mc:Ignorable="d">
-    <Grid>
-        <Image x:Name="svSquare" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+    <UserControl.Resources>
+        <utilities:ColorToNameConverter x:Key="ColorToNameConverter" />
+        <utilities:ColorToChannelConverter x:Key="ColorToChannelConverter" />
+    </UserControl.Resources>
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <Viewbox Margin="10">
+            <Ellipse
+                x:Name="Circle"
+                Width="100"
+                Height="100"
+                Fill="White"
+                MouseDown="OnWheelHandlerMouseDown"
+                MouseMove="OnWheelHandlerMouseMove"
+                MouseUp="OnWheelHandlerMouseUp">
+                <Ellipse.Effect>
+                    <utilities:ColorWheelEffect />
+                </Ellipse.Effect>
+            </Ellipse>
+        </Viewbox>
+        <Canvas x:Name="HandleCanvas">
+            <Path
+                x:Name="Handle"
+                Canvas.Left="100"
+                Canvas.Top="100"
+                Fill="Black"
+                IsHitTestVisible="False"
+                Opacity="0.5">
+                <Path.Data>
+                    <CombinedGeometry GeometryCombineMode="Exclude">
+                        <CombinedGeometry.Geometry1>
+                            <EllipseGeometry RadiusX="6" RadiusY="6" />
+                        </CombinedGeometry.Geometry1>
+                        <CombinedGeometry.Geometry2>
+                            <EllipseGeometry RadiusX="3" RadiusY="3" />
+                        </CombinedGeometry.Geometry2>
+                    </CombinedGeometry>
+                </Path.Data>
+            </Path>
+        </Canvas>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <Label
+                Grid.Row="0"
+                VerticalAlignment="Center"
+                Content="A:" />
+            <TextBox
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
+                Text="{Binding SelectedColor, ElementName=Root, Converter={StaticResource ColorToChannelConverter}, ConverterParameter='A'}" />
+            <Label
+                Grid.Row="1"
+                VerticalAlignment="Center"
+                Content="R:" />
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
+                Text="{Binding SelectedColor, ElementName=Root, Converter={StaticResource ColorToChannelConverter}, ConverterParameter='R'}" />
+            <Label
+                Grid.Row="2"
+                VerticalAlignment="Center"
+                Content="G:" />
+            <TextBox
+                Grid.Row="2"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
+                Text="{Binding SelectedColor, ElementName=Root, Converter={StaticResource ColorToChannelConverter}, ConverterParameter='G'}" />
+            <Label
+                Grid.Row="3"
+                VerticalAlignment="Center"
+                Content="B:" />
+            <TextBox
+                Grid.Row="3"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
+                Text="{Binding SelectedColor, ElementName=Root, Converter={StaticResource ColorToChannelConverter}, ConverterParameter='B'}" />
+            <Label
+                Grid.Row="4"
+                VerticalAlignment="Center"
+                Content="Hex:" />
+            <TextBox
+                Grid.Row="4"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
+                Text="{Binding SelectedColor, ElementName=Root}" />
+            <Label
+                Grid.Row="5"
+                VerticalAlignment="Center"
+                Content="Name:" />
+            <TextBox
+                Grid.Row="5"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
+                Text="{Binding SelectedColor, ElementName=Root, Converter={StaticResource ColorToNameConverter}}" />
+        </Grid>
     </Grid>
 </UserControl>

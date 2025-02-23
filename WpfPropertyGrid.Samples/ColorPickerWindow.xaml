@@ -7,14 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pg="clr-namespace:WpfPropertyGrid;assembly=WpfPropertyGrid"
     Title="Color Picker"
-    Width="400"
-    Height="600"
     SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterOwner"
     WindowStyle="ToolWindow"
     mc:Ignorable="d">
     <pg:ColorPicker
-        Width="300"
-        Height="600"
+        Width="600"
+        Height="300"
         SelectedColor="{Binding Value}" />
 </Window>

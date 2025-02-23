@@ -21,7 +21,7 @@ public class Customer : DictionaryObject
         SampleBooleanDropDownList = true;
         MultiEnumString = "First, Second";
         SubObject = Address.Parse("1600 Amphitheatre Parkway Mountain View, CA 94043, USA");
-        Color = Colors.AliceBlue;
+        Color = Colors.Red;
     }
 
     [DisplayName("System In Dark Mode")]
