@@ -23,12 +23,12 @@ public class ColorToNameConverter : IValueConverter
         {
             var opaque = color;
             opaque.A = 255;
-            if (!_colorNames.TryGetValue(opaque, out var name))
+            if ("NoName".Equals(parameter) || !_colorNames.TryGetValue(opaque, out var name))
             {
+                if ("NameOnly".Equals(parameter))
+                    return string.Empty;
+
                 name = $"#FF{opaque.R:X2}{opaque.G:X2}{opaque.B:X2}";
-            }
-            else
-            {
             }
             return name;
         }

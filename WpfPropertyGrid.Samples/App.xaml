@@ -204,26 +204,6 @@
 
             </DataTemplate>
 
-            <DataTemplate x:Key="ColorEditor">
-                <DockPanel LastChildFill="true" ToolTip="{Binding Value, Mode=OneWay}">
-                    <Button
-                        Padding="4,0,4,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Static pg:PropertyGrid.BrowseCommand}"
-                        CommandParameter="ColorPickerWindow"
-                        Content="..."
-                        DockPanel.Dock="Right"
-                        IsEnabled="{Binding IsReadWrite}" />
-                    <TextBox
-                        Background="{Binding Value, Converter={StaticResource ColorToBrushConverter}}"
-                        DockPanel.Dock="Left"
-                        Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </DockPanel>
-            </DataTemplate>
-
-            <samples:ColorPickerWindow x:Key="ColorPickerWindow" x:Shared="False" />
-
             <DataTemplate x:Key="FontEditor">
                 <ComboBox ItemTemplate="{DynamicResource FontTemplate}" SelectedItem="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <ComboBox.Resources>

@@ -12,27 +12,25 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <utilities:ColorToNameConverter x:Key="ColorToNameConverter" />
-        <utilities:ColorToChannelConverter x:Key="ColorToChannelConverter" />
     </UserControl.Resources>
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
-        <Viewbox Margin="10">
-            <Ellipse
-                x:Name="Circle"
-                Width="100"
-                Height="100"
-                Fill="White"
-                MouseDown="OnWheelHandlerMouseDown"
-                MouseMove="OnWheelHandlerMouseMove"
-                MouseUp="OnWheelHandlerMouseUp">
-                <Ellipse.Effect>
-                    <utilities:ColorWheelEffect />
-                </Ellipse.Effect>
-            </Ellipse>
-        </Viewbox>
+        <Ellipse
+            x:Name="Circle"
+            Width="180"
+            Height="180"
+            Margin="5"
+            Fill="White"
+            MouseDown="OnWheelHandlerMouseDown"
+            MouseMove="OnWheelHandlerMouseMove"
+            MouseUp="OnWheelHandlerMouseUp">
+            <Ellipse.Effect>
+                <utilities:ColorWheelEffect />
+            </Ellipse.Effect>
+        </Ellipse>
         <Canvas x:Name="HandleCanvas">
             <Path
                 x:Name="Handle"
@@ -65,46 +63,100 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60" />
                 <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
             <Label
                 Grid.Row="0"
                 VerticalAlignment="Center"
                 Content="A:" />
-            <TextBox
+            <utilities:ByteTextBox
+                x:Name="ArgbA"
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Right"
-                Text="{Binding SelectedColor, ElementName=Root, Converter={StaticResource ColorToChannelConverter}, ConverterParameter='A'}" />
+                TabIndex="0"
+                TextChanged="ArgbA_TextChanged" />
+            <Label
+                Grid.Row="0"
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                Content="H:" />
+            <utilities:UInt16TextBox
+                x:Name="HsvH"
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
+                MaxValue="361"
+                MinValue="0"
+                TabIndex="6"
+                TextChanged="HsvH_TextChanged" />
             <Label
                 Grid.Row="1"
                 VerticalAlignment="Center"
                 Content="R:" />
-            <TextBox
+            <utilities:ByteTextBox
+                x:Name="ArgbR"
                 Grid.Row="1"
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Right"
-                Text="{Binding SelectedColor, ElementName=Root, Converter={StaticResource ColorToChannelConverter}, ConverterParameter='R'}" />
+                TabIndex="1"
+                TextChanged="ArgbR_TextChanged" />
+            <Label
+                Grid.Row="1"
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                Content="S:" />
+            <utilities:ByteTextBox
+                x:Name="HsvS"
+                Grid.Row="1"
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
+                MaxValue="101"
+                MinValue="0"
+                TabIndex="7"
+                TextChanged="HsvS_TextChanged" />
             <Label
                 Grid.Row="2"
                 VerticalAlignment="Center"
                 Content="G:" />
-            <TextBox
+            <utilities:ByteTextBox
+                x:Name="ArgbG"
                 Grid.Row="2"
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Right"
-                Text="{Binding SelectedColor, ElementName=Root, Converter={StaticResource ColorToChannelConverter}, ConverterParameter='G'}" />
+                TabIndex="2"
+                TextChanged="ArgbG_TextChanged" />
+            <Label
+                Grid.Row="2"
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                Content="V:" />
+            <utilities:ByteTextBox
+                x:Name="HsvV"
+                Grid.Row="2"
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
+                MaxValue="101"
+                MinValue="0"
+                TabIndex="8"
+                TextChanged="HsvV_TextChanged" />
             <Label
                 Grid.Row="3"
                 VerticalAlignment="Center"
                 Content="B:" />
-            <TextBox
+            <utilities:ByteTextBox
+                x:Name="ArgbB"
                 Grid.Row="3"
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Right"
-                Text="{Binding SelectedColor, ElementName=Root, Converter={StaticResource ColorToChannelConverter}, ConverterParameter='B'}" />
+                TabIndex="3"
+                TextChanged="ArgbB_TextChanged" />
             <Label
                 Grid.Row="4"
                 VerticalAlignment="Center"
@@ -114,7 +166,8 @@
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Right"
-                Text="{Binding SelectedColor, ElementName=Root}" />
+                TabIndex="4"
+                Text="{Binding SelectedColor, ElementName=Root, Converter={StaticResource ColorToNameConverter}, ConverterParameter=NoName}" />
             <Label
                 Grid.Row="5"
                 VerticalAlignment="Center"
@@ -124,7 +177,8 @@
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Right"
-                Text="{Binding SelectedColor, ElementName=Root, Converter={StaticResource ColorToNameConverter}}" />
+                TabIndex="5"
+                Text="{Binding SelectedColor, ElementName=Root, Converter={StaticResource ColorToNameConverter}, ConverterParameter=NameOnly}" />
         </Grid>
     </Grid>
 </UserControl>

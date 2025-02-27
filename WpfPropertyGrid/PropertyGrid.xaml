@@ -293,6 +293,27 @@
                     IsDefault="True" />
             </Grid>
         </Window>
+        <Window
+            x:Key="ColorPickerWindow"
+            Name="ColorPickerWindow"
+            Title="Color Picker"
+            x:Shared="false"
+            SizeToContent="WidthAndHeight"
+            WindowStyle="ToolWindow">
+            <Window.CommandBindings>
+                <CommandBinding
+                    CanExecute="OnEditorWindowCloseCanExecute"
+                    Command="Close"
+                    Executed="OnEditorWindowCloseExecuted" />
+            </Window.CommandBindings>
+            <Window.InputBindings>
+                <KeyBinding Key="Escape" Command="Close" />
+            </Window.InputBindings>
+            <pg:ColorPicker
+                Width="600"
+                Height="300"
+                SelectedColor="{Binding Value, Mode=TwoWay}" />
+        </Window>
 
         <DataTemplate x:Key="DateTimePicker">
             <pg:DateTimePicker SelectedDate="{Binding Value, UpdateSourceTrigger=PropertyChanged}" SelectedDateTime="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
@@ -511,6 +532,24 @@
                             <pg:PropertyGridDataTemplate IsReadOnly="False" PropertyType="System.DateTime|System.Nullable`1[System.DateTime]">
                                 <DataTemplate>
                                     <DatePicker SelectedDate="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </pg:PropertyGridDataTemplate>
+                            <pg:PropertyGridDataTemplate IsReadOnly="False" PropertyType="System.Windows.Media.Color, PresentationCore">
+                                <DataTemplate>
+                                    <DockPanel LastChildFill="true" ToolTip="{Binding Value, Mode=OneWay}">
+                                        <Button
+                                            Padding="4,0,4,0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            Command="{x:Static pg:PropertyGrid.BrowseCommand}"
+                                            CommandParameter="ColorPickerWindow"
+                                            Content="..."
+                                            DockPanel.Dock="Right" />
+                                        <TextBox
+                                            Background="{Binding Value, Converter={StaticResource ColorToBrushConverter}}"
+                                            DockPanel.Dock="Left"
+                                            Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DockPanel>
                                 </DataTemplate>
                             </pg:PropertyGridDataTemplate>
                             <pg:PropertyGridDataTemplate IsReadOnly="False" PropertyType="System.Guid|System.Nullable`1[System.Guid]">

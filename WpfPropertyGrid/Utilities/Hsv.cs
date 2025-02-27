@@ -6,19 +6,6 @@ public struct Hsv(float hue, float saturation, float value) : IEquatable<Hsv>
     public float Saturation = saturation;
     public float Value = value;
     public readonly Color Color => ToColor();
-    public readonly Hsv Complementary
-    {
-        get
-        {
-            var hue = Hue;
-            hue += 180;
-            if (hue > 360)
-            {
-                hue -= 360;
-            }
-            return new Hsv(hue, Saturation, Value);
-        }
-    }
 
     public readonly int ToArgb()
     {
@@ -28,7 +15,7 @@ public struct Hsv(float hue, float saturation, float value) : IEquatable<Hsv>
 
     public readonly Color ToColor(float a = 1)
     {
-        var hue = Hue;
+        var hue = Hue * 360;
         var saturation = Saturation;
         var value = Value;
 
@@ -149,7 +136,7 @@ public struct Hsv(float hue, float saturation, float value) : IEquatable<Hsv>
         {
             hue += 360;
         }
-        return hue;
+        return hue / 360;
     }
 
     public static float GetValue(float r, float g, float b) => r >= g ? (r >= b ? r : b) : (g >= b ? g : b);
@@ -158,8 +145,8 @@ public struct Hsv(float hue, float saturation, float value) : IEquatable<Hsv>
         var min = r <= g ? (r <= b ? r : b) : (g <= b ? g : b);
         var value = GetValue(r, g, b);
         var chroma = value - min;
-        if (chroma == 0f)
-            return 0f;
+        if (chroma == 0)
+            return 0;
 
         return chroma / value;
     }

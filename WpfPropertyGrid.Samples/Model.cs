@@ -97,7 +97,6 @@ public class Customer : DictionaryObject
     [PropertyGridOptions(SortOrder = 30)]
     public Gender Gender { get => DictionaryObjectGetPropertyValue<Gender>(); set => DictionaryObjectSetPropertyValue(value); }
 
-    [PropertyGridOptions(EditorDataTemplateResourceKey = "ColorEditor")]
     public Color Color { get => DictionaryObjectGetPropertyValue<Color>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [Category("Enums")]

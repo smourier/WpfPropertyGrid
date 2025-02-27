@@ -28,6 +28,7 @@
 		<Using Include="System.IO" />
 		<Using Include="System.Linq" />
 		<Using Include="System.Net" />
+		<Using Include="System.Numerics" />
 		<Using Include="System.Reflection" />
 		<Using Include="System.Runtime.CompilerServices" />
 		<Using Include="System.Runtime.InteropServices" />
