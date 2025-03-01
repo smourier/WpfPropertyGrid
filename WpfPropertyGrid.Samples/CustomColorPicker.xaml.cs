@@ -1,14 +1,14 @@
 ﻿namespace WpfPropertyGrid.Samples;
 
-public partial class ColorPicker : UserControl, INotifyPropertyChanged
+public partial class CustomColorPicker : UserControl, INotifyPropertyChanged
 {
     public static DependencyProperty SelectedColorProperty { get; } =
-        DependencyProperty.Register(nameof(SelectedColor), typeof(Color), typeof(ColorPicker),
-        new FrameworkPropertyMetadata(Colors.Black, FrameworkPropertyMetadataOptions.AffectsRender, (s, e) => ((ColorPicker)s).OnSelectedColorChanged((Color)e.OldValue, (Color)e.NewValue)));
+        DependencyProperty.Register(nameof(SelectedColor), typeof(Color), typeof(CustomColorPicker),
+        new FrameworkPropertyMetadata(Colors.Black, FrameworkPropertyMetadataOptions.AffectsRender, (s, e) => ((CustomColorPicker)s).OnSelectedColorChanged((Color)e.OldValue, (Color)e.NewValue)));
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public ColorPicker()
+    public CustomColorPicker()
     {
         InitializeComponent();
     }
@@ -37,7 +37,6 @@ public partial class ColorPicker : UserControl, INotifyPropertyChanged
         if (!((UIElement)sender).IsMouseCaptured)
             return;
 
-        //Trace.Write("OnWheelHandlerMouseMove");
         var circlePos = e.GetPosition(Circle);
         var hit = VisualTreeHelper.HitTest(Circle, circlePos);
         if (hit == null)
@@ -104,8 +103,6 @@ public partial class ColorPicker : UserControl, INotifyPropertyChanged
 
     private void UpdateWheelHandler(Color color)
     {
-        //Trace.Write("ResetHandler");
-
         var hsv = Hsv.From(color);
 
         var r = (Circle.ActualWidth - Circle.Margin.Right - Circle.Margin.Left) / 2; // presumes it's a circle
@@ -129,7 +126,6 @@ public partial class ColorPicker : UserControl, INotifyPropertyChanged
         if (_source.HasValue)
             return;
 
-        //Trace.Write("HsvH_TextChanged");
         var h = ((UInt16TextBox)sender).Value / 360f;
         var hsv = Hsv.From(SelectedColor);
         if (h == hsv.Hue)
@@ -144,7 +140,6 @@ public partial class ColorPicker : UserControl, INotifyPropertyChanged
         if (_source.HasValue)
             return;
 
-        //Trace.Write("HsvS_TextChanged");
         var s = ((ByteTextBox)sender).Value / 100f;
         var hsv = Hsv.From(SelectedColor);
         if (s == hsv.Saturation)
@@ -159,7 +154,6 @@ public partial class ColorPicker : UserControl, INotifyPropertyChanged
         if (_source.HasValue)
             return;
 
-        //Trace.Write("HsvV_TextChanged");
         var v = ((ByteTextBox)sender).Value / 100f;
         var hsv = Hsv.From(SelectedColor);
         if (v == hsv.Value)
@@ -174,7 +168,6 @@ public partial class ColorPicker : UserControl, INotifyPropertyChanged
         if (_source.HasValue)
             return;
 
-        //Trace.Write("ArgbA_TextChanged");
         var color = SelectedColor;
         UpdateSelectedColor(Color.FromArgb(((ByteTextBox)sender).Value, color.R, color.G, color.B), UpdateSource.Inputs);
     }
@@ -184,7 +177,6 @@ public partial class ColorPicker : UserControl, INotifyPropertyChanged
         if (_source.HasValue)
             return;
 
-        //Trace.Write("ArgbR_TextChanged");
         var color = SelectedColor;
         UpdateSelectedColor(Color.FromArgb(color.A, ((ByteTextBox)sender).Value, color.G, color.B), UpdateSource.Inputs);
     }
@@ -194,7 +186,6 @@ public partial class ColorPicker : UserControl, INotifyPropertyChanged
         if (_source.HasValue)
             return;
 
-        //Trace.Write("ArgbG_TextChanged");
         var color = SelectedColor;
         UpdateSelectedColor(Color.FromArgb(color.A, color.R, ((ByteTextBox)sender).Value, color.B), UpdateSource.Inputs);
     }
@@ -204,7 +195,6 @@ public partial class ColorPicker : UserControl, INotifyPropertyChanged
         if (_source.HasValue)
             return;
 
-        //Trace.Write("ArgbB_TextChanged");
         var color = SelectedColor;
         UpdateSelectedColor(Color.FromArgb(color.A, color.R, color.G, ((ByteTextBox)sender).Value), UpdateSource.Inputs);
     }

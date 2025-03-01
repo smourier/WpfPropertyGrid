@@ -128,7 +128,7 @@
                 <Window.InputBindings>
                     <KeyBinding Key="Escape" Command="Close" />
                 </Window.InputBindings>
-                <samples:ColorPicker
+                <samples:CustomColorPicker
                     Width="600"
                     Height="300"
                     SelectedColor="{Binding Value, Mode=TwoWay}" />
