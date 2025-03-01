@@ -184,7 +184,10 @@ public partial class PropertyGrid : UserControl
                     editor.Width = editor.Owner.Width;
                     editor.Height = editor.Owner.Height;
                 }
+
+                editor.CenterOwner();
             }
+
             editor.DataContext = property;
             if (LogicalTreeHelper.FindLogicalNode(editor, "EditorSelector") is Selector selector)
             {

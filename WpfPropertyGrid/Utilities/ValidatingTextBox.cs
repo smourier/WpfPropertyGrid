@@ -14,6 +14,8 @@ public class ValidatingTextBox : TextBox
     // validates before losing focus
     public event EventHandler<ValidateTextEventArgs>? ValidateText;
 
+    public virtual bool Validate { get; set; } = true;
+
     protected virtual void OnPreValidateText(object sender, ValidateTextEventArgs e) => PreValidateText?.Invoke(this, e);
     protected virtual void OnValidateText(object sender, ValidateTextEventArgs e) => ValidateText?.Invoke(this, e);
 
@@ -26,6 +28,9 @@ public class ValidatingTextBox : TextBox
     protected override void OnLostFocus(RoutedEventArgs e)
     {
         base.OnLostFocus(e);
+        if (!Validate)
+            return;
+
         var ev = new ValidateTextEventArgs(Text);
         OnValidateText(this, ev);
         if (ev.Cancel && Text != _initalText)
@@ -40,6 +45,9 @@ public class ValidatingTextBox : TextBox
 
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
+        if (!Validate)
+            return;
+
         if (_inEvents)
             return;
 
@@ -50,6 +58,9 @@ public class ValidatingTextBox : TextBox
 
     protected override void OnTextChanged(TextChangedEventArgs e)
     {
+        if (!Validate)
+            return;
+
         if (_inEvents)
             return;
 

@@ -603,4 +603,37 @@ public static class Extensions
 
         return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
     }
+
+    public static void CenterOwner(this Window window, Window? alternateOwner = null)
+    {
+        if (window == null)
+            return;
+
+        alternateOwner ??= window.Owner;
+        if (alternateOwner == null)
+            return;
+
+        var x = (getWidth(alternateOwner) - getWidth(window)) / 2;
+        var y = (getHeight(alternateOwner) - getHeight(window)) / 2;
+        window.Left = alternateOwner.Left + x;
+        window.Top = alternateOwner.Top + y;
+
+        static double getWidth(Window window)
+        {
+            var w = window.ActualWidth;
+            if (w == 0 || double.IsNaN(w))
+                return window.Width;
+
+            return w;
+        }
+
+        static double getHeight(Window window)
+        {
+            var w = window.ActualHeight;
+            if (w == 0 || double.IsNaN(w))
+                return window.Height;
+
+            return w;
+        }
+    }
 }

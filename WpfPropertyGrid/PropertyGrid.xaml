@@ -293,6 +293,28 @@
                     IsDefault="True" />
             </Grid>
         </Window>
+        <Window
+            x:Key="ColorPickerWindow"
+            Name="ColorPickerWindow"
+            pg:PropertyGridWindowManager.Options="UseDefinedSize"
+            Title="Color Picker"
+            Width="400"
+            Height="400"
+            x:Shared="false"
+            WindowStyle="ToolWindow">
+            <Window.CommandBindings>
+                <CommandBinding
+                    CanExecute="OnEditorWindowCloseCanExecute"
+                    Command="Close"
+                    Executed="OnEditorWindowCloseExecuted" />
+            </Window.CommandBindings>
+            <Window.InputBindings>
+                <KeyBinding Key="Escape" Command="Close" />
+            </Window.InputBindings>
+            <Viewbox Stretch="Uniform" StretchDirection="Both">
+                <pgu:ColorPicker SelectedColor="{Binding Value, Mode=TwoWay}" />
+            </Viewbox>
+        </Window>
 
         <DataTemplate x:Key="DateTimePicker">
             <pg:DateTimePicker SelectedDate="{Binding Value, UpdateSourceTrigger=PropertyChanged}" SelectedDateTime="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
