@@ -1,6 +1,4 @@
-﻿using System.Windows.Media.Effects;
-
-namespace WpfPropertyGrid.Utilities;
+﻿namespace WpfPropertyGrid.Samples.Utilities;
 
 public class ColorWheelEffect : ShaderEffect
 {
@@ -11,7 +9,7 @@ public class ColorWheelEffect : ShaderEffect
 
     public ColorWheelEffect()
     {
-        PixelShader = new PixelShader() { UriSource = new Uri("/WpfPropertyGrid;component/Resources/ColorWheel.ps", UriKind.Relative) };
+        PixelShader = new PixelShader() { UriSource = new Uri("/WpfPropertyGrid.Samples;component/Resources/ColorWheel.ps", UriKind.Relative) };
         UpdateShaderValue(InputProperty);
         UpdateShaderValue(CenterProperty);
     }

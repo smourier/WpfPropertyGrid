@@ -1,4 +1,4 @@
-﻿namespace WpfPropertyGrid.Utilities;
+﻿namespace WpfPropertyGrid.Samples.Utilities;
 
 public class ColorToNameConverter : IValueConverter
 {
@@ -17,6 +17,7 @@ public class ColorToNameConverter : IValueConverter
         return dic;
     }
 
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is Color color)
@@ -34,10 +35,5 @@ public class ColorToNameConverter : IValueConverter
         }
 
         return value;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
     }
 }

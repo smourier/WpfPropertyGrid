@@ -95,6 +95,45 @@
                 </DockPanel>
             </DataTemplate>
 
+            <DataTemplate x:Key="ColorEditor">
+                <DockPanel LastChildFill="true" ToolTip="{Binding Value, Mode=OneWay}">
+                    <Button
+                        Padding="4,0,4,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Command="{x:Static pg:PropertyGrid.BrowseCommand}"
+                        CommandParameter="ColorPickerWindow"
+                        Content="..."
+                        DockPanel.Dock="Right" />
+                    <TextBox
+                        Background="{Binding Value, Converter={StaticResource ColorToBrushConverter}}"
+                        DockPanel.Dock="Left"
+                        Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+            </DataTemplate>
+
+            <Window
+                x:Key="ColorPickerWindow"
+                Name="ColorPickerWindow"
+                Title="Color Picker"
+                x:Shared="false"
+                SizeToContent="WidthAndHeight"
+                WindowStyle="ToolWindow">
+                <Window.CommandBindings>
+                    <CommandBinding
+                        CanExecute="OnEditorWindowCloseCanExecute"
+                        Command="Close"
+                        Executed="OnEditorWindowCloseExecuted" />
+                </Window.CommandBindings>
+                <Window.InputBindings>
+                    <KeyBinding Key="Escape" Command="Close" />
+                </Window.InputBindings>
+                <samples:ColorPicker
+                    Width="600"
+                    Height="300"
+                    SelectedColor="{Binding Value, Mode=TwoWay}" />
+            </Window>
+
             <Window
                 x:Key="UrlPreviewWindow"
                 Name="UrlPreviewWindow"

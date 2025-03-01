@@ -1,4 +1,4 @@
-﻿namespace WpfPropertyGrid.Utilities;
+﻿namespace WpfPropertyGrid.Samples.Utilities;
 
 public struct Hsv(float hue, float saturation, float value) : IEquatable<Hsv>
 {

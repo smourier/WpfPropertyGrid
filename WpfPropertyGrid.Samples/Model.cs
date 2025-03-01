@@ -97,6 +97,7 @@ public class Customer : DictionaryObject
     [PropertyGridOptions(SortOrder = 30)]
     public Gender Gender { get => DictionaryObjectGetPropertyValue<Gender>(); set => DictionaryObjectSetPropertyValue(value); }
 
+    [PropertyGridOptions(EditorDataTemplateResourceKey = "ColorEditor")]
     public Color Color { get => DictionaryObjectGetPropertyValue<Color>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [Category("Enums")]
@@ -200,7 +201,7 @@ public class Customer : DictionaryObject
     public FontFamily? PreferredFont { get => DictionaryObjectGetPropertyValue<FontFamily>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [DisplayName("Point (auto type converter)")]
-    public Point Point { get => DictionaryObjectGetPropertyValue<Point>(); set => DictionaryObjectSetPropertyValue(value); }
+    public PointInt32 Point { get => DictionaryObjectGetPropertyValue<PointInt32>(); set => DictionaryObjectSetPropertyValue(value); }
 
     [DisplayName("Nullable Int32 (supports empty string)")]
     public int? NullableInt32 { get => DictionaryObjectGetPropertyValue<int?>(); set => DictionaryObjectSetPropertyValue(value); }
@@ -394,7 +395,7 @@ public class AddressConverter : TypeConverter
     }
 }
 
-public class PointConverter : TypeConverter
+public class PointInt32Converter : TypeConverter
 {
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
     public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
@@ -402,7 +403,7 @@ public class PointConverter : TypeConverter
         if (value is string s)
         {
             var v = s.Split([';']);
-            return new Point(int.Parse(v[0]), int.Parse(v[1]));
+            return new PointInt32(int.Parse(v[0]), int.Parse(v[1]));
         }
 
         return base.ConvertFrom(context, culture, value);
@@ -411,14 +412,14 @@ public class PointConverter : TypeConverter
     public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
     {
         if (destinationType == typeof(string))
-            return ((Point)value!).X + ";" + ((Point)value).Y;
+            return ((PointInt32)value!).X + ";" + ((PointInt32)value).Y;
 
         return base.ConvertTo(context, culture, value, destinationType);
     }
 }
 
-[TypeConverter(typeof(PointConverter))]
-public struct Point(int x, int y)
+[TypeConverter(typeof(PointInt32Converter))]
+public struct PointInt32(int x, int y)
 {
     public int X = x;
     public int Y = y;

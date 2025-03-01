@@ -1,4 +1,4 @@
-﻿namespace WpfPropertyGrid;
+﻿namespace WpfPropertyGrid.Samples;
 
 public partial class ColorPicker : UserControl, INotifyPropertyChanged
 {

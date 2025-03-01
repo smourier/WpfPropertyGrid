@@ -9,10 +9,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\ColorWheel.ps" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Using Include="System" />
 		<Using Include="System.Collections" />
 		<Using Include="System.Collections.Concurrent" />
@@ -48,21 +44,4 @@
 		<Using Include="WpfPropertyGrid.Utilities" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Effect Include="Resources\ColorWheel.fx" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Resource Include="Resources\ColorWheel.ps" />
-	</ItemGroup>
-
-	<Target Name="EffectCompile" Condition="'@(Effect)' != '' ">
-		<!-- the following line is supposed to call something like this C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\fxc.exe ... if it doesn't work, just set it manually -->
-		<Exec Command="&quot;$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Microsoft SDKs\Windows\v10.0@InstallationFolder)bin\$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Microsoft SDKs\Windows\v10.0@ProductVersion).0\x64\fxc.exe&quot; /T ps_3_0 /Fo %(Effect.RelativeDir)%(Effect.FileName).ps %(Effect.Identity)" />
-	</Target>
-
-	<PropertyGroup>
-		<!-- add effect compilation to the PrepareResourcesDependsOn so that the effect get compiled before resources are collected -->
-		<PrepareResourcesDependsOn>EffectCompile;$(PrepareResourcesDependsOn)</PrepareResourcesDependsOn>
-	</PropertyGroup>
 </Project>
