@@ -2,21 +2,133 @@
 
 public class BaseConverter : IConverter
 {
-    private static byte GetHexaByte(char c)
+    public static bool TryConvert(object? value, out Color color)
     {
-        if ((c >= '0') && (c <= '9'))
-            return (byte)(c - '0');
+        var text = (value as string ?? string.Format("{0}", value)).Nullify();
+        color = new Color();
+        if (string.IsNullOrWhiteSpace(text))
+            return false;
 
-        if ((c >= 'A') && (c <= 'F'))
-            return (byte)(c - 'A' + 10);
+        if (text.StartsWith('#'))
+        {
+            text = text[1..];
+        }
 
-        if ((c >= 'a') && (c <= 'f'))
-            return (byte)(c - 'a' + 10);
+        byte? a, r, g, b;
+        switch (text.Length)
+        {
+            case 3:
+                r = GetHexaNibble(text[0]);
+                if (!r.HasValue)
+                    break;
 
-        return 0xFF;
+                g = GetHexaNibble(text[1]);
+                if (!g.HasValue)
+                    break;
+
+                b = GetHexaNibble(text[2]);
+                if (!b.HasValue)
+                    break;
+
+                color = Color.FromRgb((byte)(r.Value * 16 + r.Value), (byte)(g.Value * 16 + g.Value), (byte)(b.Value * 16 + b.Value));
+                return true;
+
+            case 4:
+                a = GetHexaNibble(text[0]);
+                if (!a.HasValue)
+                    break;
+
+                r = GetHexaNibble(text[1]);
+                if (!r.HasValue)
+                    break;
+
+                g = GetHexaNibble(text[2]);
+                if (!g.HasValue)
+                    break;
+
+                b = GetHexaNibble(text[3]);
+                if (!b.HasValue)
+                    break;
+
+                color = Color.FromArgb((byte)(a.Value * 16 + a.Value), (byte)(r.Value * 16 + r.Value), (byte)(g.Value * 16 + g.Value), (byte)(b.Value * 16 + b.Value));
+                return true;
+
+            case 6:
+                r = GetHexaByte(text, 0);
+                if (!r.HasValue)
+                    break;
+
+                g = GetHexaByte(text, 2);
+                if (!g.HasValue)
+                    break;
+
+                b = GetHexaByte(text, 4);
+                if (!b.HasValue)
+                    break;
+
+                color = Color.FromRgb(r.Value, g.Value, b.Value);
+                return true;
+
+            case 8:
+                a = GetHexaByte(text, 0);
+                if (!a.HasValue)
+                    break;
+
+                r = GetHexaByte(text, 2);
+                if (!r.HasValue)
+                    break;
+
+                g = GetHexaByte(text, 4);
+                if (!g.HasValue)
+                    break;
+
+                b = GetHexaByte(text, 6);
+                if (!b.HasValue)
+                    break;
+
+                color = Color.FromArgb(a.Value, r.Value, g.Value, b.Value);
+                return true;
+        }
+
+        return false;
     }
 
-    private static bool TryConvert(string text, out byte[]? value)
+    public static byte? GetHexaNibble(char c)
+    {
+        if (c >= '0' && c <= '9')
+            return (byte)(c - '0');
+
+        if (c >= 'A' && c <= 'F')
+            return (byte)(c - 'A' + 10);
+
+        if (c >= 'a' && c <= 'f')
+            return (byte)(c - 'a' + 10);
+
+        return null;
+    }
+
+    public static byte? GetHexaByte(string? s, int offset)
+    {
+        if (s == null || (s.Length - offset) < 2)
+            return null;
+
+        return GetHexaByte(s[offset], s[offset + 1]);
+    }
+
+    public static byte? GetHexaByte(char hiChar, char loChar)
+    {
+        var hi = GetHexaNibble(hiChar);
+        if (!hi.HasValue)
+            return null;
+
+        var lo = GetHexaNibble(loChar);
+        if (!lo.HasValue)
+            return null;
+
+        return (byte)(hi.Value * 16 + lo.Value);
+    }
+
+    public static bool TryConvert(string? text, out byte[]? value)
     {
         if (text == null)
         {
@@ -40,8 +152,8 @@ public class BaseConverter : IConverter
 
         for (var i = 0; i < text.Length - offset; i++)
         {
-            var b = GetHexaByte(text[i + offset]);
-            if (b == 0xFF)
+            var b = GetHexaNibble(text[i + offset]);
+            if (!b.HasValue)
             {
                 value = null;
                 return false;
@@ -49,11 +161,11 @@ public class BaseConverter : IConverter
 
             if (lo)
             {
-                list.Add((byte)(prev * 16 + b));
+                list.Add((byte)(prev * 16 + b.Value));
             }
             else
             {
-                prev = b;
+                prev = b.Value;
             }
             lo = !lo;
         }
@@ -973,6 +1085,15 @@ public class BaseConverter : IConverter
                     if (TryConvert(input, provider, out TimeSpan ts))
                     {
                         value = ts;
+                        return true;
+                    }
+                }
+
+                if (conversionType == typeof(Color))
+                {
+                    if (TryConvert(input, out Color color))
+                    {
+                        value = color;
                         return true;
                     }
                 }

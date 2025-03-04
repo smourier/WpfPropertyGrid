@@ -7,6 +7,20 @@ public struct Hsv(float hue, float saturation, float value) : IEquatable<Hsv>
     public float Value = value;
     public readonly Color Color => ToColor();
 
+    public readonly Hsv Complementary
+    {
+        get
+        {
+            var hue = Hue;
+            hue += 0.5f;
+            if (hue > 1)
+            {
+                hue -= 1;
+            }
+            return new Hsv(hue, Saturation, Value);
+        }
+    }
+
     public readonly int ToArgb()
     {
         var color = Color;

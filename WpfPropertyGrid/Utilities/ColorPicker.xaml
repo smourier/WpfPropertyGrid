@@ -7,7 +7,10 @@
     xmlns:pg="clr-namespace:WpfPropertyGrid"
     xmlns:pgu="clr-namespace:WpfPropertyGrid.Utilities"
     mc:Ignorable="d">
-    <Grid Margin="2">
+    <Grid
+        Margin="2"
+        TextBlock.FontFamily="Consolas"
+        TextBlock.FontSize="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="256" />
             <RowDefinition Height="36" />
@@ -78,11 +81,59 @@
                         StrokeThickness="0.5" />
                 </StackPanel>
             </Canvas>
-            <Image
+            <Rectangle Grid.Column="4">
+                <Rectangle.Fill>
+                    <DrawingBrush
+                        TileMode="Tile"
+                        Viewport="0,0,16,16"
+                        ViewportUnits="Absolute">
+                        <DrawingBrush.Drawing>
+                            <GeometryDrawing Brush="Gray" Geometry="M0,0 H1 V1 H2 V2 H1 V1 H0Z" />
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle
                 x:Name="Alpha"
                 Grid.Column="4"
                 Width="16"
-                Height="256" />
+                Height="256"
+                Fill="Red"
+                MouseDown="OnAlphaMouseDown"
+                MouseMove="OnAlphaMouseMove"
+                MouseUp="OnAlphaMouseUp">
+                <Rectangle.OpacityMask>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <LinearGradientBrush.GradientStops>
+                            <GradientStop Offset="0" Color="Black" />
+                            <GradientStop Offset="1" Color="Transparent" />
+                        </LinearGradientBrush.GradientStops>
+                    </LinearGradientBrush>
+                </Rectangle.OpacityMask>
+            </Rectangle>
+            <Canvas
+                x:Name="AlphaCanvas"
+                Grid.Column="4"
+                Width="16"
+                Height="256">
+                <StackPanel
+                    x:Name="AlphaHandle"
+                    IsHitTestVisible="False"
+                    Orientation="Horizontal">
+                    <Polygon
+                        Fill="DimGray"
+                        Points="0,-2 4,0, 0,2"
+                        SnapsToDevicePixels="True"
+                        Stroke="Black"
+                        StrokeThickness="0.5" />
+                    <Polygon
+                        Fill="DimGray"
+                        Points="12,-2 8,0, 12,2"
+                        SnapsToDevicePixels="True"
+                        Stroke="Black"
+                        StrokeThickness="0.5" />
+                </StackPanel>
+            </Canvas>
         </Grid>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
@@ -93,44 +144,126 @@
                 <RowDefinition Height="2" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="14" />
                 <ColumnDefinition />
+                <ColumnDefinition Width="14" />
                 <ColumnDefinition />
+                <ColumnDefinition Width="14" />
                 <ColumnDefinition />
+                <ColumnDefinition Width="14" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Row="1"
+                Margin="2,0,0,0"
+                VerticalAlignment="Center">
+                R:
+            </TextBlock>
             <pgu:ByteTextBox
                 x:Name="Argb_R"
                 Grid.Row="1"
-                Grid.Column="0" />
+                Grid.Column="1"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                TextChanged="OnRedChanged" />
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="2"
+                Margin="2,0,0,0"
+                VerticalAlignment="Center">
+                G:
+            </TextBlock>
             <pgu:ByteTextBox
                 x:Name="Argb_G"
                 Grid.Row="1"
-                Grid.Column="1" />
+                Grid.Column="3"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                TextChanged="OnGreenChanged" />
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="4"
+                Margin="2,0,0,0"
+                VerticalAlignment="Center">
+                B:
+            </TextBlock>
             <pgu:ByteTextBox
                 x:Name="Argb_B"
                 Grid.Row="1"
-                Grid.Column="2" />
+                Grid.Column="5"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                TextChanged="OnBlueChanged" />
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="6"
+                Margin="2,0,0,0"
+                VerticalAlignment="Center">
+                A:
+            </TextBlock>
             <pgu:ByteTextBox
                 x:Name="Argb_A"
                 Grid.Row="1"
-                Grid.Column="3" />
-
-            <pgu:ByteTextBox
+                Grid.Column="7"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                TextChanged="OnAlphaChanged" />
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="0"
+                Margin="2,0,0,0"
+                VerticalAlignment="Center">
+                H:
+            </TextBlock>
+            <pgu:SingleTextBox
                 x:Name="Hsv_H"
                 Grid.Row="3"
-                Grid.Column="0" />
-            <pgu:ByteTextBox
+                Grid.Column="1"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                TextChanged="OnHueChanged" />
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="2"
+                Margin="2,0,0,0"
+                VerticalAlignment="Center">
+                S:
+            </TextBlock>
+            <pgu:SingleTextBox
                 x:Name="Hsv_S"
                 Grid.Row="3"
-                Grid.Column="1" />
-            <pgu:ByteTextBox
+                Grid.Column="3"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                TextChanged="OnSaturationChanged" />
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="4"
+                Margin="2,0,0,0"
+                VerticalAlignment="Center">
+                V:
+            </TextBlock>
+            <pgu:SingleTextBox
                 x:Name="Hsv_V"
                 Grid.Row="3"
-                Grid.Column="2" />
-            <pgu:ByteTextBox
-                x:Name="Hsv_A"
+                Grid.Column="5"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                TextChanged="OnValueChanged" />
+            <TextBlock
                 Grid.Row="3"
-                Grid.Column="3" />
+                Grid.Column="6"
+                Margin="2,0,0,0"
+                VerticalAlignment="Center">
+                x:
+            </TextBlock>
+            <pgu:ColorTextBox
+                x:Name="Hex"
+                Grid.Row="3"
+                Grid.Column="7"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                TextChanged="OnHexChanged" />
         </Grid>
     </Grid>
 </UserControl>

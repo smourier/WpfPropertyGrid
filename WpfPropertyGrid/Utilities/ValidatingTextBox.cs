@@ -270,3 +270,41 @@ public class SingleTextBox : FloatingPointNumberTextBox<float>
 public class DecimalTextBox : FloatingPointNumberTextBox<decimal>
 {
 }
+
+public class ColorTextBox : ValidatingTextBox
+{
+    public static string Format(Color color) => $"{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}";
+
+    public Color Value
+    {
+        get
+        {
+            ConversionService.TryConvertType<Color>(Text, out var value);
+            return value;
+        }
+    }
+
+    protected override void OnValidateText(object sender, ValidateTextEventArgs e)
+    {
+        base.OnValidateText(sender, e);
+        e.Cancel = !ConversionService.TryConvertType<Color>(Text, out var value);
+        e.ReplacementText = Format(value);
+    }
+
+    protected override void OnPreValidateText(object sender, ValidateTextEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(e.Text))
+            return;
+
+        for (var i = 0; i < e.Text.Length; i++)
+        {
+            var c = e.Text[i];
+
+            if (!char.IsAsciiHexDigit(c))
+            {
+                e.Cancel = true;
+                return;
+            }
+        }
+    }
+}
