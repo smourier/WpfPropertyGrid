@@ -8,11 +8,8 @@ public partial class ColorPicker : UserControl
         DependencyProperty.Register(nameof(SelectedColor), typeof(Color), typeof(ColorPicker),
         new FrameworkPropertyMetadata(Colors.Black, FrameworkPropertyMetadataOptions.AffectsRender, (s, e) => ((ColorPicker)s).OnSelectedColorChanged((Color)e.OldValue, (Color)e.NewValue)));
 
-    public static DependencyProperty OptionsProperty { get; } =
-        DependencyProperty.Register(nameof(Options), typeof(ColorPickerOptions), typeof(ColorPicker),
-        new FrameworkPropertyMetadata(ColorPickerOptions.None, FrameworkPropertyMetadataOptions.AffectsRender, (s, e) => ((ColorPicker)s).OnOptionsChanged((ColorPickerOptions)e.OldValue, (ColorPickerOptions)e.NewValue)));
-
     private int _updating;
+
     public ColorPicker()
     {
         InitializeComponent();
@@ -22,9 +19,7 @@ public partial class ColorPicker : UserControl
     }
 
     public Color SelectedColor { get => (Color)GetValue(SelectedColorProperty); set => SetValue(SelectedColorProperty, value); }
-    public ColorPickerOptions Options { get => (ColorPickerOptions)GetValue(OptionsProperty); set => SetValue(OptionsProperty, value); }
 
-    protected virtual void OnOptionsChanged(ColorPickerOptions oldValue, ColorPickerOptions newValue) { }
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
         base.OnRenderSizeChanged(sizeInfo);
