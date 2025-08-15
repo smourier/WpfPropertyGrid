@@ -132,7 +132,7 @@ public class Customer : DictionaryObject
     [Category("Enums")]
     public string? MultiEnumString { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
-    [PropertyGridOptions(IsEnum = true, IsFlagsEnum = true, EnumNames = ["No,nze", "My First", "My Second", "My Third"], EnumValues = [8, 1, 2, 4])]
+    [PropertyGridOptions(IsEnum = true, IsFlagsEnum = true, EnumNames = ["None", "My First", "My Second", "My Third"], EnumValues = [8, 1, 2, 4])]
     [Category("Enums")]
     public string? MultiEnumStringWithDisplay { get => DictionaryObjectGetPropertyValue<string>(); set => DictionaryObjectSetPropertyValue(value); }
 
