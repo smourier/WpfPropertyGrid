@@ -1,5 +1,5 @@
 # WpfPropertyGrid
-A .NET Core 9+ WPF property grid that supports the newer [ThemeMode](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/whats-new/net90) XAML attribute.
+A .NET Core 10+ WPF property grid that supports the newer [ThemeMode](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/whats-new/net90) XAML attribute.
 
 With `ThemeMode=None`
 
